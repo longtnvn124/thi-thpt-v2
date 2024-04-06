@@ -11,6 +11,11 @@ export const PhoneNumberValidator        = ( control : AbstractControl ) : Valid
 
 export const EmailCheckValidator         = (control : AbstractControl)   : ValidationErrors | null => control.value ?EMAIL_REGEX.test(control.value) ? null : { invalidEmailCheckStructure : true } : null;
 
+export const PASS_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+export const PassCheckValidator = (control : AbstractControl) : ValidationErrors | null => control.value ? PASS_REGEX.test(control.value) ? null :  { invalidEmailCheckStructure : true } : null;
+
+
 export const NumberLessThanTenValidator = (control: AbstractControl): ValidationErrors | null => {
   const value = control.value;
   if (value !== null && value !== undefined) {

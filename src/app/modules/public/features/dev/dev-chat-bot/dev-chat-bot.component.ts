@@ -45,6 +45,5 @@ export class DevChatBotComponent implements OnInit {
 
 
   sendChat(){
-    console.log(1111)
   }
 }

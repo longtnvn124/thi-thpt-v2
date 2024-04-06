@@ -21,7 +21,6 @@ export class HomeDhtnComponent implements OnInit {
         localStorage.setItem('count',ew.toString());
       },
       error:(e)=>{
-        console.log(e);
       }
     })
   }

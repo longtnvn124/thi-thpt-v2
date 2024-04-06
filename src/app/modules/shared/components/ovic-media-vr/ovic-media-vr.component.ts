@@ -272,7 +272,7 @@ export class OvicMediaVrComponent implements OnInit, OnDestroy {
       if (this.dataPointsChildNguLieu && this.dataPointsChildNguLieu.length) {
         this.addPointInScene(this.dataPointsChildNguLieu)
       } else {
-        // console.log('data not point');
+
       }
       this.scenePrev.createScrene(this.scene, this.file_param, item.id);
       this.renderSecene();

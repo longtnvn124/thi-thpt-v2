@@ -460,7 +460,7 @@ export class QuanLyTaiKhoanComponent implements OnInit {
     // this.passwordSelectItem = !this.passwordSelectItem;
 
     this.changPassState = !this.changPassState;
-    console.log(this.changPassState);
+
   }
 
 }

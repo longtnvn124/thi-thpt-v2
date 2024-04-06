@@ -185,8 +185,6 @@ export class ToHopMonComponent implements OnInit {
           m['__status'] = sIndex !== -1 ? this.statusList[sIndex].color : '';
           return m;
         })
-        console.log(this.listData);
-
         this.isLoading = false;
       }, error: () => {
         this.isLoading = false;

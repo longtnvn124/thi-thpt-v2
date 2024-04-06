@@ -9,6 +9,13 @@ import {ResetPasswordComponent} from "@modules/public/features/reset-password/re
 import {DesktopGuard} from "@modules/public/desktop.guard";
 import {MobileGuard} from "@modules/public/mobile.guard";
 import {HomeDhtnComponent} from "@modules/public/features/home-dhtn/home-dhtn.component";
+import {RegisterAccountService} from "@shared/services/register-account.service";
+import {
+  VerificationComponent
+} from "@modules/public/features/home-thi-thpt/layouts/verification/verification.component";
+import {
+  RegisterAccountComponent
+} from "@modules/public/features/home-thi-thpt/layouts/register-account/register-account.component";
 
 
 const routes: Routes = [
@@ -28,10 +35,22 @@ const routes: Routes = [
     path         : 'dev' ,
     loadChildren : () => import('@modules/public/features/dev/dev.module').then( m => m.DevModule )
   },
+  // {
+  //   path:"home",
+  //   component:HomeDhtnComponent
+  // } ,
   {
     path:"home",
-    component:HomeDhtnComponent
+    loadChildren:()=> import('@modules/public/features/home-thi-thpt/home-thi-thpt.module').then(m=>m.HomeThiThptModule),
   } ,
+  {
+    path:"register-account",
+    component:RegisterAccountComponent,
+  },
+  {
+    path:"verification",
+    component:VerificationComponent,
+  },
   // {
   //   path: 'home',
   //   canActivate: [DesktopGuard],

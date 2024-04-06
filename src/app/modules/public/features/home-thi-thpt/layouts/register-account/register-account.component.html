@@ -1,0 +1,90 @@
+<div class="home-thpt-register" style="background-image: url('./assets/images/home-thpt/bg-1.jpg');">
+  <div class="register-cotainer m-auto ">
+    <div class="h-100" style="padding:20px;">
+      <div class="register-head">
+        <div class="register-head-div-1">
+          Thi THPT
+        </div>
+        <div class="register-head-div-2">Đăng ký tài khoản</div>
+      </div>
+      <div class="ovic-vertical__inputs ovic-vertical__inputs--layout-2">
+        <form [formGroup]="formSave" autocomplete="off">
+          <div class="row row-cols-1">
+            <div class="mb-4 col-12 col-lg-6">
+              <fieldset class="register-form-row" [class.fieldset--error]="f['username'].touched && f['username'].invalid" [class.fieldset--invalid]="f['username'].touched && f['username'].valid">
+                <label class="register-form-row__label">Tài khoản <span class="ovic-mark">*</span></label>
+                <input class="register-form-row__input" type="text" placeholder="Tài khoản" formControlName="username" autocomplete="off">
+              </fieldset>
+            </div>
+            <div class="mb-4 col-12 col-lg-6 ovic-pl-0">
+              <fieldset class="register-form-row" [class.fieldset--error]="f['display_name'].touched && f['display_name'].invalid" [class.fieldset--invalid]="f['display_name'].touched && f['display_name'].valid">
+                <label >Tên hiển thị <span class="ovic-mark">*</span></label>
+                <input type="text" placeholder="Tên hiển thị" formControlName="display_name" autocomplete="off">
+              </fieldset>
+            </div>
+          </div>
+          <div class="row mb-4">
+            <div class="col">
+              <fieldset class="register-form-row" [class.fieldset--error]="f['phone'].touched && f['phone'].invalid" [class.fieldset--invalid]="f['phone'].touched && f['phone'].valid">
+                <label >Số điện thoại <span class="ovic-mark">*</span></label>
+                <input type="text" placeholder="Số điện thoại" formControlName="phone" autocomplete="off">
+              </fieldset>
+            </div>
+          </div>
+          <div class="row mb-4">
+            <div class="col">
+              <fieldset class="register-form-row" [class.fieldset--error]="f['email'].touched && f['email'].invalid" [class.fieldset--invalid]="f['email'].touched && f['email'].valid">
+                <label >Email <span class="ovic-mark">*</span></label>
+                <input type="text" placeholder="Email" formControlName="email" autocomplete="off">
+              </fieldset>
+              <div class="toast-Err-Email">
+                Lưu ý: Nhập chính xác email, nhập sai không nhận được email kích hoạt tài khoản
+              </div>
+
+            </div>
+          </div>
+          <div class="row mb-4">
+            <div class="col">
+              <fieldset class="register-form-row form-group position-relative" [class.fieldset--error]="f['password'].touched && f['password'].invalid" [class.fieldset--invalid]="f['password'].touched && f['password'].valid">
+                <label >Mật khẩu <span class="ovic-mark">*</span></label>
+                <input type="{{type_password}}" placeholder="Mật khẩu" formControlName="password"
+                       [attr.disabled]=" !changPassState == true ? true : null" autocomplete="off">
+                <div style="position: absolute;right: 12px;top: 0;height: 100%;text-align: center;display: flex;align-items: center;">
+                  <i [pTooltip]="'Hiển thị mật khẩu'" [tooltipPosition]="'left'" class="mr-2 btn-check"  [ngClass]="[type_password==='password' ? 'pi pi-eye': 'pi pi-eye-slash', changPassState === true ?'':'p-disabled']" (click)="btnShowPassWord()"></i>
+                </div>
+              </fieldset>
+              <div class="toast-Err-Email">
+                Lưu ý: Mật khẩu phải có chữ in hoa, chữ thường, số và ký tự đặc biệt
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="register-footer">
+        <div *ngIf="type_check_valid === 1"class="test-member__from__col test-member-size--max pb-0 justify-content-center" >
+          <button (click)="btnRegisterForm()" *ngIf="formSave.valid; else disableButton" class="p-button-success test-member__from__btn-submit" pButton pRipple icon="pi pi-file-edit" label="Đăng ký"></button>
+          <ng-template #disableButton>
+            <button disabled class="p-button-success test-member__from__btn-submit ovic-button--disabled" pButton pRipple icon="pi pi-file-edit" label="Đăng ký "></button>
+          </ng-template>
+        </div>
+        <div *ngIf="type_check_valid === 2" class="test-member__from__col test-member-size--max pb-0 justify-content-center">
+          <button disabled class="p-button-success test-member__from__btn-submit ovic-button--disabled" pButton pRipple icon="pi pi-spin pi-spinner" label="Hệ thống đang gửi yêu cầu đăng ký"></button>
+        </div>
+        <div *ngIf="type_check_valid === 3">
+          <div class="w-100 test-member__from__col test-member-size--max pb-0 justify-content-center">
+            <button disabled class="p-button-success test-member__from__btn-submit ovic-button--disabled" pButton pRipple icon="pi pi-file-edit" label="Gửi yêu cầu truy cập thi"></button>
+          </div>
+          <div class="test-submit-form">
+            <div class="intro-y">
+              <i class="pi pi-check"></i>
+              <label>Hệ thống đã gửi thông tin xác thực về Email của bạn, vui lòng kiểm tra email. Trường hợp không thấy email, vui lòng kiểm tra hòm <b>"Thư rác"</b> hoặc <b>"Spam"</b>. </label>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+

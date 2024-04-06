@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { KetQuaDanhKyComponent } from './ket-qua-danh-ky.component';
+import { MainLayoutComponent } from './main-layout.component';
 
-describe('KetQuaDanhKyComponent', () => {
-  let component: KetQuaDanhKyComponent;
-  let fixture: ComponentFixture<KetQuaDanhKyComponent>;
+describe('MainLayoutComponent', () => {
+  let component: MainLayoutComponent;
+  let fixture: ComponentFixture<MainLayoutComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ KetQuaDanhKyComponent ]
+      declarations: [ MainLayoutComponent ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(KetQuaDanhKyComponent);
+    fixture = TestBed.createComponent(MainLayoutComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -443,7 +443,6 @@ export class DanhSachSuKienComponent implements OnInit {
     const parser = new DOMParser();
     const doc = parser.parseFromString(text, 'text/html');
     const iframes = doc.querySelectorAll('iframe');
-    console.log(iframes)
     return iframes;
   }
 

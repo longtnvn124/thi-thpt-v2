@@ -4,14 +4,14 @@ import {HttpClient, HttpParams} from "@angular/common/http";
 import {HttpParamsHeplerService} from "@core/services/http-params-hepler.service";
 import {ThemeSettingsService} from "@core/services/theme-settings.service";
 import {map, Observable} from "rxjs";
-import {DmMon, DmToHopMon} from "@shared/models/danh-muc";
+import {DmTruongHoc} from "@shared/models/danh-muc";
 import {Dto, OvicConditionParam, OvicQueryCondition} from "@core/models/dto";
 
 @Injectable({
   providedIn: 'root'
 })
-export class DanhMucToHopMonService {
-  private readonly api = getRoute('thpt-monhoc-tohop/');
+export class DanhMucTruongHocService {
+  private readonly api = getRoute('thpt-truonghoc/');
 
   constructor(
     private http: HttpClient,
@@ -20,18 +20,12 @@ export class DanhMucToHopMonService {
   ) {
   }
 
-  load(page: number): Observable<{ recordsTotal: number, data: DmToHopMon[] }> {
-    const conditions: OvicConditionParam[] = [
-      {
-        conditionName: 'is_deleted',
-        condition: OvicQueryCondition.equal,
-        value: '0'
-      },
-    ];
+  load(page: number): Observable<{ recordsTotal: number, data: DmTruongHoc[] }> {
+    const conditions: OvicConditionParam[] = [];
     const fromObject = {
       paged: page,
       limit: this.themeSettingsService.settings.rows,
-      orderby: 'tentohop',
+      orderby: 'tentruong',
       order: "ASC"
     }
     const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({fromObject}));
@@ -53,19 +47,19 @@ export class DanhMucToHopMonService {
     return this.http.delete(''.concat(this.api, id.toString(10)));
   }
 
-  search(page: number, ten: string): Observable<{ recordsTotal: number, data: DmToHopMon[] }> {
+  search(page: number, ten: string): Observable<{ recordsTotal: number, data: DmTruongHoc[] }> {
     const conditions: OvicConditionParam[] = [
 
     ];
     const fromObject = {
       paged: page,
       limit: this.themeSettingsService.settings.rows,
-      orderby: 'tentohop',
+      orderby: 'tentruong',
       order: 'ASC'
     };
     if (ten) {
       conditions.push({
-        conditionName: 'tentohop',
+        conditionName: 'tentruong',
         condition: OvicQueryCondition.like,
         value: `%${ten}%`,
         orWhere: 'and'
@@ -78,7 +72,7 @@ export class DanhMucToHopMonService {
     })));
   }
 
-  getDataUnlimit(): Observable<DmToHopMon[]> {
+  getDataUnlimit(): Observable<DmTruongHoc[]> {
     const conditions: OvicConditionParam[] = [
       {
         conditionName: 'status',
@@ -90,7 +84,7 @@ export class DanhMucToHopMonService {
     const fromObject = {
       paged: 1,
       limit: -1,
-      orderby: 'tentohop',
+      orderby: 'tentruong',
       order: 'ASC'
     };
     const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({fromObject}));

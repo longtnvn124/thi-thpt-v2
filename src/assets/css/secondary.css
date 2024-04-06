@@ -142,8 +142,12 @@ app-danh-sach-diem-truy-cap,
 app-ngu-lieu-image-vr,
 app-ngu-lieu-video-vr,
 app-danh-sach-su-kien,
-app-user-info {
+app-user-info{
   height: 100%;
+}
+app-register-account{
+  display:block;
+  height:100vh;
 }
 
 .ovic-prevent-disable-color .p-disabled,
@@ -865,21 +869,25 @@ p .ql-align-center{
 .register-cotainer{
   min-width: 300px;
   max-width: 600px;
-  width:100%;
+  width:calc(100% - 40px);
   display: block;
-  height:100%;
+  /*height:100%;*/
   background: #fff;
   border:1px solid #cccccc;
   border-radius:10px;
 }
 .register-head-div-1{
+  width: 100%;
+  text-align: center;
   text-transform: uppercase;
   font-size: 24px;
-  padding: 10px 0px;
   font-weight: 500;
   line-height: 30px;
+  border-right:3px solid #eef1f4;
 }
 .register-head-div-2{
+  width: 100%;
+  text-align: center;
   font-size: 18px;
   color: #393939;
   font-weight: 400;
@@ -944,14 +952,24 @@ p .ql-align-center{
 .toast-Err-Email{
   font-size: 14px;
   color: #979292;
-  margin-bottom:10px;
+  /*margin-bottom:10px;*/
 }
 .register-head{
   display: flex;
-  flex-direction: column;
-  text-align: center;
+  flex-direction: row;
+  justify-content: space-around;
   align-items: center;
   padding: 10px;
+}
+@media (max-width: 1024px) {
+  .register-head{
+    flex-direction: column;
+    justify-content: center;
+  }
+  .register-head-div-1{
+    border:none;
+  }
+
 }
 .register-footer{
   display:flex;
@@ -967,6 +985,7 @@ p .ql-align-center{
   }
   .register-head-div-1{
     font-size:20px;
+    border:none;
   }
 }
 .test-member__from__col__span{
@@ -997,3 +1016,46 @@ p .ql-align-center{
   height: 43px;
   border-radius: 4px;
 }
+.thpt-form-data{
+  background: #fff;
+  padding: 10px;
+  height: 100%;
+}
+
+.form-row-ilement{
+  border:1px solid #ccc;
+  border-radius:4px;
+  padding: 15px;
+  background: #fff;
+}
+
+
+/*===================thanh toán======================*/
+
+.thanh-toan {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 14px;
+  padding: 10px;
+  border-radius: 10px;
+
+}
+.thanh-toan.true{
+  color:#0B9419;
+  background: #daebd8;
+}
+.thanh-toan.false{
+  color: red;
+  background: #ebc0c0;
+}
+
+
+.thanh-toan i{
+  font-size:3rem;
+}
+.thanh-toan label{
+  margin:0;
+}
+/*===================thanh toán======================*/

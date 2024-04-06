@@ -4,7 +4,7 @@ import {
   ThongTinThiSinhComponent
 } from "@modules/admin/features/thi-sinh/thong-tin-thi-sinh/thong-tin-thi-sinh.component";
 import {ThiSinhDangKyComponent} from "@modules/admin/features/thi-sinh/thi-sinh-dang-ky/thi-sinh-dang-ky.component";
-import {KetQuaDanhKyComponent} from "@modules/admin/features/thi-sinh/ket-qua-danh-ky/ket-qua-danh-ky.component";
+import {TraCuuKetQuaComponent} from "@modules/admin/features/thi-sinh/tra-cuu-ket-qua/tra-cuu-ket-qua.component";
 
 const routes: Routes = [
   {
@@ -18,9 +18,9 @@ const routes: Routes = [
     data: {state: 'thisinh--dang-ky'}
   },
   {
-    path:'ket-qua-dang-ky',
-    component:KetQuaDanhKyComponent,
-    data: {state: 'thisinh--ket-qua-dang-ky'}
+    path:'ket-qua',
+    component:TraCuuKetQuaComponent,
+    data: {state: 'thisinh--ket-qua'}
   },
   {
     path: '',

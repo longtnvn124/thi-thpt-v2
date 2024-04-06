@@ -99,7 +99,6 @@ export class OvicInputAddressFourLayoutsComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.loadProvince();
-    console.log(this.disabled);
     this.data =this._formField ? this._formField.value: {};
     if (this.formField) {
       this.data =this._formField ? this._formField.value: {};
@@ -107,7 +106,6 @@ export class OvicInputAddressFourLayoutsComponent implements OnInit, OnChanges {
       this.f['district'].setValue(this.data['district']);
       this.f['wards'].setValue(this.data['wards']);
       this.f['address'].setValue(this.data['address']);
-      console.log(this.fields);
     }
   }
 
@@ -140,10 +138,6 @@ export class OvicInputAddressFourLayoutsComponent implements OnInit, OnChanges {
         this.f['district'].setValue(this.data.district);
         this.f['wards'].setValue(this.data.wards);
         this.f['address'].setValue(this.data.address);
-
-      }
-      if(this.formField){
-        console.log(this.formField.value);
       }
     }
   }

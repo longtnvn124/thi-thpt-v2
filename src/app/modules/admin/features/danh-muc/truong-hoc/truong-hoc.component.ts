@@ -1,34 +1,32 @@
 import {Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
-import {FormType, NgPaginateEvent, OvicForm, OvicTableStructure} from "@shared/models/ovic-models";
-import {DmDotThi, DmMon} from "@shared/models/danh-muc";
 import {Paginator} from "primeng/paginator";
+import {DmMon, DmToHopMon, DmTruongHoc} from "@shared/models/danh-muc";
+import {FormType, NgPaginateEvent, OvicForm, OvicTableStructure} from "@shared/models/ovic-models";
 import {AbstractControl, FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {debounceTime, filter, Observable, Subject, Subscription} from "rxjs";
 import {ThemeSettingsService} from "@core/services/theme-settings.service";
 import {NotificationService} from "@core/services/notification.service";
-import {AuthService} from "@core/services/auth.service";
-import {HelperService} from "@core/services/helper.service";
+import {DanhMucToHopMonService} from "@shared/services/danh-muc-to-hop-mon.service";
 import {DanhMucMonService} from "@shared/services/danh-muc-mon.service";
-import {DanhMucDotThiService} from "@shared/services/danh-muc-dot-thi.service";
 import {OvicButton} from "@core/models/buttons";
+import {DanhMucTruongHocService} from "@shared/services/danh-muc-truong-hoc.service";
+import {LocationService} from "@shared/services/location.service";
+import {DiaDanh} from "@shared/models/location";
 
-
-interface FormDotThi extends OvicForm {
-  object: DmDotThi;
+interface FormDmTruonghoc extends OvicForm {
+  object: DmTruongHoc;
 }
-
 @Component({
-  selector: 'app-dot-thi',
-  templateUrl: './dot-thi.component.html',
-  styleUrls: ['./dot-thi.component.css']
+  selector: 'app-truong-hoc',
+  templateUrl: './truong-hoc.component.html',
+  styleUrls: ['./truong-hoc.component.css']
 })
-export class DotThiComponent implements OnInit {
+export class TruongHocComponent implements OnInit {
 
   @ViewChild('fromUpdate', {static: true}) template: TemplateRef<any>;
   @ViewChild('formMembers', {static: true}) formMembers: TemplateRef<any>;
   @ViewChild(Paginator) paginator: Paginator;
-  listData: DmDotThi[];
-
+  listData: DmTruongHoc[];
   statusList = [
     {
       value: 1,
@@ -41,20 +39,19 @@ export class DotThiComponent implements OnInit {
       color: '<span class="badge badge--size-normal badge-danger w-100">Inactive</span>'
     }
   ];
-
   tblStructure: OvicTableStructure[] = [
     {
       fieldType: 'normal',
-      field: ['ten_dotthi'],
+      field: ['__ten_converted'],
       innerData: true,
-      header: 'Tên đợt thi',
+      header: 'Tên trường học',
       sortable: false
     },
     {
       fieldType: 'normal',
-      field: ['__time_converted'],
+      field: ['__proviewed'],
       innerData: true,
-      header: 'Thời gian',
+      header: 'tỉnh/ Thành phố',
       sortable: false
     },
 
@@ -97,22 +94,20 @@ export class DotThiComponent implements OnInit {
 
   headButtons = [
     {
-      label: 'Thêm đợt thi',
+      label: 'Thêm mới',
       name: 'BUTTON_ADD_NEW',
       icon: 'pi-plus pi',
       class: 'p-button-rounded p-button-success ml-3 mr-2'
     },
   ];
-
   listForm = {
-    [FormType.ADDITION]: {type: FormType.ADDITION, title: 'Thêm mới đợt thi', object: null, data: null},
-    [FormType.UPDATE]: {type: FormType.UPDATE, title: 'Cập nhật đợt thi', object: null, data: null}
+    [FormType.ADDITION]: {type: FormType.ADDITION, title: 'Thêm mới trường học', object: null, data: null},
+    [FormType.UPDATE]: {type: FormType.UPDATE, title: 'Cập nhật trường học', object: null, data: null}
   };
-
-  formActive: FormDotThi;
+  formActive: FormDmTruonghoc;
   formSave: FormGroup;
 
-  private OBSERVE_PROCESS_FORM_DATA = new Subject<FormDotThi>();
+  private OBSERVE_PROCESS_FORM_DATA = new Subject<FormDmTruonghoc>();
 
   rows = this.themeSettingsService.settings.rows;
   loadInitFail = false;
@@ -120,26 +115,29 @@ export class DotThiComponent implements OnInit {
   sizeFullWidth = 1024;
   isLoading = true;
   needUpdate = false;
-  menuName: 'dm_dotthi';
+
+  menuName: 'dm_chuyenmuc';
+
   page = 1;
   btn_checkAdd: 'Lưu lại' | 'Cập nhật';
   recordsTotal = 0;
 
   index = 1;
   search='';
+
+  provinces:DiaDanh[]
   constructor(
     private themeSettingsService: ThemeSettingsService,
     private notificationService: NotificationService,
     private fb: FormBuilder,
-    private auth: AuthService,
-    private helperService: HelperService,
-    private danhMucDotThiService: DanhMucDotThiService
+    private locationService: LocationService,
+    private danhMucTruongHocService: DanhMucTruongHocService
   ) {
     this.formSave = this.fb.group({
-      ten_dotthi: ['', Validators.required],
-      time_start: [null, Validators.required],
-      time_end: [null, Validators.required],
-      status: [null, Validators.required],
+      tentruong: ['', Validators.required],
+      tinhtp_id: [null, Validators.required],
+      diachi:['',Validators.required],
+      status: [1, Validators.required],
     });
 
     const observeProcessFormData = this.OBSERVE_PROCESS_FORM_DATA.asObservable().pipe(debounceTime(100)).subscribe(form => this.__processFrom(form));
@@ -148,11 +146,26 @@ export class DotThiComponent implements OnInit {
     this.subscription.add(observeProcessCloseForm);
     const observerOnResize = this.notificationService.observeScreenSize.subscribe(size => this.sizeFullWidth = size.width)
     this.subscription.add(observerOnResize);
+
   }
 
   ngOnInit(): void {
-    this.loadInit()
+    this.notificationService.isProcessing(true);
+    this.locationService.listProvinces().subscribe({
+      next:(data)=>{
+        this.provinces=data;
+        if (data){
+          this.loadInit();
+        }
+        this.notificationService.isProcessing(false);
+
+      },error:()=>{
+        this.notificationService.isProcessing(false);
+      }
+    })
+
   }
+
 
   loadInit() {
     this.isLoading = true;
@@ -163,13 +176,14 @@ export class DotThiComponent implements OnInit {
     const limit = this.themeSettingsService.settings.rows;
     this.index = (page * limit) - limit + 1;
     let newsearch:string = search? search : this.search;
-    this.danhMucDotThiService.search(page, newsearch).subscribe({
+    this.danhMucTruongHocService.search(page, newsearch).subscribe({
       next: ({data, recordsTotal}) => {
         this.recordsTotal = recordsTotal;
         this.listData = data.map(m => {
           const sIndex = this.statusList.findIndex(i => i.value === m.status);
-          m['__time_converted'] = this.strToTime(m.time_start) + ' - ' + this.strToTime(m.time_end);
+          m['__proviewed'] = this.provinces ?  this.provinces.find(f=>f.id === m.tinhtp_id).name: '';
           m['__status'] = sIndex !== -1 ? this.statusList[sIndex].color : '';
+          m['__ten_converted'] = `<b>${m.tentruong}</b><br>` + m.diachi;
           return m;
         })
         this.isLoading = false;
@@ -179,16 +193,23 @@ export class DotThiComponent implements OnInit {
       }
     })
   }
-  private __processFrom({data, object, type}: FormDotThi) {
-    const observer$: Observable<any> = type === FormType.ADDITION ? this.danhMucDotThiService.create(data) : this.danhMucDotThiService.update(object.id, data);
+
+  private __processFrom({data, object, type}: FormDmTruonghoc) {
+    this.notificationService.isProcessing(true);
+
+    const observer$: Observable<any> = type === FormType.ADDITION ? this.danhMucTruongHocService.create(data) : this.danhMucTruongHocService.update(object.id, data);
     observer$.subscribe({
       next: () => {
         this.needUpdate = true;
-        this.page = 1;
-        this.loadData(1, this.search);
+        this.loadData(1,this.search);
         this.notificationService.toastSuccess('Thao tác thành công', 'Thông báo');
+        this.notificationService.isProcessing(false);
       },
-      error: () => this.notificationService.toastError('Thao tác thất bại', 'Thông báo')
+      error: () =>{
+        this.notificationService.toastError('Thao tác thất bại', 'Thông báo');
+        this.notificationService.isProcessing(false);
+
+      }
     });
   }
 
@@ -202,14 +223,17 @@ export class DotThiComponent implements OnInit {
     this.paginator.changePage(1);
     this.loadData(1, text);
   }
+
   private preSetupForm(name: string) {
-    this.notificationService.isProcessing(false);
-    this.notificationService.openSideNavigationMenu({
-      name,
-      template: this.template,
-      size: 600,
-      offsetTop: '0px'
-    });
+    if(this.provinces){
+      this.notificationService.isProcessing(false);
+      this.notificationService.openSideNavigationMenu({
+        name,
+        template: this.template,
+        size: 600,
+        offsetTop: '0px'
+      });
+    }
   }
 
   closeForm() {
@@ -226,10 +250,10 @@ export class DotThiComponent implements OnInit {
       case 'BUTTON_ADD_NEW':
         this.btn_checkAdd = "Lưu lại";
         this.formSave.reset({
-          ten_dotthi: '',
-          time_start: null,
-          time_end: null,
-          status: 1,
+          tentruong: '',
+          tinhtp_id:null,
+          diachi:'',
+          status: null,
 
         });
         this.formActive = this.listForm[FormType.ADDITION];
@@ -240,9 +264,9 @@ export class DotThiComponent implements OnInit {
 
         const object1 = this.listData.find(u => u.id === decision.id);
         this.formSave.reset({
-          ten_dotthi: object1.ten_dotthi,
-          time_start: object1.time_start,
-          time_end: object1.time_end,
+          tentruong: object1.tentruong,
+          tinhtp_id: object1.tinhtp_id,
+          diachi: object1.diachi,
           status: object1.status,
 
         })
@@ -253,7 +277,7 @@ export class DotThiComponent implements OnInit {
       case 'DELETE_DECISION':
         const confirm = await this.notificationService.confirmDelete();
         if (confirm) {
-          this.danhMucDotThiService.delete(decision.id).subscribe({
+          this.danhMucTruongHocService.delete(decision.id).subscribe({
             next: () => {
               this.page = Math.max(1, this.page - (this.listData.length > 1 ? 0 : 1));
               this.notificationService.isProcessing(false);
@@ -271,25 +295,18 @@ export class DotThiComponent implements OnInit {
         break;
     }
   }
+
   get f(): { [key: string]: AbstractControl<any> } {
     return this.formSave.controls;
   }
 
   saveForm() {
-    const titleInput = this.f['ten_dotthi'].value.trim();
-    this.f['ten_dotthi'].setValue(titleInput);
-    const timeszone = this.formatSQLDateTime(new Date(this.formSave.value['time_start'])) <  this.formatSQLDateTime(new Date(this.formSave.value['time_end']));
+    const titleInput = this.f['tentruong'].value.trim();
+    this.f['tentruong'].setValue(titleInput);
     if (this.formSave.valid) {
       if (titleInput !== '') {
-        if (timeszone){
-          this.formSave.value['time_start'] = this.formatSQLDateTime(new Date(this.formSave.value['time_start']));
-          this.formSave.value['time_end'] = this.formatSQLDateTime(new Date(this.formSave.value['time_end']));
-          this.formActive.data = this.formSave.value;
-          this.OBSERVE_PROCESS_FORM_DATA.next(this.formActive);
-        }else{
-          this.notificationService.toastWarning('Thời gian nhập không hợp lệ');
-        }
-
+        this.formActive.data = this.formSave.value;
+        this.OBSERVE_PROCESS_FORM_DATA.next(this.formActive);
       } else {
         this.notificationService.toastError('Vui lòng không nhập khoảng trống');
       }
@@ -300,23 +317,5 @@ export class DotThiComponent implements OnInit {
   }
 
 
-  strToTime(input: string): string {
-    const date = input ? new Date(input) : null;
-    let result = '';
-    if (date) {
-      result += [date.getDate().toString().padStart(2, '0'), (date.getMonth() + 1).toString().padStart(2, '0'), date.getFullYear().toString()].join('/');
-      result += ' ' + [date.getHours().toString().padStart(2, '0'), date.getMinutes().toString().padStart(2, '0')].join(':');
-    }
-    return result;
-  }
-  formatSQLDateTime(date: Date): string {
-    const y = date.getFullYear().toString();
-    const m = (date.getMonth() + 1).toString().padStart(2, '0');
-    const d = date.getDate().toString().padStart(2, '0');
-    const h = date.getHours().toString().padStart(2, '0');
-    const min = date.getMinutes().toString().padStart(2, '0');
-    const sec = '00';
-    //'YYYY-MM-DD hh:mm:ss' type of sql DATETIME format
-    return `${y}-${m}-${d} ${h}:${min}:${sec}`;
-  }
+
 }

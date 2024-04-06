@@ -26,6 +26,7 @@ import { MonComponent } from './mon/mon.component';
 import { ToHopMonComponent } from './to-hop-mon/to-hop-mon.component';
 import { DotThiComponent } from './dot-thi/dot-thi.component';
 import {CalendarModule} from "primeng/calendar";
+import { TruongHocComponent } from './truong-hoc/truong-hoc.component';
 Quill.register('modules/imageResize', ImageResize);
 
 @NgModule({
@@ -37,6 +38,7 @@ Quill.register('modules/imageResize', ImageResize);
     MonComponent,
     ToHopMonComponent,
     DotThiComponent,
+    TruongHocComponent,
 
   ],
     imports: [

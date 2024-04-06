@@ -166,7 +166,6 @@ export class NguLieuVideoVrComponent implements OnInit {
           if(m.file_product && m.file_product[0]){
             this.nguLieuDanhSachService.loadUrlNgulieuById(m.id).subscribe({
               next:(link)=>{
-                console.log(link);
                 m['__url_product'] = link['data'];
               }
             })

@@ -211,7 +211,8 @@ import {OvicAvataTypeThptComponent} from "@shared/components/ovic-avata-type-thp
     AutoFocusDirective,
     OvicMediaVrProductComponent,
     OvicResizeDropdowDirective,
-    OvicAvataTypeThptComponent
+    OvicAvataTypeThptComponent,
+
   ],
   imports: [
     EditorModule,

@@ -1,5 +1,5 @@
-<div class="ovic-container">
-  <div *ngIf="userInfo, else notUserInfo">
+<div *ngIf="userInfo, else notUserInfo">
+  <div class="ovic-container">
     <div class="thpt-form-data ovic-side-navigation-content --no-footer">
       <div class="ovic-vertical__inputs ovic-vertical__inputs--layout-2">
         <form [formGroup]="formSave" autocomplete="off" >
@@ -277,11 +277,14 @@
     </div>
 
   </div>
-  <ng-template #notUserInfo>
-    <div class="w-100 h-100 ">
-      <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
-    </div>
-  </ng-template>
 
 
 </div>
+<ng-template #notUserInfo>
+  <div class="w-100 d-flex justify-content-center align-items-center flex-column " style="height: calc(100vh - 90px);gap:10px;">
+    <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+    <div style="font-size:20px; font-weight:400;">
+      Hệ thống đang load dữ liệu
+    </div>
+  </div>
+</ng-template>
