@@ -13,6 +13,7 @@ export interface Options {
   name:string;
   value:number;
   description:string;
+  status:0|1;
 }
 @Injectable({
   providedIn: 'root'
@@ -38,7 +39,6 @@ export class ThptOptionsService {
         conditionName: 'name',
         condition: OvicQueryCondition.like,
         value: `%${search}%`,
-        orWhere: "and"
       })
     }
     const fromObject = {

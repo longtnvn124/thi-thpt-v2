@@ -46,11 +46,11 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     private http: HttpClient,
     private primengConfig: PrimeNGConfig
   ) {
-    const _url: URL = new URL(window.location.href);
-    const device: string = _url.searchParams.has('device') ? _url.searchParams.get('device') : 'desktop';
-    if (_url.searchParams.has('device') || !localStorage.getItem('device')) {
-      localStorage.setItem('device', device);
-    }
+    // const _url: URL = new URL(window.location.href);
+    // const device: string = _url.searchParams.has('device') ? _url.searchParams.get('device') : 'desktop';
+    // if (_url.searchParams.has('device') || !localStorage.getItem('device')) {
+    //   localStorage.setItem('device', device);
+    // }
 
     const observerOnLoading = this.notification.onAppLoading.pipe(debounceTime(50), distinctUntilChanged()).subscribe(isLoading => this.isLoading = isLoading);
     this.subscription.add(observerOnLoading);

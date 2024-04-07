@@ -27,6 +27,8 @@ import { ToHopMonComponent } from './to-hop-mon/to-hop-mon.component';
 import { DotThiComponent } from './dot-thi/dot-thi.component';
 import {CalendarModule} from "primeng/calendar";
 import { TruongHocComponent } from './truong-hoc/truong-hoc.component';
+import { LePhiThiComponent } from './le-phi-thi/le-phi-thi.component';
+import {InputTextModule} from "primeng/inputtext";
 Quill.register('modules/imageResize', ImageResize);
 
 @NgModule({
@@ -39,6 +41,7 @@ Quill.register('modules/imageResize', ImageResize);
     ToHopMonComponent,
     DotThiComponent,
     TruongHocComponent,
+    LePhiThiComponent,
 
   ],
     imports: [
@@ -56,7 +59,8 @@ Quill.register('modules/imageResize', ImageResize);
         ContextMenuModule,
         MultiSelectModule,
         SplitterModule,
-        CalendarModule
+        CalendarModule,
+        InputTextModule
     ]
 })
 export class DanhMucModule {

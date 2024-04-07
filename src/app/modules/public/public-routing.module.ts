@@ -4,7 +4,7 @@ import {ContentNoneComponent} from './features/content-none/content-none.compone
 import {UnauthorizedComponent} from './features/unauthorized/unauthorized.component';
 import {ClearComponent} from './features/clear/clear.component';
 import {LoginVideoComponent} from '@modules/public/features/login-video/login-video.component';
-import {VirtualTourComponent} from "@modules/public/features/virtual-tour/virtual-tour.component";
+
 import {ResetPasswordComponent} from "@modules/public/features/reset-password/reset-password.component";
 import {DesktopGuard} from "@modules/public/desktop.guard";
 import {MobileGuard} from "@modules/public/mobile.guard";
@@ -71,10 +71,6 @@ const routes: Routes = [
   //  component : LoginV2Component
   // } ,
   {
-    path: 'virtual-tour',
-    component: VirtualTourComponent
-  },
-  {
     path: 'content-none',
     component: ContentNoneComponent
   },
@@ -83,11 +79,7 @@ const routes: Routes = [
     path: 'reset-password',
     component: ResetPasswordComponent
   },
-  {
-    path: 'mobile',
-    canActivate: [MobileGuard],
-    loadChildren: () => import('@modules/public/features/mobile-app/mobile-app.module').then(m => m.MobileAppModule)
-  },
+
   // {
   //   path: '',
   //   redirectTo: 'test',

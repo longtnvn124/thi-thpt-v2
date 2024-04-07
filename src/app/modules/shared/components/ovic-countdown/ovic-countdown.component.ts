@@ -1,11 +1,15 @@
 import { AfterViewInit , Component , EventEmitter , Input , OnInit , Output , ViewChild } from '@angular/core';
 import { CountdownComponent , CountdownConfig } from 'ngx-countdown';
 
-@Component( {
-	selector    : 'ovic-countdown' ,
-	templateUrl : './ovic-countdown.component.html' ,
-	styleUrls   : [ './ovic-countdown.component.css' ]
-} )
+@Component({
+  selector: 'ovic-countdown',
+  templateUrl: './ovic-countdown.component.html',
+  standalone: true,
+  imports: [
+    CountdownComponent
+  ],
+  styleUrls: ['./ovic-countdown.component.css']
+})
 export class OvicCountdownComponent implements OnInit , AfterViewInit {
 
 	timerConfigs : CountdownConfig;

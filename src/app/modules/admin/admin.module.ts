@@ -26,10 +26,15 @@ import { TranslateModule } from '@ngx-translate/core';
 import { OvicMessageModule } from '@modules/admin/features/ovic-message/ovic-message.module';
 import { NewHomeComponent } from '@modules/admin/features/new-home/new-home.component';
 import { DropdownModule } from 'primeng/dropdown';
-import { FormsModule } from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {HomeEducationComponent} from "@modules/admin/features/home/home-education/home-education.component";
 import {HomeSampleComponent} from "@modules/admin/features/home/home-sample/home-sample.component";
 import {CardWidgetComponent} from "@modules/admin/features/home/widgets/card-widget/card-widget.component";
+import { KeHoachThiComponent } from './features/ke-hoach-thi/ke-hoach-thi.component';
+import {DialogModule} from "primeng/dialog";
+import {EditorModule} from "primeng/editor";
+import {PaginatorModule} from "primeng/paginator";
+import {SplitterModule} from "primeng/splitter";
 
 
 @NgModule( {
@@ -44,27 +49,33 @@ import {CardWidgetComponent} from "@modules/admin/features/home/widgets/card-wid
     HomeEducationComponent,
     HomeSampleComponent,
     CardWidgetComponent,
+    KeHoachThiComponent,
 
 	] ,
-	imports      : [
-		CommonModule ,
-		AdminRoutingModule ,
-		MenuModule ,
-		PanelMenuModule ,
-		MessagesModule ,
-		MessageModule ,
-		ScrollPanelModule ,
-		ButtonModule ,
-		RippleModule ,
-		InputTextModule ,
-		NgApexchartsModule ,
-		SharedModule ,
-		OverlayPanelModule ,
-		OvicSvgModule ,
-		TranslateModule ,
-		OvicMessageModule ,
-		DropdownModule ,
-		FormsModule
-	]
+    imports: [
+        CommonModule,
+        AdminRoutingModule,
+        MenuModule,
+        PanelMenuModule,
+        MessagesModule,
+        MessageModule,
+        ScrollPanelModule,
+        ButtonModule,
+        RippleModule,
+        InputTextModule,
+        NgApexchartsModule,
+        SharedModule,
+        OverlayPanelModule,
+        OvicSvgModule,
+        TranslateModule,
+        OvicMessageModule,
+        DropdownModule,
+        FormsModule,
+        DialogModule,
+        EditorModule,
+        PaginatorModule,
+        ReactiveFormsModule,
+        SplitterModule
+    ]
 } )
 export class AdminModule {}

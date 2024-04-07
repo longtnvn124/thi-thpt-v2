@@ -14,7 +14,7 @@ import {ClearComponent} from './features/clear/clear.component';
 
 import {InputMaskModule} from 'primeng/inputmask';
 import {LoginVideoComponent} from './features/login-video/login-video.component';
-import {VirtualTourComponent} from './features/virtual-tour/virtual-tour.component';
+
 import {SharedModule} from "@shared/shared.module";
 import {DialogModule} from "primeng/dialog";
 import {TabMenuModule} from "primeng/tabmenu";
@@ -44,7 +44,7 @@ import {HomeDhtnComponent} from "@modules/public/features/home-dhtn/home-dhtn.co
     UnauthorizedComponent,
     ClearComponent,
     LoginVideoComponent,
-    VirtualTourComponent,
+
     WebHomeComponent,
     SearchComponent,
     NhanvatComponent,

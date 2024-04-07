@@ -127,6 +127,7 @@ import {AutoFocusDirective} from "@shared/directives/auto-focus.directive";
 import { OvicMediaVrProductComponent } from './components/ovic-media-vr-product/ovic-media-vr-product.component';
 import { OvicResizeDropdowDirective } from './directives/ovic-resize-dropdow.directive';
 import {OvicAvataTypeThptComponent} from "@shared/components/ovic-avata-type-thpt/ovic-avata-type-thpt.component";
+import {OvicCountdownComponent} from "@shared/components/ovic-countdown/ovic-countdown.component";
 @NgModule({
   declarations: [
     OvicFlexibleTableComponent,
@@ -211,8 +212,7 @@ import {OvicAvataTypeThptComponent} from "@shared/components/ovic-avata-type-thp
     AutoFocusDirective,
     OvicMediaVrProductComponent,
     OvicResizeDropdowDirective,
-    OvicAvataTypeThptComponent,
-
+    OvicAvataTypeThptComponent
   ],
   imports: [
     EditorModule,
@@ -242,6 +242,7 @@ import {OvicAvataTypeThptComponent} from "@shared/components/ovic-avata-type-thp
     ContextMenuModule,
     DialogModule,
     NgxMapboxGLModule,
+    OvicCountdownComponent,
     // Quill.forRoot({
     //   modules:{
     //     imageResize: {
@@ -334,7 +335,8 @@ import {OvicAvataTypeThptComponent} from "@shared/components/ovic-avata-type-thp
         AutoFocusDirective,
         OvicMediaVrProductComponent,
         OvicResizeDropdowDirective,
-        OvicAvataTypeThptComponent
+        OvicAvataTypeThptComponent,
+        OvicCountdownComponent
     ]
 })
 export class SharedModule {
