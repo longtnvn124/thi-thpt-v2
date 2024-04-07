@@ -41,6 +41,10 @@ const routes : Routes = [
         data      : { state : 'ke-hoach-thi' }
       } ,
       {
+        path         : 'hoi-dong-thi' ,
+        loadChildren : () => import('@modules/admin/features/hoi-dong/hoi-dong.module').then( m => m.HoiDongModule )
+      } ,
+      {
         path         : 'thi-sinh' ,
         loadChildren : () => import('@modules/admin/features/thi-sinh/thi-sinh.module').then( m => m.ThiSinhModule )
       } ,
