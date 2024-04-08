@@ -76,4 +76,6 @@ export class ThptOptionsService {
     const params: HttpParams = this.httpParamsHelper.paramsConditionBuilder(conditions);
     return this.http.get<Dto>(this.api, {params}).pipe(map(res => res.data && res.data[0] ? res.data[0] : null));
   }
+
+  loadDataAndWithThiSinh
 }

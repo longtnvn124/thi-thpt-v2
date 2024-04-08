@@ -1,0 +1,104 @@
+<div class="row">
+  <div class="col-12 ovic-ui-table" [class.ovic-is-loading]="isLoading">
+    <div class="ovic-load-init-fail alert alert-danger --fs-14" *ngIf="loadInitFail; else tableData">
+      Đã có lỗi trong quá trình tải dữ liệu
+      <button class="btn btn-primary border-circle --fs-13 ml-2" (click)="loadInit()">Reload</button>
+    </div>
+    <ng-template #tableData>
+      <div class="p-datatable-header" style="border-bottom:1px solid #CCC;">
+        <h3 class="tbl-title ">Kết quả đăng ký</h3>
+        <div class="search-block ui-table-globalfilter-container ">
+          <div class="d-flex align-items-center">
+            <div class="ovic-vertical__inputs ovic-vertical__inputs--layout-2">
+              <div class="d-flex">
+                <div>
+                  <p-dropdown [options]="keHoachThi" optionLabel="dotthi" optionValue="id" placeholder="Chọn đợt thi"
+                    (onChange)="selectkeHoachThi($event.value)"></p-dropdown>
+                </div>
+                <div class="search-block__elm ml-2">
+                  <span class="p-input-icon-right">
+                    <i class="pi pi-search"></i>
+                    <input type="text" pInputText style="height:42px" placeholder="Tìm kiếm"
+                      (input)="changeInput($event.target['value'])" />
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p-table [value]="listData" [showCurrentPageReport]="false" [tableStyle]="{ 'min-width': '100px' }">
+        <ng-template pTemplate="header">
+          <tr>
+            <th class="ovic-w-50px text-center">TT</th>
+            <th class="ovic-w-200px text-left">Họ và tên </th>
+            <th class=" text-left text-center">Email</th>
+            <th class="ovic-w-180px text-center">Phone</th>
+            <th class="ovic-w-110px text-center">Đợt thi</th>
+            <th class="ovic-w-110px text-center">Môn/ Tổ hợp môn</th>
+            <th class="ovic-w-150px text-center">Trạng thái</th>
+            <th class="ovic-w-100px text-center">Thao tác</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="6">Không có dữ liệu</td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item>
+          <tr>
+            <td class="ovic-w-50px text-center" [innerHTML]="item['_indexTable']"></td>
+            <td class="ovic-w-200px">
+              <div class="d-block --fs-14 font-weight-bold" [innerHTML]="item['_thisinh_hoten']"></div>
+            </td>
+            <td class="ovic-w-260px">
+              <div class="d-block --fs-14" [innerHTML]="item['_thisinh_email']"></div>
+            </td>
+            <td class="ovic-w-100px">
+              <div class="d-block --fs-14 text-center" [innerHTML]="item['_thisinh_phone']"></div>
+            </td>
+            <td class="ovic-w-150px">
+              <div class="d-block --fs-14" [innerHTML]="item['_kehoach_coverted']"></div>
+            </td>
+            <td class="ovic-w-150px">
+              <div class="d-block --fs-14" [innerHTML]="item['__monthi_covered']"></div>
+            </td>
+            <td class="ovic-w-100px">
+              <div class="d-block --fs-14" [innerHTML]="item['__status_converted'] | htmlDecode"></div>
+            </td>
+            <td class="ovic-w-100px text-center">
+              <div class="d-block --fs-14">
+                <button pButton pRipple pTooltip="Thông tin thí sinh" tooltipPosition="top" icon="pi pi-user"
+                  (click)="btnShowUser(item.thisinh_id)"> </button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+      <p-paginator class="p-paginator--custom" [showCurrentPageReport]="true" [rows]="rows"
+        [totalRecords]="recordsTotal" [pageLinkSize]="5" (onPageChange)="paginate($event)"></p-paginator>
+    </ng-template>
+  </div>
+</div>
+
+
+<ng-template #fromUser>
+  <div class="ovic-side-navigation-content">
+    <div class="ovic-side-navigation-content__head">
+      <h4 class="ovic-side-navigation-content__head__title">Thông tin thí sinh</h4>
+      <button (click)="closeForm()" pButton pRipple type="button" icon="pi pi-times"
+        class="p-button-rounded p-button-danger p-button-text close ovic-side-navigation-content__head__btn-close"></button>
+    </div>
+    <div class="ovic-side-navigation-content__body --no-footer ovic-scroll-style">
+      <div class=" container">
+        <div class="row" style="border:1px solid #ccc">
+        <div>
+          
+        </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</ng-template>

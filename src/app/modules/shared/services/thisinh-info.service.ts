@@ -81,4 +81,18 @@ export class ThisinhInfoService {
     const deleted_by = this.auth.user.id;
     return this.update(id, {is_deleted, deleted_by});
   }
+
+
+  getUserById(id :number): Observable<ThiSinhInfo> {
+    const conditions: OvicConditionParam[] = [
+      {
+        conditionName: 'id',
+        condition: OvicQueryCondition.equal,
+        value: id.toString(),
+      },
+    ];
+    const params: HttpParams = this.httpParamsHelper.paramsConditionBuilder(conditions);
+    return this.http.get<Dto>(this.api, {params}).pipe(map(res => res.data && res.data[0] ? res.data[0] : null));
+
+  }
 }

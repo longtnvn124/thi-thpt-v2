@@ -1,13 +1,13 @@
-
 <ng-container [ngSwitch]="ngType">
   <ng-container *ngSwitchCase="-1">
     <div class="w-100 d-flex flex-column justify-content-center align-items-center" style="height:calc(100vh - 90px)">
       <div>
         <i class="pi pi-spin pi-spinner" style="font-size: 4rem"></i>
       </div>
-      <div style="padding:12px;font-size: 16px;" > Đang chờ thanh toán</div>
+      <div style="padding:12px;font-size: 16px;"> Đang chờ thanh toán</div>
 
-      <button pRipple pButton icon="pi pi-sign-out" class="p-button-raised p-button-warning" label="Truy cập kết quả đăng ký" (click)="btnchecksite(-1)"></button>
+      <button pRipple pButton icon="pi pi-sign-out" class="p-button-raised p-button-warning"
+        label="Truy cập kết quả đăng ký" (click)="btnchecksite(-1)"></button>
     </div>
   </ng-container>
   <ng-container *ngSwitchCase="1">
@@ -15,23 +15,25 @@
       <div>
         <i class="pi pi-check-circle p-button-success" style="font-size: 4rem"></i>
       </div>
-      <div style="padding:12px;font-size: 16px;" > Thanh toán thành công</div>
+      <div style="padding:12px;font-size: 16px;"> Thanh toán thành công</div>
 
-      <button pRipple pButton icon="pi pi-sign-out" class="p-button-raised p-button-success" label="Truy cập kết quả đăng ký" (click)="btnchecksite(1)"></button>
+      <button pRipple pButton icon="pi pi-sign-out" class="p-button-raised p-button-success"
+        label="Truy cập kết quả đăng ký" (click)="btnchecksite(1)"></button>
     </div>
   </ng-container>
   <ng-container *ngSwitchCase="0">
     <div class="ovic-container ovic-scroll-style overflow-hidden overflow-y-auto">
       <div class="thpt-form-data ovic-side-navigation-content --no-footer">
         <div class="ovic-vertical__inputs ovic-vertical__inputs--layout-2">
-          <form [formGroup]="formSave" autocomplete="off" >
+          <form [formGroup]="formSave" autocomplete="off">
             <div class="row">
               <div class="col-8">
                 <div class="row">
                   <div class="col">
                     <div class="form-row">
-                      <label >Đợt thi <span class="ovic-mark">*</span></label>
-                      <p-dropdown class="w-100 " placeholder="Chọn đợt thi" [options]="keHoachThi" formControlName="kehoach_id" optionLabel="dotthi" optionValue="id" ></p-dropdown>
+                      <label>Đợt thi <span class="ovic-mark">*</span></label>
+                      <p-dropdown class="w-100 " placeholder="Chọn đợt thi" [options]="keHoachThi"
+                        formControlName="kehoach_id" optionLabel="dotthi" optionValue="id"></p-dropdown>
                     </div>
                   </div>
                 </div>
@@ -39,27 +41,36 @@
                   <div class="col">
                     <div class="form-row">
                       <label>Chọn hình thức thi <span class="ovic-mark">*</span></label>
-                      <p-dropdown class="w-100 " placeholder="chọn hình thức thi" [options]="hinhthucthi" optionLabel="label" optionValue="value" (onChange)="valueHinhthucThi($event)" ></p-dropdown>
+                      <p-dropdown class="w-100 " placeholder="chọn hình thức thi" [options]="hinhthucthi"
+                        optionLabel="label" optionValue="value" (onChange)="valueHinhthucThi($event)"></p-dropdown>
                     </div>
                   </div>
                   <div *ngIf="hinhthucthiSlect !== -1" class="col">
                     <div class="form-row">
-                      <label [innerHTML]="hinhthucthiSlect === 0 ?'Môn thi':'Tổ hợp môn'"> <span class="ovic-mark">*</span></label>
-                      <p-multiSelect class="w-100" [style]="{'width':'100%'}" *ngIf="hinhthucthiSlect === 0" placeholder="Chọn môn thi..."  class="w-100 " formControlName="mon_ids" [options]="dmMon" optionLabel="tenmon" optionValue="id" (onChange)="selectTypeMon(0, $event)" ></p-multiSelect>
-                      <p-dropdown [style]="{'width':'100%'}" *ngIf="hinhthucthiSlect === 1" placeholder="Chọn tổ hợp môn..." class="w-100 " formControlName="tohopmon_ids" [options]="dmToHopMon" optionLabel="tentohop" optionValue="id" [filter]="true" (onChange)="selectTypeMon(1, $event)" ></p-dropdown>
+                      <label [innerHTML]="hinhthucthiSlect === 0 ?'Môn thi':'Tổ hợp môn'"> <span
+                          class="ovic-mark">*</span></label>
+                      <p-multiSelect class="w-100" [style]="{'width':'100%'}" *ngIf="hinhthucthiSlect === 0"
+                        placeholder="Chọn môn thi..." class="w-100 " formControlName="mon_ids" [options]="dmMon"
+                        optionLabel="tenmon" optionValue="id" (onChange)="selectTypeMon(0, $event)"></p-multiSelect>
+                      <p-dropdown [style]="{'width':'100%'}" *ngIf="hinhthucthiSlect === 1"
+                        placeholder="Chọn tổ hợp môn..." class="w-100 " formControlName="tohopmon_ids"
+                        [options]="dmToHopMon" optionLabel="tentohop" optionValue="id" [filter]="true"
+                        (onChange)="selectTypeMon(1, $event)"></p-dropdown>
                     </div>
                   </div>
                 </div>
               </div>
               <div class="col-4">
                 <div class="mon-select">
-                  <div class="mon-select__title"> {{hinhthucthiSlect === 0 ? 'Môn thi đã chọn': 'Tổ hợp môn đã chọn'}}</div>
+                  <div class="mon-select__title"> {{hinhthucthiSlect === 0 ? 'Môn thi đã chọn': 'Tổ hợp môn đã chọn'}}
+                  </div>
                   <div class="mon-select__body">
-                    <ul class="mon-select__body--ul"  *ngIf="hinhthucthiSlect=== 0">
+                    <ul class="mon-select__body--ul" *ngIf="hinhthucthiSlect=== 0">
                       <li class="mon-select__body--li" *ngFor="let item of dataMonslect">{{item['tenmon']}}</li>
                     </ul>
                     <ul class="mon-select__body--ul" *ngIf="hinhthucthiSlect=== 1">
-                      <li class="mon-select__body--li" *ngFor="let item of dataTohopmonslect">{{item['__tentohop_covered']}}</li>
+                      <li class="mon-select__body--li" *ngFor="let item of dataTohopmonslect">
+                        {{item['__tentohop_covered']}}</li>
                     </ul>
                   </div>
                 </div>
@@ -68,21 +79,22 @@
           </form>
 
           <div class="thpt-note">
-            <div class="thpt-note-header" >Lưu ý:</div>
+            <div class="thpt-note-header">Lưu ý:</div>
             <div class="thpt-note-body">
               <p>- Lệ phí thi với mỗi môn thi là {{lephithiData ? lephithiData['value'] : 0}} VNĐ / 1 môn.</p>
-              <p>- Trường hợp với tổ hợp môn thì sẽ lấy lệ phí thi của 1 môn nhân với tổng số môn có trong 'Tổ hợp môn'. </p>
+              <p>- Trường hợp với tổ hợp môn thì sẽ lấy lệ phí thi của 1 môn nhân với tổng số môn có trong 'Tổ hợp môn'.
+              </p>
               <p>- Sau khi thí sinh đăng ký thi, hệ thống sẽ khoá đăng ký và yêu câu thanh toán. </p>
               <p>- Với trường hợp thí sinh đăng ký nhưng ko thanh toán hệ thống sẽ không xếp lịch. </p>
             </div>
           </div>
 
           <div style="padding: 20px 0;display: flex;justify-content: center;gap: 10px;">
-<!--            <button pButton pRipple class="p-button-warning" icon="pi pi-sync" label="Tải lại trang" (click)="reLoadData()"></button>-->
-<!--            <button pButton pRipple class="p-button-danger" icon="pi pi-credit-card" label="Thanh toán" (click)="getPayment()" ></button>-->
-            <button  pButton pRipple class="p-button-success" icon="pi pi-check-square" label="Xác nhận Thông tin" (click)="SaveForm()"></button>
+            <!--            <button pButton pRipple class="p-button-warning" icon="pi pi-sync" label="Tải lại trang" (click)="reLoadData()"></button>-->
+            <!--            <button pButton pRipple class="p-button-danger" icon="pi pi-credit-card" label="Thanh toán" (click)="getPayment()" ></button>-->
+            <button pButton pRipple class="p-button-success" icon="pi pi-check-square" label="Xác nhận Thông tin"
+              (click)="SaveForm()"></button>
           </div>
-
         </div>
       </div>
       <div class="row">
@@ -94,25 +106,24 @@
           <ng-template #tableData>
             <div class="p-datatable-header" style="border-bottom:1px solid #CCC;">
               <h3 class="tbl-title ">Kết quả đăng ký</h3>
-<!--              <div class="search-block ui-table-globalfilter-container ">-->
-<!--                <div class="d-flex align-items-center">-->
-<!--                  <div class="ovic-vertical__inputs ovic-vertical__inputs&#45;&#45;layout-2">-->
-<!--                    <div class="d-flex">-->
-<!--                      <div class="search-block__elm ml-2">-->
-<!--                      <span class="p-input-icon-right">-->
-<!--                        <i class="pi pi-search"></i>-->
-<!--                        <input type="text" pInputText style="height:42px" placeholder="Tìm kiếm" (input)="changeInput($event.target['value'])"/>-->
-<!--                      </span>-->
-<!--                      </div>-->
-<!--                    </div>-->
-<!--                  </div>-->
-<!--                </div>-->
-<!--              </div>-->
+              <!--              <div class="search-block ui-table-globalfilter-container ">-->
+              <!--                <div class="d-flex align-items-center">-->
+              <!--                  <div class="ovic-vertical__inputs ovic-vertical__inputs&#45;&#45;layout-2">-->
+              <!--                    <div class="d-flex">-->
+              <!--                      <div class="search-block__elm ml-2">-->
+              <!--                      <span class="p-input-icon-right">-->
+              <!--                        <i class="pi pi-search"></i>-->
+              <!--                        <input type="text" pInputText style="height:42px" placeholder="Tìm kiếm" (input)="changeInput($event.target['value'])"/>-->
+              <!--                      </span>-->
+              <!--                      </div>-->
+              <!--                    </div>-->
+              <!--                  </div>-->
+              <!--                </div>-->
+              <!--              </div>-->
             </div>
-            <p-table [value]="dataOrders" [showCurrentPageReport]="false"
-                     [tableStyle]="{ 'min-width': '100px' }">
+            <p-table [value]="dataOrders" [showCurrentPageReport]="false" [tableStyle]="{ 'min-width': '100px' }">
               <ng-template pTemplate="header">
-                <tr >
+                <tr>
                   <th class="ovic-w-50px text-center">TT</th>
                   <th class="text-left">Kế hoạch thi</th>
                   <th class=" text-left text-center">Môn/Tổ hợp môn</th>
@@ -145,11 +156,12 @@
                   <td class="ovic-w-100px text-center">
                     <div class="d-block --fs-14">
                       <div *ngIf="item.trangthai_thanhtoan ===1,else notPay">
-                        <button  pButton pRipple label="Thanh toán" disabled icon="pi pi-credit-card">  </button>
+                        <button pButton pRipple label="Thanh toán" disabled icon="pi pi-credit-card"> </button>
 
                       </div>
                       <ng-template #notPay>
-                        <button pButton pRipple class="p-button-warning" label="Thanh toán" icon="pi pi-credit-card" (click)="getPayment(item.id)"></button>
+                        <button pButton pRipple class="p-button-warning" label="Thanh toán" icon="pi pi-credit-card"
+                          (click)="getPayment(item.id)"></button>
 
                       </ng-template>
 
@@ -165,4 +177,3 @@
 
   </ng-container>
 </ng-container>
-

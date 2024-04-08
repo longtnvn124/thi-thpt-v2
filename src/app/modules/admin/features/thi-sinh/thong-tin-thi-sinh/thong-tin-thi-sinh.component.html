@@ -37,6 +37,21 @@
               </div>
               <div class="row">
                 <div class="col">
+                  <div class="form-row" [class.fieldset--error]="f['dantoc'].touched && f['dantoc'].invalid" [class.fieldset--invalid]="f['dantoc'].touched && f['dantoc'].valid">
+                    <label >Dân tộc <span class="ovic-mark">*</span></label>
+                    <p-dropdown [disabled]=" userInfo.status === 1 ? true : false" class="w-100" [style]="{'width':'100%'}" [options]="sex" formControlName="dantoc" optionLabel="label" optionValue="label" placeholder="Chọn..."></p-dropdown>
+                  </div>
+
+                </div>
+                <div class="col ">
+                  <div class="form-row" >
+                    <label >Tôn giáo</label>
+                    <input [attr.disabled]=" userInfo.status === 1 ? true : false" type="text" placeholder="vd:không,..." formControlName="tongiao" autocomplete="off">
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
                   <div class="form-row" [class.fieldset--error]="f['noisinh'].touched && f['noisinh'].invalid" [class.fieldset--invalid]="f['noisinh'].touched && f['noisinh'].valid">
                     <label >Nơi sinh <span class="ovic-mark">*</span></label>
                     <input [attr.disabled]=" userInfo.status === 1 ? true : false" type="text" placeholder="Nơi sinh" formControlName="noisinh" autocomplete="off">

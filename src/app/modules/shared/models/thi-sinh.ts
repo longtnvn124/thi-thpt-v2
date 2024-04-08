@@ -10,6 +10,8 @@ export interface ThiSinhInfo {
   ten:string;
   ngaysinh:string;
   gioitinh:string;
+  dantoc:string;
+  tongiao:string;
   noisinh:string;
   noisinhkhac:string;
   quequan:InputDiaDanh;

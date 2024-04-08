@@ -1,7 +1,5 @@
 import {Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators} from '@angular/forms';
-import {AuthService} from '@core/services/auth.service';
-import {HelperService} from '@core/services/helper.service';
 import {NotificationService} from '@core/services/notification.service';
 import {ThemeSettingsService} from '@core/services/theme-settings.service';
 import {FormType, NgPaginateEvent, OvicForm, OvicTableStructure} from '@modules/shared/models/ovic-models';
@@ -130,8 +128,6 @@ export class ChuyenMucComponent implements OnInit {
     private themeSettingsService: ThemeSettingsService,
     private notificationService: NotificationService,
     private fb: FormBuilder,
-    private auth: AuthService,
-    private helperService: HelperService,
     private danhMucChuyenMucService: DanhMucChuyenMucService
   ) {
     this.formSave = this.fb.group({

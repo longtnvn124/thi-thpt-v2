@@ -41,8 +41,16 @@ const routes : Routes = [
         data      : { state : 'ke-hoach-thi' }
       } ,
       {
-        path         : 'hoi-dong-thi' ,
+        path         : 'dangky-thi' ,
+        loadChildren : () => import('@modules/admin/features/danh-sach-du-thi/danh-sach-du-thi.module').then( m => m.DanhSachDuThiModule )
+      } ,
+      {
+        path         : 'hoidong-thi' ,
         loadChildren : () => import('@modules/admin/features/hoi-dong/hoi-dong.module').then( m => m.HoiDongModule )
+      } ,
+      {
+        path         : 'hoi-dap' ,
+        loadChildren : () => import('@modules/admin/features/hoi-dap/hoi-dap.module').then( m => m.HoiDapModule )
       } ,
       {
         path         : 'thi-sinh' ,

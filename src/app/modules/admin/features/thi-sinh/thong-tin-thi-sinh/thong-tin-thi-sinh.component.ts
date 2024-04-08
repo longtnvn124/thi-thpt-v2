@@ -11,6 +11,7 @@ import {LocationService} from "@shared/services/location.service";
 import {DDMMYYYYDateFormatValidator, NumberLessThanTenValidator, PhoneNumberValidator} from "@core/utils/validators";
 import {ThisinhInfoService} from "@shared/services/thisinh-info.service";
 import {BUTTON_NO, BUTTON_YES} from "@core/models/buttons";
+import {DanToc} from "@shared/utils/syscat";
 interface FormThisinh extends OvicForm {
   object: ThiSinhInfo;
 }
@@ -32,7 +33,7 @@ export class ThongTinThiSinhComponent implements OnInit {
       {name:'Nữ',code:'nu'},
       {name:'Nam',code:'nam'}
     ];
-
+  dantoc = DanToc;
   provinceOptions : DiaDanh[] = [];
 
   listForm = {
@@ -62,6 +63,8 @@ export class ThongTinThiSinhComponent implements OnInit {
       ten:[''],
       hoten:['',Validators.required],
       ngaysinh:['',[Validators.required, DDMMYYYYDateFormatValidator]],
+      dantoc:['',Validators.required],
+      tongiao:[''],
       gioitinh:['',Validators.required],
       noisinh:['',Validators.required],
       noisinhkhac:[''],
@@ -126,6 +129,8 @@ export class ThongTinThiSinhComponent implements OnInit {
             hoten:data.hoten,
             ngaysinh:data.ngaysinh,
             gioitinh:data.gioitinh,
+            dantoc:data.dantoc,
+            tongiao:data.tongiao,
             noisinh:data.noisinh,
             noisinhkhac:data.noisinhkhac,
             quequan:data.quequan,
