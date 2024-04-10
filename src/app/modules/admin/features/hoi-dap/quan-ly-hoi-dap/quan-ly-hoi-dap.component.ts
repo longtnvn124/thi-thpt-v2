@@ -1,12 +1,13 @@
-import {Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
-import {FormType, NgPaginateEvent, OvicForm, OvicTableStructure} from "@shared/models/ovic-models";
+import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { FormType, NgPaginateEvent, OvicForm, OvicTableStructure } from "@shared/models/ovic-models";
 
-import {HoiDapTHPT, ThptHoiDapService} from "@shared/services/thpt-hoi-dap.service";
-import {Paginator} from "primeng/paginator";
-import {FormBuilder, FormGroup} from "@angular/forms";
-import {debounceTime, filter, Observable, Subject, Subscription} from "rxjs";
-import {ThemeSettingsService} from "@core/services/theme-settings.service";
-import {NotificationService} from "@core/services/notification.service";
+import { HoiDapTHPT, ThptHoiDapService } from "@shared/services/thpt-hoi-dap.service";
+import { Paginator } from "primeng/paginator";
+import { AbstractControl, FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { debounceTime, filter, Observable, Subject, Subscription } from "rxjs";
+import { ThemeSettingsService } from "@core/services/theme-settings.service";
+import { NotificationService } from "@core/services/notification.service";
+import { OvicButton } from "@core/models/buttons";
 
 interface FormHoiDap extends OvicForm {
   object: HoiDapTHPT;
@@ -18,7 +19,7 @@ interface FormHoiDap extends OvicForm {
   styleUrls: ['./quan-ly-hoi-dap.component.css']
 })
 export class QuanLyHoiDapComponent implements OnInit {
-  @ViewChild('fromUpdate', {static: true}) template: TemplateRef<any>;
+  @ViewChild('fromUpdate', { static: true }) template: TemplateRef<any>;
   @ViewChild(Paginator) paginator: Paginator;
   listData: HoiDapTHPT[];
   statusList = [
@@ -88,8 +89,8 @@ export class QuanLyHoiDapComponent implements OnInit {
     },
   ];
   listForm = {
-    [FormType.ADDITION]: {type: FormType.ADDITION, title: 'Thêm mới câu hỏi đáp', object: null, data: null},
-    [FormType.UPDATE]: {type: FormType.UPDATE, title: 'Cập nhật câu hỏi đáp', object: null, data: null}
+    [FormType.ADDITION]: { type: FormType.ADDITION, title: 'Thêm mới câu hỏi đáp', object: null, data: null },
+    [FormType.UPDATE]: { type: FormType.UPDATE, title: 'Cập nhật câu hỏi đáp', object: null, data: null }
   };
   formActive: FormHoiDap;
   formSave: FormGroup;
@@ -110,10 +111,10 @@ export class QuanLyHoiDapComponent implements OnInit {
   recordsTotal = 0;
 
   index = 1;
-  search:string= '';
+  search: string = '';
   constructor(
-    private themeSettingsService :ThemeSettingsService,
-    private hoidapService:ThptHoiDapService,
+    private themeSettingsService: ThemeSettingsService,
+    private hoidapService: ThptHoiDapService,
     private notificationService: NotificationService,
     private fb: FormBuilder,
   ) {
@@ -123,6 +124,13 @@ export class QuanLyHoiDapComponent implements OnInit {
     this.subscription.add(observeProcessCloseForm);
     const observerOnResize = this.notificationService.observeScreenSize.subscribe(size => this.sizeFullWidth = size.width)
     this.subscription.add(observerOnResize);
+
+    this.formSave = this.fb.group({
+      question: ['', Validators.required],
+      answer: ['', Validators.required],
+      status: [1, Validators.required],
+    });
+
   }
 
   ngOnInit(): void {
@@ -133,33 +141,37 @@ export class QuanLyHoiDapComponent implements OnInit {
     this.isLoading = true;
     this.loadData(1);
   }
-  loadData(page:number, search?:string) {
+  loadData(page: number, search?: string) {
     const limit = this.themeSettingsService.settings.rows;
     this.index = (page * limit) - limit + 1;
-    this.search = search? search : this.search;
+    this.search = search ? search : this.search;
+    this.notificationService.isProcessing(true);
     this.hoidapService.search(page, null, this.search).subscribe({
-      next: ({data, recordsTotal}) => {
+      next: ({ data, recordsTotal }) => {
         this.recordsTotal = recordsTotal;
         this.listData = data.map(m => {
           const sIndex = this.statusList.findIndex(i => i.value === m.status);
           m['__status'] = sIndex !== -1 ? this.statusList[sIndex].color : '';
-          m['__ten_converted'] = `<b>${m.question}</b><br>` ;
+          m['__ten_converted'] = `<b>${m.question}</b><br>`;
           return m;
         })
         this.isLoading = false;
+        this.notificationService.isProcessing(false);
+
       }, error: () => {
         this.isLoading = false;
+        this.notificationService.isProcessing(false);
         this.notificationService.toastError('Mất kết nối với máy chủ');
       }
     })
   }
 
-  private __processFrom({data, object, type}: FormHoiDap) {
+  private __processFrom({ data, object, type }: FormHoiDap) {
     const observer$: Observable<any> = type === FormType.ADDITION ? this.hoidapService.create(data) : this.hoidapService.update(object.id, data);
     observer$.subscribe({
       next: () => {
         this.needUpdate = true;
-        this.loadData(1,'');
+        this.loadData(1, '');
         this.notificationService.toastSuccess('Thao tác thành công', 'Thông báo');
       },
       error: () => {
@@ -168,7 +180,7 @@ export class QuanLyHoiDapComponent implements OnInit {
     });
   }
 
-  paginate({page}: NgPaginateEvent) {
+  paginate({ page }: NgPaginateEvent) {
     this.page = page + 1;
     this.loadData(this.page);
   }
@@ -177,6 +189,94 @@ export class QuanLyHoiDapComponent implements OnInit {
     this.search = text;
     this.paginator.changePage(1);
     this.loadData(1, text);
+  }
+  private preSetupForm(name: string) {
+    this.notificationService.isProcessing(false);
+    this.notificationService.openSideNavigationMenu({
+      name,
+      template: this.template,
+      size: 600,
+      offsetTop: '0px'
+    });
+  }
+
+  closeForm() {
+    this.loadInit();
+    this.notificationService.closeSideNavigationMenu(this.menuName);
+  }
+
+  async handleClickOnTable(button: OvicButton) {
+    if (!button) {
+      return;
+    }
+    const decision = button.data && this.listData ? this.listData.find(u => u.id === button.data) : null;
+    switch (button.name) {
+      case 'BUTTON_ADD_NEW':
+        this.btn_checkAdd = "Lưu lại";
+        this.formSave.reset({
+          question: '',
+          answer: '',
+          status: 1,
+
+        });
+        this.formActive = this.listForm[FormType.ADDITION];
+        this.preSetupForm(this.menuName);
+        break;
+      case 'EDIT_DECISION':
+        this.btn_checkAdd = "Cập nhật";
+
+        const object1 = this.listData.find(u => u.id === decision.id);
+        this.formSave.reset({
+          question: object1.question,
+          answer: object1.answer,
+          status: object1.status,
+
+        })
+        this.formActive = this.listForm[FormType.UPDATE];
+        this.formActive.object = object1;
+        this.preSetupForm(this.menuName);
+        break;
+      case 'DELETE_DECISION':
+        const confirm = await this.notificationService.confirmDelete();
+        if (confirm) {
+          this.hoidapService.delete(decision.id).subscribe({
+            next: () => {
+              this.page = Math.max(1, this.page - (this.listData.length > 1 ? 0 : 1));
+              this.notificationService.isProcessing(false);
+              this.notificationService.toastSuccess('Thao tác thành công');
+              this.loadData(this.page);
+            }, error: () => {
+              this.notificationService.isProcessing(false);
+              this.notificationService.toastError('Thao tác không thành công');
+            }
+          })
+        }
+        break;
+      default:
+        break;
+    }
+  }
+
+  get f(): { [key: string]: AbstractControl<any> } {
+    return this.formSave.controls;
+  }
+
+  saveForm() {
+    const titleInput = this.f['question'].value.trim();
+    this.f['question'].setValue(titleInput);
+    console.log(this.formSave.value);
+
+    if (this.formSave.valid) {
+      if (titleInput !== '') {
+        this.formActive.data = this.formSave.value;
+        this.OBSERVE_PROCESS_FORM_DATA.next(this.formActive);
+      } else {
+        this.notificationService.toastError('Vui lòng không nhập khoảng trống');
+      }
+    } else {
+      this.formSave.markAllAsTouched();
+      this.notificationService.toastError('Vui lòng nhập đủ thông tin');
+    }
   }
 
 }

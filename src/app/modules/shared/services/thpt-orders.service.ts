@@ -38,6 +38,12 @@ export class ThptOrdersService {
         condition: OvicQueryCondition.equal,
         value: user_id.toString(),
       },
+      {
+        conditionName: 'is_deleted',
+        condition: OvicQueryCondition.equal,
+        value: '0',
+        orWhere: 'and'
+      },
     ];
     const params: HttpParams = this.httpParamsHelper.paramsConditionBuilder(conditions);
     return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data && res.data[0] ? res.data[0] : null));
@@ -91,7 +97,9 @@ export class ThptOrdersService {
   }
 
   getPayment(id: number, url: string): Observable<any> {
-    const conditions: OvicConditionParam[] = [];
+    const conditions: OvicConditionParam[] = [
+
+    ];
     const fromObject = {
       returnUrl: url,
     }
@@ -111,6 +119,12 @@ export class ThptOrdersService {
         condition: OvicQueryCondition.equal,
         value: user_id.toString(),
       },
+      {
+        conditionName: 'is_deleted',
+        condition: OvicQueryCondition.equal,
+        value: '0',
+        orWhere: 'and'
+      },
     ];
     const fromObject = {
 
@@ -125,6 +139,12 @@ export class ThptOrdersService {
         condition: OvicQueryCondition.equal,
         value: user_id.toString(),
       },
+      {
+        conditionName: 'is_deleted',
+        condition: OvicQueryCondition.equal,
+        value: '0',
+        orWhere: 'and'
+      },
     ];
     const fromObject = {
 
@@ -136,7 +156,12 @@ export class ThptOrdersService {
   // getDataByWithThisinh()
   getDataByWithThisinhAndSearchAndPage(page: number, kehoach_id: number, search?: string): Observable<{ recordsTotal: number, data: OrdersTHPT[] }> {
     const conditions: OvicConditionParam[] = [
+      {
+        conditionName: 'is_deleted',
+        condition: OvicQueryCondition.equal,
+        value: '0',
 
+      },
     ];
     if (kehoach_id) {
       conditions.push({

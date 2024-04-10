@@ -9,7 +9,6 @@ import { DmMon, DmToHopMon } from "@shared/models/danh-muc";
 import { NotificationService } from "@core/services/notification.service";
 import { AbstractControl, FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { KeHoachThi, ThptKehoachThiService } from "@shared/services/thpt-kehoach-thi.service";
-import { DanhMucTruongHocService } from "@shared/services/danh-muc-truong-hoc.service";
 import { Options, ThptOptionsService } from "@shared/services/thpt-options.service";
 import { ThptOrderMonhocService } from "@shared/services/thpt-order-monhoc.service";
 import { OrdersTHPT, ThptOrdersService } from "@shared/services/thpt-orders.service";
@@ -69,7 +68,7 @@ export class ThiSinhDangKyComponent implements OnInit {
   ) {
     this._user_id = this.auth.user.id;
     this.formSave = this.fb.group({
-      user_id: [null, Validators.required],
+      user_id: [null],
       kehoach_id: [null, Validators.required],
       // hinhthucthi:[null,Validators.required], //1:tohopmon,2:mon thi,
       mon_ids: [[]],
@@ -124,7 +123,8 @@ export class ThiSinhDangKyComponent implements OnInit {
           }
           return m
         });
-        console.log(data);
+
+        console.log(this.dataOrders);
 
         this.notifi.isProcessing(false);
       },
@@ -204,25 +204,25 @@ export class ThiSinhDangKyComponent implements OnInit {
   SaveForm() {
     const kehoachid = this.f['kehoach_id'].value;
     console.log(kehoachid);
-    if (this.dataOrders.some(f => f.kehoach_id !== kehoachid)) {
+    if (this.dataOrders && !this.dataOrders.some(obj => obj.kehoach_id === kehoachid)) {
       if (this.formSave.valid) {
         const formUp: FormGroup = this.fb.group({
           thisinh_id: this.userInfo.id,
-          kehoach_id: null,
+          kehoach_id: kehoachid,
           mota: '',
           lephithi: null,
           status: null,
         });
         formUp.reset({
           thisinh_id: this.userInfo.id,
-          kehoach_id: this.keHoachThi[0].id,
+          kehoach_id: kehoachid,
           mota: '',
           lephithi: this.hinhthucthiSlect === 0 ? this.lephithiData.value * this.dataMonslect.length : this.lephithiData.value * this.dataTohopmonslect[0].mon_ids.length,
           status: 1
         });
         this.ordersService.create(formUp.value).subscribe({
           next: (id) => {
-            this.UpOrderMonBylocal(id, this.userInfo.id, this.keHoachThi[0].id, this.hinhthucthiSlect);
+            this.UpOrderMonBylocal(id, this.userInfo.id, kehoachid, this.hinhthucthiSlect);
             this.getPayment(id);
             this.notifi.isProcessing(false);
             this.notifi.toastSuccess('Thí sinh đăng ký thành công');
@@ -362,6 +362,5 @@ export class ThiSinhDangKyComponent implements OnInit {
     return result;
   }
 
-
-
 }
+

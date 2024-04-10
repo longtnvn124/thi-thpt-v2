@@ -225,4 +225,8 @@ export class LoginVideoComponent implements OnInit , AfterViewInit , OnDestroy {
 			this.password.type = 'text';
 		}
 	}
+
+  btnRegister(){
+    this.router.navigate(['register-account/']);
+  }
 }

@@ -6,13 +6,12 @@
     </div>
     <ng-template #tableData>
       <ovic-table emptyMessage="Danh sách trống" [index]="index" [data]="listData"
-                  styleClass="tbl-danh-sach-tap-the head-input-size--normal head-input-size--250px" dataKey="id"
-                  rowHover="true"
-                  [rows]="15" tableName="Danh sách Câu hỏi và Đáp án" [tblStructure]="tblStructure"
-                  (onButtonClick)="handleClickOnTable($event)" [enableSearch]="true" [enableSearchLocal]="false"
-                  (onSearch)="onSearch($event)" [searchDebounceTime]="800" [headerButtons]="headButtons"></ovic-table>
+        styleClass="tbl-danh-sach-tap-the head-input-size--normal head-input-size--250px" dataKey="id" rowHover="true"
+        [rows]="15" tableName="Danh sách Câu hỏi và Đáp án" [tblStructure]="tblStructure"
+        (onButtonClick)="handleClickOnTable($event)" [enableSearch]="true" [enableSearchLocal]="false"
+        (onSearch)="onSearch($event)" [searchDebounceTime]="800" [headerButtons]="headButtons"></ovic-table>
       <p-paginator class="p-paginator--custom" [showCurrentPageReport]="true" [rows]="rows"
-                   [totalRecords]="recordsTotal" [pageLinkSize]="5" (onPageChange)="paginate($event)"></p-paginator>
+        [totalRecords]="recordsTotal" [pageLinkSize]="5" (onPageChange)="paginate($event)"></p-paginator>
     </ng-template>
   </div>
 </div>
@@ -22,25 +21,24 @@
     <div class="ovic-side-navigation-content__head">
       <h4 class="ovic-side-navigation-content__head__title">{{formActive ? formActive.title : ''}}</h4>
       <button (click)="closeForm()" pButton pRipple type="button" icon="pi pi-times"
-              class="p-button-rounded p-button-danger p-button-text close ovic-side-navigation-content__head__btn-close"></button>
+        class="p-button-rounded p-button-danger p-button-text close ovic-side-navigation-content__head__btn-close"></button>
     </div>
     <div class="ovic-side-navigation-content__body ovic-scroll-style">
       <div class="ovic-vertical__inputs ovic-vertical__inputs--layout-2">
         <form [formGroup]="formSave" autocomplete="off">
           <div class="row">
-            <div class="col-6">
-              <p class="form-row" >
+            <div class="col-12">
+              <p class="form-row">
                 <label>Nội dung câu hỏi<span class="ovic-mark">*</span></label>
-                <input pRipple pInputText type="text" placeholder="Tên chuyên mục..." formControlName="ten"
-                       autocomplete="off">
+                <input pRipple pInputText type="text" placeholder="Câu hỏi..." formControlName="question"
+                  autocomplete="off">
               </p>
             </div>
-            <div class="col-6">
+            <div class="col-12">
               <p class="form-row">
                 <label>Trạng thái <span class="ovic-mark">*</span></label>
                 <p-dropdown placeholder="Chọn..." class="w-100" [options]="statusList" optionLabel="label"
-                            optionValue="value" [showClear]="true"
-                            formControlName='status'></p-dropdown>
+                  optionValue="value" [showClear]="true" formControlName='status'></p-dropdown>
               </p>
             </div>
           </div>
@@ -48,7 +46,7 @@
             <div class="col-12">
               <p class="form-row">
                 <label for="mota">Nội dung câu trả lời<span class="ovic-mark">*</span></label>
-                <ovic-editor class="w-100" [formField]="answer"></ovic-editor>
+                <ovic-editor class="w-100" [formField]="f['answer']"></ovic-editor>
               </p>
             </div>
 
@@ -59,11 +57,10 @@
     </div>
     <div class="ovic-side-navigation-content__foot">
       <span class="ovic-side-navigation-content__foot__notice mr-auto"><mark>(*)</mark> bắt buộc phải nhập</span>
-      <button pButton pRipple type="button" [label]="btn_checkAdd"  icon="pi pi-save" (click)="saveForm()"
-              class="p-button-success"></button>
+      <button pButton pRipple type="button" [label]="btn_checkAdd" icon="pi pi-save" (click)="saveForm()"
+        class="p-button-success"></button>
       <button pButton pRipple type="button" label="Đóng" class="p-button-secondary ml-3" icon="pi pi-times"
-              (click)="closeForm()"></button>
+        (click)="closeForm()"></button>
     </div>
   </div>
 </ng-template>
-
