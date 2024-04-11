@@ -2,18 +2,25 @@
   <form [formGroup]="form" autocomplete="off">
     <div class="ovic-input-address-four-layouts__row p-dropdown--border-bottom">
       <div class="ovic-input-address-four-layouts__col">
-        <p-dropdown [disabled]=" disabled " class="input-element ovic-dropdown-style" [filter]="true" filterBy="name" [options]="provinceOptions" optionLabel="name" optionValue="id" formControlName="province" placeholder="Chọn Tỉnh, Thành phố"></p-dropdown>
+        <p-dropdown [disabled]=" disabled " class="input-element ovic-dropdown-style" [filter]="true" filterBy="name"
+          [options]="provinceOptions" optionLabel="name" optionValue="id" formControlName="province"
+          placeholder="Chọn Tỉnh, Thành phố"></p-dropdown>
       </div>
       <div class="ovic-input-address-four-layouts__col">
-        <p-dropdown [disabled]=" disabled " class="input-element ovic-dropdown-style" [filter]="true" filterBy="name" [options]="districtOptions" optionLabel="name" optionValue="id" formControlName="district" placeholder="Chọn Quận,Huyện"></p-dropdown>
+        <p-dropdown [disabled]=" disabled " class="input-element ovic-dropdown-style" [filter]="true" filterBy="name"
+          [options]="districtOptions" optionLabel="name" optionValue="id" formControlName="district"
+          placeholder="Chọn Quận,Huyện"></p-dropdown>
       </div>
       <div class="ovic-input-address-four-layouts__col">
-        <p-dropdown [disabled]=" disabled " class="input-element ovic-dropdown-style" [filter]="true" filterBy="name" [options]="wardsOptions" optionLabel="name" optionValue="id" formControlName="wards" placeholder="Chọn Xã, Phường"></p-dropdown>
+        <p-dropdown [disabled]=" disabled " class="input-element ovic-dropdown-style" [filter]="true" filterBy="name"
+          [options]="wardsOptions" optionLabel="name" optionValue="id" formControlName="wards"
+          placeholder="Chọn Xã, Phường"></p-dropdown>
       </div>
     </div>
     <div class="ovic-input-address-four-layouts__row">
       <div class="ovic-input-address-four-layouts__col">
-        <input [attr.disabled]="disabled" type="text" name="address" id="address" formControlName="address" placeholder="Nhập địa chỉ">
+        <input [disabled]="disabled" type="text" name="address" id="address" formControlName="address"
+          placeholder="Nhập địa chỉ">
       </div>
     </div>
   </form>

@@ -5,10 +5,12 @@ export const environment = {
 };
 
 // run locall
-
+// http://thi-thpt.tnu.vn 
 const realm       = 'thithpt';
-const host        = [ 'h' , 't' , 't' , 'p' , 's' , ':' , '/' , '/' , 'a' , 'p' , 'i' , '-' , 'd' , 'e' , 'v' , '.' , 'i' , 'c' , 't' , 'u' , '.' , 'v' , 'n' ];
+// const host        = [ 'h' , 't' , 't' , 'p' , 's' , ':' , '/' , '/' , 'a' , 'p' , 'i' , '-' , 'd' , 'e' , 'v' , '.' , 'i' , 'c' , 't' , 'u' , '.' , 'v' , 'n' ];
+const host        = [ 'h' , 't' , 't' , 'p' , 's' , ':' , '/' , '/' , 't' , 'n' , 'u' , '.' , 'v' , 'n' ];
 const port        = '10091';
+
 const port_socket = '10092';
 const ws_url      = [ 'w' , 's' , 's' , ':' , '/' , '/' , 'a' , 'p' , 'i' , '-' , 'd' , 'e' , 'v' , '.' , 'i' , 'c' , 't' , 'u' , '.' , 'v' , 'n' ];
 
@@ -114,7 +116,7 @@ export const REFRESH_TOKEN   = 'thithptAbLPDaGK';
 export const ENCRYPT_KEY     = 'thithptW4jM2P5r';
 export const APP_STORES      = 'thithpt4QfWtr6Z'; // no clear after logout
 export const SWITCH_DONVI_ID = 'thithptC@gGA506'; // no clear after logout
-export const X_APP_ID        = '64c9a192-cc0e-4198-acb8-2188dbb472fa';
+export const X_APP_ID        = '64267F1F-EBC6-4D47-8BAD-B4847DB01A93';
 
 export const imgFalback = 'assets/images/placeholder.jpg';
 

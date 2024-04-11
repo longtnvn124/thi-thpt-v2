@@ -72,6 +72,7 @@ export class RegisterAccountComponent implements OnInit {
         this.type_check_valid= 3;
         this.resetForm();
       },error:(e)=>{
+        console.log(e);
         this.type_check_valid= 1;
       }
     })

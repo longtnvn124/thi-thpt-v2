@@ -72,7 +72,7 @@ export class ThiSinhDangKyComponent implements OnInit {
       kehoach_id: [null, Validators.required],
       // hinhthucthi:[null,Validators.required], //1:tohopmon,2:mon thi,
       mon_ids: [[]],
-      tohopmon_ids: [[]],
+      tohopmon_ids: [null],
     })
   }
 
@@ -138,7 +138,7 @@ export class ThiSinhDangKyComponent implements OnInit {
   getDataDanhMuc() {
     this.isLoading = true;
     this.notifi.isProcessing(true);
-    forkJoin<[ThiSinhInfo, DmMon[], DmToHopMon[], KeHoachThi[], Options, ]>(
+    forkJoin<[ThiSinhInfo, DmMon[], DmToHopMon[], KeHoachThi[], Options,]>(
       [
         this.thisinhInfoService.getUserInfo(this._user_id),
         this.monService.getDataUnlimit(),
@@ -203,7 +203,7 @@ export class ThiSinhDangKyComponent implements OnInit {
   }
   SaveForm() {
     const kehoachid = this.f['kehoach_id'].value;
-    console.log(kehoachid);
+
     if (this.dataOrders && !this.dataOrders.some(obj => obj.kehoach_id === kehoachid)) {
       if (this.formSave.valid) {
         const formUp: FormGroup = this.fb.group({
@@ -212,14 +212,19 @@ export class ThiSinhDangKyComponent implements OnInit {
           mota: '',
           lephithi: null,
           status: null,
+          tohop_mon_id: null,
+          mon_id: null,
         });
         formUp.reset({
           thisinh_id: this.userInfo.id,
           kehoach_id: kehoachid,
           mota: '',
           lephithi: this.hinhthucthiSlect === 0 ? this.lephithiData.value * this.dataMonslect.length : this.lephithiData.value * this.dataTohopmonslect[0].mon_ids.length,
-          status: 1
+          status: 1,
+          tohop_mon_id: this.hinhthucthiSlect === 1 ? this.f['tohopmon_ids'].value : null,
+          mon_id: this.hinhthucthiSlect === 0 ? this.f['mon_ids'].value : null,
         });
+        console.log(formUp.value);
         this.ordersService.create(formUp.value).subscribe({
           next: (id) => {
             this.UpOrderMonBylocal(id, this.userInfo.id, kehoachid, this.hinhthucthiSlect);

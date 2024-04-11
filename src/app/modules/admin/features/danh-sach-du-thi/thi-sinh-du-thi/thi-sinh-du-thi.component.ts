@@ -129,7 +129,7 @@ export class ThiSinhDuThiComponent implements OnInit {
           m['__status_converted'] = m['trangthai_thanhtoan'] === 1 ? this.listStyle.find(f => f.value === 1).title : this.listStyle.find(f => f.value === 0).title;
           return m;
         })
-        console.log(this.listData);
+        
         this.notifi.isProcessing(false);
         this.isLoading = false;
 
@@ -161,12 +161,12 @@ export class ThiSinhDuThiComponent implements OnInit {
   }
 
   selectkeHoachThi(event) {
-    console.log(event);
+   
     this._kehoach_id = event;
     this.getData(1, event, this._searchText);
   }
   changeInput(event) {
-    console.log(event);
+   
     this.paginator.changePage(1);
     this._searchText = event;
     this.getData(this.page, this._kehoach_id, this._searchText);
@@ -194,20 +194,14 @@ export class ThiSinhDuThiComponent implements OnInit {
 
   userInfo: ThiSinhInfo;
   btnShowUser(id: number) {
-    console.log(id);
-
     this.preSetupForm(this.menuName);
-
     this.notifi.isProcessing(true);
     this.thisinhInfoService.getUserById(id).subscribe({
       next: (data) => {
-        console.log(data);
         this.userInfo = data;
         this.userInfo['__anh_chandung_covented'] = data.anh_chandung ? this.fileSerive.getPreviewLinkLocalFile(data.anh_chandung[0]) : '';
         this.userInfo['__cccd_mattruoc_covented'] = data.cccd_img_truoc ? this.fileSerive.getPreviewLinkLocalFile(data.cccd_img_truoc[0]) : '';
         this.userInfo['__cccd_matsau_covented'] = data.cccd_img_sau ? this.fileSerive.getPreviewLinkLocalFile(data.anh_chandung[0]) : '';
-        console.log(this.userInfo);
-
         this.notifi.isProcessing(false);
       }, error: (e) => {
         this.notifi.isProcessing(false);

@@ -6,6 +6,7 @@ import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/fo
 import { ThptHoiDong, ThptHoiDongService } from '@modules/shared/services/thpt-hoi-dong.service';
 import { FormType, OvicForm } from '@modules/shared/models/ovic-models';
 import { Observable, Subject, Subscription, debounceTime, filter } from 'rxjs';
+import {ThptHoiDongPhongThi} from "@shared/models/thpt-model";
 
 
 interface FormHoiDong extends OvicForm {
@@ -19,6 +20,7 @@ interface FormHoiDong extends OvicForm {
 })
 export class HoiDongThiComponent implements OnInit {
   @ViewChild('fromUpdate', { static: true }) template: TemplateRef<any>;
+  @ViewChild('examinationRoom', { static: true }) examinationRoom: TemplateRef<any>;
   statusList = [
     {
       value: 1,
@@ -104,7 +106,7 @@ export class HoiDongThiComponent implements OnInit {
     })
   }
   changeSelectData(event) {
-    console.log(event);
+
     this._kehoach_id = event;
     this.getDataHoiDong(event);
 
@@ -128,7 +130,7 @@ export class HoiDongThiComponent implements OnInit {
           m['__status_converted'] = sIndex !== -1 ? this.statusList[sIndex].color : '';
           return m;
         })
-        console.log(this.listData);
+
         this.isLoading = false;
         this.notifi.isProcessing(false);
       },
@@ -169,7 +171,7 @@ export class HoiDongThiComponent implements OnInit {
   }
 
   changeInput(text) {
-    console.log(text);
+
   }
 
   btnAddNew(type: 'add' | 'update', item?: ThptHoiDong) {
@@ -249,5 +251,46 @@ export class HoiDongThiComponent implements OnInit {
     }
   }
 
+  hoidong_id: number;
+
+  btnViewPhongThi(item: ThptHoiDong) {
+    this.notifi.isProcessing(false);
+    this.notifi.openSideNavigationMenu({
+      template: this.examinationRoom,
+      size: this.sizeFullWidth,
+      offsetTop: '0px'
+    });
+
+    this.hoidong_id = item.id;
+  }
+
+  btnCreateRoom() {
+    const user = 17;
+    const userinRoom = 3;
+    let  room:number;
+    console.log((user - (user % userinRoom)) / userinRoom, user % userinRoom);
+    console.log(room);
+
+    if (user <= userinRoom){
+      room= 1;
+    }else{
+      room=user % userinRoom ===0 ? (user / userinRoom) : (Math.floor(user / userinRoom) +1);
+    }
+    console.log( room);
+    let rooms : ThptHoiDongPhongThi[]= []
+    for(let i =1 ; i<= room ;i++){
+       const roomAdd :ThptHoiDongPhongThi  = {
+         kehoach_id:this._kehoach_id,
+         hoidong_id:this.hoidong_id,
+         ten_phong_thi: 'Phòng thi môn ' + this.hoidong_id + '-'+ i,
+         mota:'',
+         sothisinh:userinRoom,
+         canbo_coithi:'',
+         status:1
+       };
+       rooms.push(roomAdd);
+    }
+    console.log( rooms);
+  }
 
 }

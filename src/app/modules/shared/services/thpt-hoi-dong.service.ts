@@ -5,7 +5,7 @@ import { AuthService } from '@core/services/auth.service';
 import { HttpParamsHeplerService } from '@core/services/http-params-hepler.service';
 import { ThemeSettingsService } from '@core/services/theme-settings.service';
 import { Observable, map } from 'rxjs';
-import { getRoute } from 'src/environments/environment.prod';
+import { getRoute } from 'src/environments/environment';
 
 export interface ThptHoiDong {
   id: number;
@@ -87,5 +87,19 @@ export class ThptHoiDongService {
     }
     const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }));
     return this.http.get<Dto>(this.api, { params }).pipe(map(res => (res.data)));
+  }
+
+
+  getHoidongonly(hoidong_id: number): Observable<ThptHoiDong> {
+    const conditions: OvicConditionParam[] = [
+
+    ];
+    const fromObject = {
+      paged: 1,
+      orderby: 'ten_hoidong',
+      order: "ASC"
+    }
+    const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }));
+    return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data[0]));
   }
 }

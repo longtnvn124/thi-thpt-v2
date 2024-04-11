@@ -1,23 +1,18 @@
 import { Injectable } from '@angular/core';
-import { getRoute } from "@env";
-import { HttpClient, HttpParams } from "@angular/common/http";
-import { HttpParamsHeplerService } from "@core/services/http-params-hepler.service";
-import { ThemeSettingsService } from "@core/services/theme-settings.service";
-import { map, Observable } from "rxjs";
-import { Dto, OvicConditionParam, OvicQueryCondition } from "@core/models/dto";
-export interface KeHoachThi {
-  id: number;
-  nam: number;
-  dotthi: string;
-  soluong_toida: number;
-  mota: string;
-  status: 1 | 0;
-}
+import {getRoute} from "@env";
+import {HttpClient, HttpParams} from "@angular/common/http";
+import {HttpParamsHeplerService} from "@core/services/http-params-hepler.service";
+import {ThemeSettingsService} from "@core/services/theme-settings.service";
+import {map, Observable} from "rxjs";
+import {Dto, OvicConditionParam, OvicQueryCondition} from "@core/models/dto";
+import {KeHoachThi} from "@shared/services/thpt-kehoach-thi.service";
+import {ThptHoiDongPhongThi} from "@shared/models/thpt-model";
+
 @Injectable({
   providedIn: 'root'
 })
-export class ThptKehoachThiService {
-  private readonly api = getRoute('thpt-kehoach-thi/');
+export class ThptHoidongPhongthiService {
+  private readonly api = getRoute('thpt-hoidong-phongthi/');
 
   constructor(
     private http: HttpClient,
@@ -26,14 +21,14 @@ export class ThptKehoachThiService {
   ) {
   }
 
-  load(page: number): Observable<{ recordsTotal: number, data: KeHoachThi[] }> {
+  load(page: number): Observable<{ recordsTotal: number, data: ThptHoiDongPhongThi[] }> {
     const conditions: OvicConditionParam[] = [
 
     ];
     const fromObject = {
       paged: page,
       limit: this.themeSettingsService.settings.rows,
-      orderby: 'dotthi',
+      orderby: 'ten_phongthi',
       order: "ASC"
     }
     const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }));
@@ -55,7 +50,7 @@ export class ThptKehoachThiService {
     return this.http.delete(''.concat(this.api, id.toString(10)));
   }
 
-  search(page: number, ten: string): Observable<{ recordsTotal: number, data: KeHoachThi[] }> {
+  search(page: number, ten: string): Observable<{ recordsTotal: number, data: ThptHoiDongPhongThi[] }> {
     const conditions: OvicConditionParam[] = [];
     const fromObject = {
       paged: page,
@@ -78,7 +73,7 @@ export class ThptKehoachThiService {
     })));
   }
 
-  getDataUnlimit(): Observable<KeHoachThi[]> {
+  getDataUnlimit(): Observable<ThptHoiDongPhongThi[]> {
     const conditions: OvicConditionParam[] = [
       {
         conditionName: 'status',
@@ -90,29 +85,10 @@ export class ThptKehoachThiService {
     const fromObject = {
       paged: 1,
       limit: -1,
-      orderby: 'dotthi',
+      orderby: 'ten_phongthi',
       order: 'ASC'
     };
     const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }));
     return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data));
-  }
-
-  getDataById(id: number): Observable<KeHoachThi> {
-    const conditions: OvicConditionParam[] = [
-      {
-        conditionName: 'id',
-        condition: OvicQueryCondition.equal,
-        value: id.toString()
-      }
-
-    ];
-    const fromObject = {
-      paged: 1,
-      limit: 1,
-      orderby: 'dotthi',
-      order: "ASC"
-    }
-    const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }));
-    return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data[0]));
   }
 }
