@@ -212,6 +212,14 @@ export const WAITING_POPUP_SPIN : NgbModalOptions = {
   backdrop    : 'static'
 };
 
+export const WAITING_FOR_EXCEL : NgbModalOptions = {
+  scrollable  : true ,
+  size        : 'xl' ,
+  windowClass : 'modal-xxl ovic-modal-for-excel' ,
+  centered    : true ,
+  backdrop    : 'static'
+};
+
 export const KEY_NAME_CONTESTANT_ID : string = 'contestant';
 
 export const KEY_NAME_CONTESTANT_PHONE : string = 'contestantPhone';

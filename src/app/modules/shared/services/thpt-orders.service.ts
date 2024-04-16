@@ -138,15 +138,36 @@ export class ThptOrdersService {
   getDataByCreatedBy(user_id: number): Observable<OrdersTHPT[]> {
     const conditions: OvicConditionParam[] = [
       {
-        conditionName : 'created_by',
-        condition     : OvicQueryCondition.equal,
-        value         : user_id.toString(),
+        conditionName: 'created_by',
+        condition: OvicQueryCondition.equal,
+        value: user_id.toString(),
       },
       {
-        conditionName : 'is_deleted',
-        condition     : OvicQueryCondition.equal,
-        value         : '0',
-        orWhere       : 'and'
+        conditionName: 'is_deleted',
+        condition: OvicQueryCondition.equal,
+        value: '0',
+        orWhere: 'and'
+      },
+    ];
+    const fromObject = {
+
+    }
+    const params: HttpParams = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }).set('with', 'monhoc'));
+    return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data));
+  }
+
+  getDataByIdthisinh(thisinh_id: number): Observable<OrdersTHPT[]> {
+    const conditions: OvicConditionParam[] = [
+      {
+        conditionName: 'thisinh_id',
+        condition: OvicQueryCondition.equal,
+        value: thisinh_id.toString(),
+      },
+      {
+        conditionName: 'is_deleted',
+        condition: OvicQueryCondition.equal,
+        value: '0',
+        orWhere: 'and'
       },
     ];
     const fromObject = {
@@ -160,26 +181,26 @@ export class ThptOrdersService {
   getDataByWithThisinhAndSearchAndPage(page: number, kehoach_id: number, search?: string): Observable<{ recordsTotal: number, data: OrdersTHPT[] }> {
     const conditions: OvicConditionParam[] = [
       {
-        conditionName : 'is_deleted',
-        condition     : OvicQueryCondition.equal,
-        value         : '0',
+        conditionName: 'is_deleted',
+        condition: OvicQueryCondition.equal,
+        value: '0',
 
       },
     ];
     if (kehoach_id) {
       conditions.push({
-        conditionName : 'kehoach_id',
-        condition     : OvicQueryCondition.equal,
-        value         : kehoach_id.toString(),
-        orWhere       : 'and'
+        conditionName: 'kehoach_id',
+        condition: OvicQueryCondition.equal,
+        value: kehoach_id.toString(),
+        orWhere: 'and'
       })
     }
     const fromObject = {
-      thisinh_hoten : search && search !== null || search && search !== undefined ? search : '',
-      paged         : page,
-      limit         : this.themeSettingsService.settings.rows,
-      orderby       : 'status',
-      order         : "DESC"// dieemr giarm dần
+      thisinh_hoten: search && search !== null || search && search !== undefined ? search : '',
+      paged: page,
+      limit: this.themeSettingsService.settings.rows,
+      orderby: 'status',
+      order: "DESC"// dieemr giarm dần
     }
     const params: HttpParams = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }).set('with', 'thisinh,monhoc'));
     return this.http.get<Dto>(this.api, { params }).pipe(map(res => ({ data: res.data, recordsTotal: res.recordsFiltered })));
@@ -188,15 +209,15 @@ export class ThptOrdersService {
   getDataByKehoachIdAndStatus(kehoach_id: number): Observable<OrdersTHPT[]> {
     const conditions: OvicConditionParam[] = [
       {
-        conditionName : 'kehoach_id',
-        condition     : OvicQueryCondition.equal,
-        value         : kehoach_id.toString(),
+        conditionName: 'kehoach_id',
+        condition: OvicQueryCondition.equal,
+        value: kehoach_id.toString(),
       },
       {
-        conditionName : 'trangthai_thanhtoan',
-        condition     : OvicQueryCondition.equal,
-        value         : '1',
-        orWhere       : 'and'
+        conditionName: 'trangthai_thanhtoan',
+        condition: OvicQueryCondition.equal,
+        value: '1',
+        orWhere: 'and'
       }
     ];
     const fromObject = {
@@ -204,7 +225,8 @@ export class ThptOrdersService {
       paged: 1,
       limit: -1,
       orderby: 'status',
-      order: "ASC"// dieemr giarm dần
+      order: "ASC"// dieemr giarm dần,
+
     }
     const params: HttpParams = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }).set('with', 'thisinh,monhoc'));
     return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data));

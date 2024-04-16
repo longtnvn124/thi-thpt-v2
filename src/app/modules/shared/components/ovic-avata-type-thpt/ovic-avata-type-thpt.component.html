@@ -1,9 +1,10 @@
 <input type="file" #fileChooser hidden="true" (change)="onInputAvatar($event , fileChooser,0)">
 <div class="w-100 h-100 ">
-  <div class="row">
+  <div class="row m-0">
     <div class="col">
       <div class="h-100 d-flex justify-content-center">
-        <button pRipple [disabled]=" disabled === true ? true : false "  class="btn w-100 btn-avata" style="min-height:250px;"  (click)="fileChooser.click()">
+        <button pRipple [disabled]=" disabled === true ? true : false " class="btn w-100 btn-avata"
+          style="min-height:250px;" (click)="fileChooser.click()">
           <img *ngIf="characterAvatar; else showIcon" class="" style=" height:250px;" [src]="characterAvatar " alt="">
           <ng-template #showIcon>
             <i class="pi pi-upload"></i>
@@ -13,5 +14,4 @@
       </div>
     </div>
   </div>
-
 </div>

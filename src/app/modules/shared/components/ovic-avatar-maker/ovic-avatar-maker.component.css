@@ -15,7 +15,7 @@
 	display: flex;
 	flex-flow: column;
 	height: 500px;
-  overflow: hidden;
+	overflow: hidden;
 }
 
 .avatar-picker__section--right {
@@ -47,7 +47,7 @@
 
 .avatar-maker__section-content {
 	display: flex;
-	height: 100%;
+	height: calc(100% - 34px);
 	justify-content: center;
 	align-items: center;
 	position: relative;

@@ -1,0 +1,9 @@
+.checkPhieunhan{
+  display: flex;
+  justify-content: center;
+  margin-top: 11px;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid #ccc;
+
+}

@@ -103,7 +103,7 @@ export class ThiSinhDangKyComponent implements OnInit {
   }
 
   getDataOrder() {
-    this.ordersService.getDataByCreatedBy(this._user_id).subscribe({
+    this.ordersService.getDataByIdthisinh(this.userInfo.id).subscribe({
       next: (data) => {
         let i = 1;
         this.dataOrders = data.map(m => {
@@ -124,7 +124,6 @@ export class ThiSinhDangKyComponent implements OnInit {
           return m
         });
 
-        console.log(this.dataOrders);
 
         this.notifi.isProcessing(false);
       },
@@ -293,7 +292,7 @@ export class ThiSinhDangKyComponent implements OnInit {
               thisinh_id: thisinh_id,
               kehoach_id: kehoach_id,
               tohop_monhoc: null,
-              tenmon: newDmMon ? newDmMon.tenmon : f.tenmon,
+              tenmon: newDmMon ? newDmMon.id : f.id,
               lephithi: this.lephithiData.value
             });
             this.orderMonhocService.create(formUp.value).subscribe({
@@ -365,6 +364,10 @@ export class ThiSinhDangKyComponent implements OnInit {
     });
 
     return result;
+  }
+
+  returnInfo() {
+    this.router.navigate(['admin/thi-sinh/thong-tin/']);
   }
 
 }

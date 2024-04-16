@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import * as fs from 'file-saver';
 import { Workbook } from 'exceljs';
+import * as XLSX from 'xlsx';
 
 const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
 const EXCEL_EXTENSION = '.xlsx';
@@ -26,6 +27,7 @@ export class ExportExcelService {
     const workbook = new Workbook();
     workbook.created = new Date();
     workbook.modified = new Date();
+
     const worksheet = workbook.addWorksheet(sheetName);
     //  Add header Row
     worksheet.addRow([]);
@@ -40,7 +42,7 @@ export class ExportExcelService {
       worksheet.mergeCells('A2:' + this.numToAlpha(header.length - 1) + '2');
       worksheet.getCell('A2').value = reportSubHeading;
       worksheet.getCell('A2').alignment = { horizontal: 'center' };
-      worksheet.getCell('A2').font = { size: 13, bold: false,name: 'Times New Roman' };
+      worksheet.getCell('A2').font = { size: 13, bold: false, name: 'Times New Roman' };
     }
 
     worksheet.addRow([]);
@@ -63,12 +65,12 @@ export class ExportExcelService {
         bottom: { style: 'thin' },
         right: { style: 'thin' }
       };
-      cell.font = { size: 13, bold: true,name: 'Times New Roman' };
-      cell.alignment = {horizontal: 'center'};
+      cell.font = { size: 13, bold: true, name: 'Times New Roman' };
+      cell.alignment = { horizontal: 'center' };
 
 
       // worksheet.getColumn(index).width = header[index - 1].length < 20 ? 20 : header[index - 1].length;
-      worksheet.getColumn(1).width=7;
+      worksheet.getColumn(1).width = 7;
       worksheet.getColumn(1).alignment = { horizontal: 'center' };
     });
 
@@ -106,7 +108,7 @@ export class ExportExcelService {
           const cellLength = cell.value ? cell.value.toString().length : 0;
           maxLength = cellLength;
         });
-        worksheet.getColumn(columnIndex + 1).width = maxLength + 2;
+        worksheet.getColumn(columnIndex + 2).width = maxLength + 2;
       });
 
     });
@@ -127,4 +129,8 @@ export class ExportExcelService {
     }
     return alpha;
   }
+
+
+
 }
+

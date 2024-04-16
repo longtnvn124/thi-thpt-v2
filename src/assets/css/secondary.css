@@ -998,7 +998,7 @@ p .ql-align-center {
 }
 
 .toast-Err-Email {
-  font-size: 14px;
+  font-size: 13px;
   color: #979292;
   /*margin-bottom:10px;*/
 }
@@ -1025,8 +1025,8 @@ p .ql-align-center {
 
 .register-footer {
   display: flex;
-  justify-content: flex-end;
-  padding: 4px;
+  justify-content: center;
+  padding-bottom: 12px;
 }
 
 .ovic-pl-0 {
@@ -1149,4 +1149,27 @@ p .ql-align-center {
 .test-submit-form div label {
   margin: 0;
   padding: 0;
+}
+
+/*.phongthi-drd .p-dropdown{*/
+/*  height:45px;*/
+/*}*/
+/* -------------------------------- */
+.waiting-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+
+.waiting-container label {
+  margin-bottom: 11px;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+
+.waiting-container .waiting-content {
+  width: 100%;
 }

@@ -1,12 +1,12 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
-import {AbstractControl, FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {NotificationService} from '@core/services/notification.service';
-import {HelperService} from '@core/services/helper.service';
-import {ThemeSettingsService} from '@core/services/theme-settings.service';
-import {LocationService} from '@shared/services/location.service';
-import {debounceTime, merge, Observable, of, switchMap} from 'rxjs';
-import {DiaDanh} from '@shared/models/location';
-import {map, tap} from 'rxjs/operators';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { NotificationService } from '@core/services/notification.service';
+import { HelperService } from '@core/services/helper.service';
+import { ThemeSettingsService } from '@core/services/theme-settings.service';
+import { LocationService } from '@shared/services/location.service';
+import { debounceTime, merge, Observable, of, switchMap } from 'rxjs';
+import { DiaDanh } from '@shared/models/location';
+import { map, tap } from 'rxjs/operators';
 
 export interface InputDiaDanh {
   province: number,
@@ -22,14 +22,14 @@ export interface InputDiaDanh {
   styleUrls: ['./ovic-input-address-four-layouts.component.css']
 })
 export class OvicInputAddressFourLayoutsComponent implements OnInit, OnChanges {
-  @Input() disabled :boolean =false;
-  @Input() set formField( field : AbstractControl){
+  @Input() disabled: boolean = false;
+  @Input() set formField(field: AbstractControl) {
     this._formField = field;
   }
 
   private _formField: AbstractControl;
 
-  get formField(): AbstractControl {return this._formField;}
+  get formField(): AbstractControl { return this._formField; }
 
   // @Input() data : InputDiaDanh;
   data: any;
@@ -76,7 +76,7 @@ export class OvicInputAddressFourLayoutsComponent implements OnInit, OnChanges {
       const wards = this.f['wards'].valid ? this.wardsOptions.reduce((t, row) => t += row.id === this.f['wards'].value ? row.name : '', '') : '';
       const province = this.f['province'].valid ? this.provinceOptions.reduce((t, row) => t += row.id === this.f['province'].value ? row.name : '', '') : '';
       const fullAddress = [address, wards, district, province].filter(Boolean).map(u => u.trim()).join(', ');
-      this.onChanges.emit({fullAddress, ...this.form.value});
+      this.onChanges.emit({ fullAddress, ...this.form.value });
     });
 
     onChangeProvince$.pipe(tap(() => this.isLoading = true), switchMap(id => id ? this.locationService.listDistrictByProvinceId(id) : of([]))).subscribe(options => {
@@ -99,9 +99,9 @@ export class OvicInputAddressFourLayoutsComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.loadProvince();
-    this.data =this._formField ? this._formField.value: {};
+    this.data = this._formField ? this._formField.value : {};
     if (this.formField) {
-      this.data =this._formField ? this._formField.value: {};
+      this.data = this._formField ? this._formField.value : {};
       this.f['province'].setValue(this.data['province']);
       this.f['district'].setValue(this.data['district']);
       this.f['wards'].setValue(this.data['wards']);

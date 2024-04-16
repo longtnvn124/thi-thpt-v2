@@ -64,14 +64,14 @@
                         </td>
                         <td class="ovic-w-100px text-center">
                             <div>
-                                <button pButton pRipple icon="pi pi-inbox" class="mx-1 p-button-warning"
+                                <button [pTooltip]="'Tạo phòng thi'" [tooltipPosition]="'top'" pButton pRipple icon="pi pi-inbox" class="mx-1 p-button-"
                                     (click)="btnViewPhongThi(item)"></button>
-                                <button pButton pRipple icon="pi pi-file-edit" class="mx-1 p-button-warning"
+                                <button [pTooltip]="'Cập nhật'" [tooltipPosition]="'top'" pButton pRipple icon="pi pi-file-edit" class="mx-1 p-button-warning"
                                     (click)="btnAddNew('update' , item)"></button>
-                                <button pButton pRipple icon="pi pi-trash" class="mx-1 p-button-danger"
+                                <button [pTooltip]="'Xoá'" [tooltipPosition]="'top'" pButton pRipple icon="pi pi-trash" class="mx-1 p-button-danger"
                                     (click)="btnDelete(item)"></button>
-                                <button pButton pRipple icon="pi pi-trash" class="mx-1 p-button-danger"
-                                    (click)="btnCreateRoom()"></button>
+                                <!-- <button pButton pRipple icon="pi pi-trash" class="mx-1 p-button-danger"
+                                    (click)="btnCreateRoom()"></button> -->
                             </div>
                         </td>
                     </tr>
@@ -150,8 +150,8 @@
             <button (click)="closeForm()" pButton pRipple type="button" icon="pi pi-times"
                 class="p-button-rounded p-button-danger p-button-text close ovic-side-navigation-content__head__btn-close"></button>
         </div>
-        <div class="ovic-side-navigation-content__body ovic-scroll-style --no-footer">
-            <app-phong-thi class="w-100" [hoidong_id]="hoidong_id"></app-phong-thi>
+        <div class="ovic-side-navigation-content__body --no-footer ovic-scroll-style ">
+            <app-phong-thi class="w-100" [hoidong_id]="hoidong_id" [kehoach_id]="kehoach_id_param"></app-phong-thi>
         </div>
 
     </div>

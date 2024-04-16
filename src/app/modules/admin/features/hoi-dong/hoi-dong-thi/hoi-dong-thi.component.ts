@@ -6,7 +6,7 @@ import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/fo
 import { ThptHoiDong, ThptHoiDongService } from '@modules/shared/services/thpt-hoi-dong.service';
 import { FormType, OvicForm } from '@modules/shared/models/ovic-models';
 import { Observable, Subject, Subscription, debounceTime, filter } from 'rxjs';
-import {ThptHoiDongPhongThi} from "@shared/models/thpt-model";
+import { ThptHoiDongPhongThi } from "@shared/models/thpt-model";
 
 
 interface FormHoiDong extends OvicForm {
@@ -57,6 +57,8 @@ export class HoiDongThiComponent implements OnInit {
 
 
   listData: ThptHoiDong[];
+
+  kehoach_id_param:number;
   constructor(
     private kehoachThiService: ThptKehoachThiService,
     private hoiDongService: ThptHoiDongService,
@@ -96,6 +98,7 @@ export class HoiDongThiComponent implements OnInit {
     this.kehoachThiService.getDataUnlimit().subscribe({
       next: (data) => {
         this.dataKeHoach = data;
+        this.getDataHoiDong();
         this.notifi.isProcessing(false);
         this.isLoading = false;
       }, error: (e) => {
@@ -116,7 +119,7 @@ export class HoiDongThiComponent implements OnInit {
 
   }
 
-  getDataHoiDong(kehoach_id: number, search?: string) {
+  getDataHoiDong(kehoach_id?: number, search?: string) {
     this.isLoading = true;
     this.notifi.isProcessing(true);
     this.hoiDongService.loadDataUnlimit(kehoach_id).subscribe({
@@ -262,35 +265,88 @@ export class HoiDongThiComponent implements OnInit {
     });
 
     this.hoidong_id = item.id;
+    this.kehoach_id_param= item.kehoach_id;
   }
 
-  btnCreateRoom() {
-    const user = 17;
-    const userinRoom = 3;
-    let  room:number;
-    console.log((user - (user % userinRoom)) / userinRoom, user % userinRoom);
-    console.log(room);
 
-    if (user <= userinRoom){
-      room= 1;
-    }else{
-      room=user % userinRoom ===0 ? (user / userinRoom) : (Math.floor(user / userinRoom) +1);
+  dataTest = [
+    { id: 1, ten: "Anh" },
+    { id: 2, ten: "Bá" },
+    { id: 3, ten: "Anh" },
+    { id: 4, ten: "Tú" },
+    { id: 5, ten: "Anh" },
+    { id: 6, ten: "Phượng" },
+    { id: 7, ten: "Anh" },
+    { id: 8, ten: "Anh" },
+    { id: 9, ten: "Hồng" },
+    { id: 10, ten: "Anh" },
+    { id: 11, ten: "Anh" },
+    { id: 12, ten: "Hoàng" },
+    { id: 13, ten: "Anh" },
+    { id: 14, ten: "Anh" },
+    { id: 15, ten: "Uyên" },
+    { id: 16, ten: "Anh" },
+    { id: 17, ten: "Anh" },
+    { id: 18, ten: "Anh" },
+    { id: 19, ten: "Tú" },
+    { id: 20, ten: "Anh" },
+    { id: 21, ten: "Anh" },
+    { id: 22, ten: "Minh" },
+    { id: 23, ten: "Anh" },
+    { id: 24, ten: "Long" },
+    { id: 25, ten: "Anh" },
+  ]
+  btnCreateRoom() {
+    // const user = 17;
+    // const userinRoom = 3;
+    // let room: number;
+    // console.log((user - (user % userinRoom)) / userinRoom, user % userinRoom);
+    // console.log(room);
+
+    // if (user <= userinRoom) {
+    //   room = 1;
+    // } else {
+    //   room = user % userinRoom === 0 ? (user / userinRoom) : (Math.floor(user / userinRoom) + 1);
+    // }
+    // console.log(room);
+    // let rooms: ThptHoiDongPhongThi[] = []
+    // for (let i = 1; i <= room; i++) {
+    //   const roomAdd: ThptHoiDongPhongThi = {
+    //     kehoach_id: this._kehoach_id,
+    //     hoidong_id: this.hoidong_id,
+    //     ten_phong_thi: 'Phòng thi môn ' + this.hoidong_id + '-' + i,
+    //     mota: '',
+    //     sothisinh: userinRoom,
+    //     canbo_coithi: '',
+    //     status: 1
+    //   };
+    //   rooms.push(roomAdd);
+    // }
+    // console.log(rooms);
+
+    const thisinh = [
+      { id: 1, ten: "Anh" },
+      { id: 2, ten: "Anh" },
+      { id: 3, ten: "Anh" },
+      { id: 4, ten: "Long" },
+      { id: 5, ten: "Tú" },
+      { id: 6, ten: "Phượng" },
+      { id: 7, ten: "Phượng" }
+    ];
+
+    const Phongthi = [
+      { id: 1, thisinh_id: [] },
+      { id: 2, thisinh_id: [] },
+      { id: 3, thisinh_id: [] }
+    ];
+    let thisinhIndex = 0;
+    for (let i = 0; i < thisinh.length; i++) {
+      console.log(i % Phongthi.length);
+
+      Phongthi[i % Phongthi.length].thisinh_id.push(thisinh[i].id);
     }
-    console.log( room);
-    let rooms : ThptHoiDongPhongThi[]= []
-    for(let i =1 ; i<= room ;i++){
-       const roomAdd :ThptHoiDongPhongThi  = {
-         kehoach_id:this._kehoach_id,
-         hoidong_id:this.hoidong_id,
-         ten_phong_thi: 'Phòng thi môn ' + this.hoidong_id + '-'+ i,
-         mota:'',
-         sothisinh:userinRoom,
-         canbo_coithi:'',
-         status:1
-       };
-       rooms.push(roomAdd);
-    }
-    console.log( rooms);
+    console.log(Phongthi);
+
   }
 
 }

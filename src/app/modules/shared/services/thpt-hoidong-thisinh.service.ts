@@ -1,19 +1,19 @@
 import { Injectable } from '@angular/core';
-import {getRoute} from "@env";
-import {HttpClient, HttpParams} from "@angular/common/http";
-import {HttpParamsHeplerService} from "@core/services/http-params-hepler.service";
-import {ThemeSettingsService} from "@core/services/theme-settings.service";
-import {ThptHoiDongThiSinh} from "@shared/models/thpt-model";
-import {Dto, OvicConditionParam, OvicQueryCondition} from "@core/models/dto";
-import {Observable} from "rxjs";
-import {map} from "rxjs/operators";
-import {KeHoachThi} from "@shared/services/thpt-kehoach-thi.service";
+import { getRoute } from "@env";
+import { HttpClient, HttpParams } from "@angular/common/http";
+import { HttpParamsHeplerService } from "@core/services/http-params-hepler.service";
+import { ThemeSettingsService } from "@core/services/theme-settings.service";
+import { ThptHoiDongThiSinh } from "@shared/models/thpt-model";
+import { Dto, OvicConditionParam, OvicQueryCondition } from "@core/models/dto";
+import { Observable } from "rxjs";
+import { map } from "rxjs/operators";
+import { KeHoachThi } from "@shared/services/thpt-kehoach-thi.service";
 
 @Injectable({
   providedIn: 'root'
 })
 export class ThptHoidongThisinhService {
-  private readonly api = getRoute('thpt-kehoach-thi/');
+  private readonly api = getRoute('thpt-hoidong-thisinh/');
 
   constructor(
     private http: HttpClient,
@@ -89,4 +89,59 @@ export class ThptHoidongThisinhService {
     const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }));
     return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data));
   }
+
+  getDataByPhongthiAndHoidongId(page: number, phongthi_id: number, hoidong_id: number): Observable<{ recordsTotal: number, data: ThptHoiDongThiSinh[] }> {
+    const conditions: OvicConditionParam[] = [
+      {
+        conditionName: 'phongthi_id',
+        condition: OvicQueryCondition.equal,
+        value: phongthi_id.toString(),
+      },
+      {
+        conditionName: 'hoidong_id',
+        condition: OvicQueryCondition.equal,
+        value: hoidong_id.toString(),
+        orWhere: 'and'
+      },
+    ];
+
+    const fromObject = {
+      paged: page,
+      limit: this.themeSettingsService.settings.rows,
+      orderby: 'id',
+      order: 'ASC'
+    };
+    const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }).set('with', 'thisinh'));
+    return this.http.get<Dto>(this.api, { params }).pipe(map(res => ({
+      recordsTotal: res.recordsFiltered,
+      data: res.data
+    })))
+  }
+
+  getDataByPhongthiAndHoidongIdnotPage(phongthi_id: number, hoidong_id: number): Observable<ThptHoiDongThiSinh[]> {
+    const conditions: OvicConditionParam[] = [
+      {
+        conditionName: 'phongthi_id',
+        condition: OvicQueryCondition.equal,
+        value: phongthi_id.toString(),
+      },
+      {
+        conditionName: 'hoidong_id',
+        condition: OvicQueryCondition.equal,
+        value: hoidong_id.toString(),
+        orWhere: 'and'
+      },
+    ];
+
+    const fromObject = {
+      paged: 1,
+      limit: -1,
+      orderby: 'id',
+      order: 'ASC'
+    };
+    const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }).set('with', 'thisinh'));
+    return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data));
+  }
+
+
 }

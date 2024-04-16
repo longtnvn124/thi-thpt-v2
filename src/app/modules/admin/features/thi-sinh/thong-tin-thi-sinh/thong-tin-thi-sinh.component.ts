@@ -22,7 +22,7 @@ interface FormThisinh extends OvicForm {
 })
 export class ThongTinThiSinhComponent implements OnInit {
 
-  checkdata: 1 | 0 = 0;// o :load data 
+  checkdata: 1 | 0 = 0;// o :load data
   formSave: FormGroup;
 
   userInfo: ThiSinhInfo;
@@ -87,16 +87,17 @@ export class ThongTinThiSinhComponent implements OnInit {
       lop10_thanhpho: [null, Validators.required],
       lop11_thanhpho: [null, Validators.required],
       lop12_thanhpho: [null, Validators.required],
-      lop10_truong: [0, Validators.required],
-      lop11_truong: [0, Validators.required],
-      lop12_truong: [0, Validators.required],
+      lop10_truong: ['', Validators.required],
+      lop11_truong: ['', Validators.required],
+      lop12_truong: ['', Validators.required],
       diem10ky1: [0, [Validators.required, NumberLessThanTenValidator]],
       diem10ky2: [0, [Validators.required, NumberLessThanTenValidator]],
       diem11ky1: [0, [Validators.required, NumberLessThanTenValidator]],
       diem11ky2: [0, [Validators.required, NumberLessThanTenValidator]],
       diem12ky1: [0, [Validators.required, NumberLessThanTenValidator]],
       diem12ky2: [0, [Validators.required, NumberLessThanTenValidator]],
-      status: [0]
+      status: [0],
+      // nhan_thongtin:[0,Validators.required]
     });
 
   }
@@ -121,7 +122,11 @@ export class ThongTinThiSinhComponent implements OnInit {
     this.notifi.isProcessing(true);
     this.thisinhInfoService.getUserInfo(user_id).subscribe({
       next: data => {
+        console.log(data);
+
         if (data && this.provinceOptions) {
+          console.log(data);
+
           this.checkdata = 1;
           this.titleBtn = "Cập nhật thông tin";
           this.formActive = this.listForm[FormType.UPDATE];
@@ -233,5 +238,22 @@ export class ThongTinThiSinhComponent implements OnInit {
   changeQuequan(event) { this.f['quequan'].setValue(event); }
   changeNguoinhandc(event) { this.f['nguoinhan_diachi'].setValue(event); }
 
+  // changeCheckBox(event){
+  //   if (event.checked) {
+  //     const hoten = this.f['hoten'].value ? this.f['hoten'].value:'' ;
+  //     const phone = this.f['phone'].value ? this.f['phone'].value:'' ;
+  //     const thuongtru_diachi = this.f['thuongtru_diachi'].value ? this.f['thuongtru_diachi'].value:'' ;
+  //     this.f['nhan_thongtin'].setValue(1);
+  //     this.f['nguoinhan_hoten'].setValue(hoten);
+  //     this.f['nguoinhan_phone'].setValue(phone);
+  //     this.f['nguoinhan_diachi'].setValue(thuongtru_diachi);
+  //   } else {
+  //     this.f['nhan_thongtin'].setValue(0);
+  //     this.f['nguoinhan_hoten'].reset('');
+  //     this.f['nguoinhan_phone'].reset('');
+  //     this.f['nguoinhan_diachi'].reset('');
+  //   }
+  //   console.log(this.formSave.value);
+  // }
 }
 

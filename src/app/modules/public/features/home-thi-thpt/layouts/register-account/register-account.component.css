@@ -5,3 +5,18 @@
   background-repeat: no-repeat;
   background-size: cover;
 }
+.btn-forgot-password {
+  font-size: 14px;
+  padding: 0;
+  margin: 0 auto;
+  display: block;
+  border: none;
+  background: transparent;
+  outline: none !important;
+  box-shadow: none !important;
+  line-height: 1;
+}
+
+.btn-forgot-password:hover {
+  color: var(--primary);
+}

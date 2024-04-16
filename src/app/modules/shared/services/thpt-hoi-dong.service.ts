@@ -65,20 +65,22 @@ export class ThptHoiDongService {
     return this.update(id, { is_deleted, deleted_by });
   }
 
-  loadDataUnlimit(kehoach_id: number): Observable<ThptHoiDong[]> {
+  loadDataUnlimit(kehoach_id?: number): Observable<ThptHoiDong[]> {
     const conditions: OvicConditionParam[] = [
       {
         conditionName: 'is_deleted',
         condition: OvicQueryCondition.equal,
         value: '0'
-      },
-      {
+      }
+    ];
+    if (kehoach_id) {
+      conditions.push({
         conditionName: 'kehoach_id',
         condition: OvicQueryCondition.equal,
         value: kehoach_id.toString(),
         orWhere: 'and'
-      }
-    ];
+      })
+    }
     const fromObject = {
       paged: 1,
       limit: -1,

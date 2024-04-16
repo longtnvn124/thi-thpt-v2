@@ -1,0 +1,131 @@
+.room_container {
+  display: block;
+  border: 1px solid #393939;
+  border-radius: 5px;
+  position: relative;
+
+}
+
+.room_header {}
+
+.room_header-content {}
+
+.hoidong-container {
+  display: flex;
+  margin: -8px;
+  /* justify-content: center; */
+  align-items: center;
+  flex-wrap: wrap;
+  position: relative;
+  -webkit-transition: all .35s ease;
+  -moz-transition: all .35s ease;
+  transition: all .35s ease;
+  transform-origin: center;
+  --gallery-item-size: calc(25% - 10px);
+  --gallery-item-gap: 5px;
+}
+
+
+.hoidong-item {
+  width: var(--gallery-item-size);
+  margin: var(--gallery-item-gap);
+  border-top-left-radius: 34px;
+  box-shadow: 0px 0px 1px #393939;
+  overflow: hidden;
+}
+
+.hoidong-item__image {
+  width: 100%;
+  height: 200px;
+  background-color: rgb(231 231 231);
+  border-top-left-radius: 34px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #409517;
+}
+
+.hoidong-item__content {
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: column;
+  font-size: 16px;
+  padding: 6px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hoidong-item__content-header {
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+.hoidong-item__content-element {
+
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 10px;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.hoidong-item__content-element__title {
+  font-weight: 500;
+}
+
+.hoidong-item:nth-child(odd) {
+  background-color: beige;
+}
+
+.hoidong-item:nth-child(even) {
+  background-color: aliceblue;
+}
+
+
+@media (max-width: 991px) {
+  .section-activity-show__content {
+    --gallery-item-size: calc((100% / 3) - 2px);
+  }
+}
+
+
+@media (max-width: 767px) {
+  .section-activity-show__content {
+    --gallery-item-size: calc((100% / 2) - 2px);
+  }
+}
+
+
+.hoidong-item:hover {
+  cursor: pointer;
+}
+
+.hoidong-item:hover .hoidong-item__image {
+  transform: scale(1.2);
+}
+
+.hoidong-item:hover .hoidong-item__content {
+  color: #fff;
+  background-color: #393939;
+}
+
+
+.btn_container {
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
+  gap: 10px;
+  padding: 10px;
+  height: 60px;
+
+}
+
+.btn_container button {
+  width: 100%;
+  height: 100%;
+  border-radius: none;
+}

@@ -11,6 +11,11 @@ import { TableModule } from "primeng/table";
 import { SharedModule } from "../../../shared/shared.module";
 import { ReactiveFormsModule } from "@angular/forms";
 import { PhongThiComponent } from './hoi-dong-thi/phong-thi/phong-thi.component';
+import {MultiSelectModule} from "primeng/multiselect";
+import {TooltipModule} from "primeng/tooltip";
+import {SplitterModule} from "primeng/splitter";
+import {PaginatorModule} from "primeng/paginator";
+import {MatProgressBarModule} from "@angular/material/progress-bar";
 @NgModule({
     declarations: [
         HoiDongThiComponent,
@@ -25,7 +30,12 @@ import { PhongThiComponent } from './hoi-dong-thi/phong-thi/phong-thi.component'
         RippleModule,
         TableModule,
         SharedModule,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        MultiSelectModule,
+        TooltipModule,
+        SplitterModule,
+        PaginatorModule,
+        MatProgressBarModule
     ]
 })
 export class HoiDongModule { }

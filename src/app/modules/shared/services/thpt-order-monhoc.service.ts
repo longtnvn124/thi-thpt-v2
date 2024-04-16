@@ -113,7 +113,63 @@ export class ThptOrderMonhocService {
       order: "DESC"
     }
     const params: HttpParams = this.httpParamsHelper.paramsConditionBuilder(conditions);
-    return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data && res.data ? res.data : null));
+    return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data));
 
   }
+
+  getDataByKehoachIdAndMonIds(tenmons: string[], kehoach_id: number): Observable<OrdersMonhocTHPT[]> {
+    const conditions: OvicConditionParam[] = [
+      {
+        conditionName: 'is_deleted',
+        condition: OvicQueryCondition.equal,
+        value: '0',
+
+      },
+      {
+        conditionName: 'kehoach_id',
+        condition: OvicQueryCondition.equal,
+        value: kehoach_id.toString(),
+        orWhere: "and"
+      }
+    ];
+    const fromObject = {
+      paged: 1,
+      limit: -1,
+      include: tenmons.join(','),
+      include_by: 'tenmon',
+      orderby: 'tohop_monhoc',
+      order: "DESC"
+    }
+    const params: HttpParams = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }));
+    return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data));
+  }
+
+  getDataByKehoachIdAndOrderIds(OrderIds: string[], kehoach_id: number): Observable<OrdersMonhocTHPT[]> {
+    const conditions: OvicConditionParam[] = [
+      {
+        conditionName: 'is_deleted',
+        condition: OvicQueryCondition.equal,
+        value: '0',
+
+      },
+      {
+        conditionName: 'kehoach_id',
+        condition: OvicQueryCondition.equal,
+        value: kehoach_id.toString(),
+        orWhere: "and"
+      }
+    ];
+    const fromObject = {
+      paged: 1,
+      limit: -1,
+      include: OrderIds.join(','),
+      include_by: 'order_id',
+      orderby: 'tohop_monhoc',
+      order: "DESC"
+    }
+    const params: HttpParams = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }).set('with', 'thisinh'));
+    return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data));
+  }
+
 }
+

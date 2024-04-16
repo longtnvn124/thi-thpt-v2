@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
-import {getRoute} from "@env";
-import {HttpClient, HttpParams} from "@angular/common/http";
-import {HttpParamsHeplerService} from "@core/services/http-params-hepler.service";
-import {ThemeSettingsService} from "@core/services/theme-settings.service";
-import {map, Observable} from "rxjs";
-import {Dto, OvicConditionParam, OvicQueryCondition} from "@core/models/dto";
-import {KeHoachThi} from "@shared/services/thpt-kehoach-thi.service";
-import {ThptHoiDongPhongThi} from "@shared/models/thpt-model";
+import { getRoute } from "@env";
+import { HttpClient, HttpParams } from "@angular/common/http";
+import { HttpParamsHeplerService } from "@core/services/http-params-hepler.service";
+import { ThemeSettingsService } from "@core/services/theme-settings.service";
+import { map, Observable } from "rxjs";
+import { Dto, OvicConditionParam, OvicQueryCondition } from "@core/models/dto";
+import { KeHoachThi } from "@shared/services/thpt-kehoach-thi.service";
+import { ThptHoiDongPhongThi } from "@shared/models/thpt-model";
 
 @Injectable({
   providedIn: 'root'
@@ -90,5 +90,30 @@ export class ThptHoidongPhongthiService {
     };
     const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }));
     return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data));
+  }
+
+  getDataByKehoachIdAndHoidongId(kehoanh_id: number, hoidong_id: number): Observable<ThptHoiDongPhongThi[]> {
+    const conditions: OvicConditionParam[] = [
+      {
+        conditionName: 'kehoach_id',
+        condition: OvicQueryCondition.equal,
+        value: kehoanh_id.toString(),
+      },
+      {
+        conditionName: 'hoidong_id',
+        condition: OvicQueryCondition.equal,
+        value: hoidong_id.toString(),
+        orWhere: 'and'
+      }
+    ]
+    const fromObject = {
+      page: 1,
+      limit: -1,
+      orderby: 'id',
+      order: 'ASC'
+    }
+    const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }));
+    return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data));
+
   }
 }

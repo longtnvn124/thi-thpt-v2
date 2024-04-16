@@ -1,12 +1,239 @@
 <ng-container [ngSwitch]="TypeChangePage">
 
-    <ng-container *ngSwitchCase="'0'">
-        <div class="w-100 " style="height: 100vh;border:1px solid #ccc">
-            <div class="form-check">
-                <input type="button" value="">
+  <ng-container *ngSwitchCase="'0'">
+    <div class="ovic-vertical__inputs ovic-vertical__inputs--layout-2">
+      <form [formGroup]="formSave">
+        <div class="ovic-container">
+          <div class="row">
+            <div class="col-3">
+              <div class="form-row">
+                <label>Môn thi<span class="ovic-mark">*</span></label>
+                <p-multiSelect class="phongthi-drd" [style]="{'width':'100%','height':'43px'}"
+                  placeholder="Chọn môn cần tạo phòng" [options]="dmMon" optionValue="id" optionLabel="tenmon"
+                  formControlName="monthi"></p-multiSelect>
+              </div>
             </div>
+            <div class="col-3">
+              <div class="form-row">
+                <label>Số lượng thí sinh/ 1 phòng</label>
+                <input pInputText type="number" placeholder="Vd:1,2..." formControlName="soluong_thisinh">
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="d-flex align-items-end h-100" style="gap:10px">
+                <button style="height: 42px;" pButton pRipple [loading]="loadingBtn" label="kiểm tra thí sinh đăng ký "
+                  (click)="checkThisinh()"></button>
+                <button style="height: 42px;" class="p-button-help" pButton pRipple label="Tạo phòng thi "
+                  (click)="CreateRooms()"></button>
+                <button style="height: 42px;" class="p-button-warning" icon="pi pi-file-excel" pButton pRipple
+                  label="Xuất phòng thi " (click)="expostExcelDataPhongThi()"></button>
+                <button style="height: 42px;" class="p-button-secondary" icon="pi pi-file-excel" pButton pRipple
+                  label="Gửi Email thông báo " (click)="SendEmailToThisinh()"></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="container" *ngIf="thisinhOrder">
+      <div class="d-flex justify-content-start align-items-center" style="padding: 10px;color: #44c383;width: 100%;">
+        <i class="pi pi-check-circle"></i>
+        <span style="font-size:14px; margin-left: 5px;"> Có {{thisinhOrder.length}} thí sinh đã đăng ký môn !...</span>
+      </div>
+    </div>
+    <div class="ovic-container" *ngIf="hoiDongPhongThi, else notHoidong">
+
+      <div class="hoidong-container" style="padding: 60px 0 0 0;">
+        <div class="hoidong-item" *ngFor="let item of hoiDongPhongThi" (click)="showThisinhInPhong(item)">
+          <div class="hoidong-item__image">
+            <i class="pi pi-verified" style="font-size: 4rem;"></i>
+          </div>
+          <div class="hoidong-item__content">
+            <div class="hoidong-item__content-header">{{item.ten_phongthi}}</div>
+            <div class="hoidong-item__content-element">
+              <div class="hoidong-item__content-element__title">Mã Phòng thi:</div>
+              <div> {{item.ma_phongthi}}</div>
+            </div>
+            <div class="hoidong-item__content-element">
+              <div class="hoidong-item__content-element__title">Số lượng thí sinh:</div>
+              <div> {{item.sothisinh}}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <ng-template #notHoidong>
+      <div class="d-flex justify-content-center align-items-center p-3">
+        Chưa có hội đồng vui lòng tạo hội đồng
+      </div>
+    </ng-template>
+  </ng-container>
+  <ng-container *ngSwitchCase="'3'">
+    <div class="ovic-vertical__inputs ovic-vertical__inputs--layout-2">
+      <form [formGroup]="formPhongthi" autocomplete="off">
+        <div class="d-block w-100" style="height: calc(100vh - 60px - 20px);">
+          <p-splitter [style]="{'height': '100%'}" [panelSizes]="[30,70]">
+            <ng-template pTemplate>
+              <div class="d-flex w-100 h-100 flex-column justify-content-between ovic-scroll-style">
+                <div class="w-100 d-block">
+                  <div class="row m-0">
+                    <div class="col-12">
+                      <div class="form-row">
+                        <label>Tên phòng thi <span class="ovic-mark">*</span></label>
+                        <input type="text" placeholder="Tên Kết hoạch..." formControlName="ten_phongthi"
+                          autocomplete="off">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row m-0">
+                    <div class="col-6">
+                      <div class="form-row">
+                        <label>Mã phòng thi<span class="ovic-mark">*</span></label>
+                        <input type="text" formControlName="ma_phongthi" autocomplete="off">
+                      </div>
+                    </div>
+                    <div class="col-6">
+                      <div class="form-row">
+                        <label>Số lượng thí sinh thi<span class="ovic-mark">*</span></label>
+                        <input type="number" placeholder="vd: 0, 10,20" formControlName="sothisinh" autocomplete="off">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row m-0">
+                    <div class="col-12">
+                      <div class="form-row">
+                        <label>Cán bộ coi thi </label>
+                        <textarea cols="10" class="w-100" formControlName="canbo_coithi"></textarea>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row m-0">
+                    <div class="col-12">
+                      <div class="form-row">
+                        <label>Mô tả </label>
+                        <textarea cols="10" class="w-100" formControlName="mota"></textarea>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="btn_container">
+                  <button pButton pRipple icon="pi pi-arrow-left" class="p-button-secondary" label="quay lại"
+                    (click)="returnPhongthi()"></button>
+                  <button pButton pRipple icon="pi pi-file-edit" class="p-button-success" label="Cập nhật"
+                    (click)="editDataPhongthi()"></button>
+                  <button pButton pRipple icon="pi pi-trash" class="p-button-danger" label="Xoá"
+                    (click)="deletePhongthi()"></button>
+                </div>
+              </div>
+
+            </ng-template>
+            <ng-template pTemplate>
+              <div class="row w-100 ovic-scroll-style" style="margin: 10px 0 0 0;">
+                <div class="col-12 ovic-ui-table">
+                  <div class="p-datatable-header" style="border-bottom:1px solid #CCC;">
+                    <h3 class="tbl-title ">Danh sách thí sinh</h3>
+                    <!--              <div class="search-block ui-table-globalfilter-container ">-->
+                    <!--                <div class="d-flex align-items-center">-->
+                    <!--                  <div class="ovic-vertical__inputs ovic-vertical__inputs&#45;&#45;layout-2">-->
+                    <!--                    <div class="d-flex">-->
+                    <!--                      <div class="search-block__elm ml-2">-->
+                    <!--                      <span class="p-input-icon-right">-->
+                    <!--                        <i class="pi pi-search"></i>-->
+                    <!--                        <input type="text" pInputText style="height:42px" placeholder="Tìm kiếm" (input)="changeInput($event.target['value'])"/>-->
+                    <!--                      </span>-->
+                    <!--                      </div>-->
+                    <!--                    </div>-->
+                    <!--                  </div>-->
+                    <!--                </div>-->
+                    <!--              </div>-->
+                  </div>
+                  <p-table [value]="thptThisinh" [showCurrentPageReport]="false" class="w-100"
+                    [tableStyle]="{ 'min-width': '100px' }">
+                    <ng-template pTemplate="header">
+                      <tr>
+                        <th class="ovic-w-50px text-center">TT</th>
+                        <th class="text-left">Số báo danh</th>
+                        <th class=" text-left text-center">Họ và tên</th>
+                        <th class="ovic-w-180px text-center">Giới tính</th>
+                        <th class="ovic-w-180px text-center">Ngày sinh</th>
+                        <th class="ovic-w-110px text-center">Nơi sinh</th>
+                        <th class="ovic-w-150px text-center">Điện thoại</th>
+                        <th class="ovic-w-150px text-center">Email</th>
+
+                      </tr>
+                    </ng-template>
+
+                    <ng-template pTemplate="emptymessage">
+                      <tr>
+                        <td colspan="6">Không có dữ liệu</td>
+                      </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-item>
+                      <tr>
+                        <td class="ovic-w-50px text-center" [innerHTML]="item['__stt']"></td>
+                        <td>
+                          <div class="d-block --fs-14 font-weight-bold" [innerHTML]="item['sobaodanh']"></div>
+                        </td>
+                        <td class="ovic-w-260px">
+                          <div class="d-block --fs-14" [innerHTML]="item['__hoten']"></div>
+                        </td>
+                        <td class="ovic-w-100px">
+                          <div class="d-block --fs-14 text-center" [innerHTML]="item['__sex']"></div>
+                        </td>
+                        <td class="ovic-w-100px">
+                          <div class="d-block --fs-14 text-center" [innerHTML]="item['__dob']"></div>
+                        </td>
+                        <td class="ovic-w-100px">
+                          <div class="d-block --fs-14 text-center" [innerHTML]="item['__adress']"></div>
+                        </td>
+                        <td class="ovic-w-100px">
+                          <div class="d-block --fs-14 text-center" [innerHTML]="item['__phone']"></div>
+                        </td>
+                        <td class="ovic-w-100px">
+                          <div class="d-block --fs-14 text-center" [innerHTML]="item['__email']"></div>
+                        </td>
+
+                      </tr>
+                    </ng-template>
+                  </p-table>
+                  <p-paginator class="p-paginator--custom" [showCurrentPageReport]="true" [rows]="rows"
+                    [totalRecords]="recordsTotal" [pageLinkSize]="5" (onPageChange)="paginate($event)"></p-paginator>
+                </div>
+              </div>
+            </ng-template>
+          </p-splitter>
         </div>
 
 
-    </ng-container>
+
+
+      </form>
+    </div>
+  </ng-container>
+
+
 </ng-container>
+
+
+<ng-template #templateWaiting let-c="close" let-d="dismiss">
+  <!--  <div class="popup-waiting-loading">-->
+  <!--    <label>Vui lòng chờ...</label>-->
+  <!--    <div class="tn-import-student-progressbar">-->
+  <!--      <mat-progress-bar mode="buffer" ></mat-progress-bar>-->
+  <!--    </div>-->
+  <!--  </div>-->
+  <div class="waiting-container">
+    <label>Vui lòng chờ...</label>
+    <div class="waiting-content">
+      <mat-progress-bar mode="buffer"></mat-progress-bar>
+    </div>
+  </div>
+</ng-template>
+
+<!-- <div>
+  <p>Gửi Long !</p>
+  <p>Bạn đã đăng ký dự thi !</p>
+  <p>Phòng thi : m.tenong</p>
+  <p>Mã Phòng thi: m.mahong</p>
+  <p>Số báo danh : sobaoda</p>
+</div> -->
