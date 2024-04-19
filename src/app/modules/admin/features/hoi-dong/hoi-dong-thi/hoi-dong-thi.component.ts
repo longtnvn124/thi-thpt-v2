@@ -115,8 +115,7 @@ export class HoiDongThiComponent implements OnInit {
 
   }
   changeInputText(event) {
-    console.log(event);
-
+   
   }
 
   getDataHoiDong(kehoach_id?: number, search?: string) {

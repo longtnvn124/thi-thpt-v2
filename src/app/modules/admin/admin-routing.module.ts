@@ -45,6 +45,10 @@ const routes : Routes = [
         loadChildren : () => import('@modules/admin/features/danh-sach-du-thi/danh-sach-du-thi.module').then( m => m.DanhSachDuThiModule )
       } ,
       {
+        path         : 'ketqua-thi' ,
+        loadChildren : () => import('@modules/admin/features/ket-qua/ket-qua-routing.module').then( m => m.KetQuaRoutingModule )
+      } ,
+      {
         path         : 'hoidong-thi' ,
         loadChildren : () => import('@modules/admin/features/hoi-dong/hoi-dong.module').then( m => m.HoiDongModule )
       } ,

@@ -1,4 +1,4 @@
-<ng-container *ngIf="userInfo && userInfo.status ===1,else notStatus">
+<ng-container *ngIf="userInfo && userInfo.status === 1,else notStatus">
   <ng-container [ngSwitch]="ngType">
     <ng-container *ngSwitchCase="-1">
       <div class="w-100 d-flex flex-column justify-content-center align-items-center" style="height:calc(100vh - 90px)">
@@ -94,7 +94,7 @@
             <div style="padding: 20px 0;display: flex;justify-content: center;gap: 10px;">
               <!--            <button pButton pRipple class="p-button-warning" icon="pi pi-sync" label="Tải lại trang" (click)="reLoadData()"></button>-->
               <!--            <button pButton pRipple class="p-button-danger" icon="pi pi-credit-card" label="Thanh toán" (click)="getPayment()" ></button>-->
-              <button pButton pRipple class="p-button-success" icon="pi pi-check-square" label="Xác nhận Thông tin"
+              <button pButton pRipple class="p-button-success" icon="pi pi-check-square" label="Đăng ký dự thi"
                 (click)="SaveForm()"></button>
             </div>
           </div>
@@ -157,13 +157,17 @@
                     </td>
                     <td class="ovic-w-100px text-center">
                       <div class="d-block --fs-14">
-                        <div *ngIf="item.trangthai_thanhtoan ===1,else notPay">
+                        <div *ngIf="item.trangthai_thanhtoan === 1,else notPay">
                           <button pButton pRipple label="Thanh toán" disabled icon="pi pi-credit-card"> </button>
 
                         </div>
                         <ng-template #notPay>
-                          <button pButton pRipple class="p-button-warning" label="Thanh toán" icon="pi pi-credit-card"
-                            (click)="getPayment(item.id)"></button>
+                          <button pButton pRipple class="p-button-warning" [pTooltip]="'Thanh toán'"
+                            [tooltipPosition]="'top'" icon="pi pi-credit-card" (click)="getPayment(item.id)"></button>
+
+                          <button *ngIf="item.trangthai_thanhtoan === 0" pButton pRipple class="p-button-danger ml-1"
+                            [pTooltip]="'Xoá'" [tooltipPosition]="'top'" icon="pi pi-trash"
+                            (click)="deleteRow(item.id)"></button>
 
                         </ng-template>
 
@@ -186,7 +190,7 @@
     <div>
       <i class="pi pi-exclamation-circle py-3" style="font-size: 8rem;color:#f59e0b"></i>
     </div>
-    <div class="p-2">Bạn chưa hoàn thành cập nhật thông tin! </div>
+    <div class="p-3" style="font-size: 17px;">Bạn chưa hoàn thành cập nhật thông tin! </div>
     <div>
 
       <button pButton pRipple class="p-button-warning p-button-text" label="Cập nhật thông tin cá nhân"

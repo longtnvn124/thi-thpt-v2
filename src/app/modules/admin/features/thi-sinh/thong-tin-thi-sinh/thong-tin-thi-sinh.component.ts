@@ -42,6 +42,18 @@ export class ThongTinThiSinhComponent implements OnInit {
     [FormType.ADDITION]: { type: FormType.ADDITION, title: 'Thêm mới Thông tin cá nhân ', object: null, data: null },
     [FormType.UPDATE]: { type: FormType.UPDATE, title: 'Cập nhật Thông tin cá nhân ', object: null, data: null }
   };
+  noicapdata = [
+    { title: 'Cục quản lý hành chính về TTXH', code: '1' },
+  ]
+  namtotnghiep = [
+    { label: '2024', value: 1 },
+    { label: '2023', value: 2 },
+    { label: '2022', value: 3 },
+    { label: '2021', value: 4 },
+    { label: '2020', value: 5 },
+  ]
+
+
 
   khuvucdata = [
     { title: 'Khu vực 1', code: 'KV1' },
@@ -72,12 +84,12 @@ export class ThongTinThiSinhComponent implements OnInit {
       noisinhkhac: [''],
       quequan: [{}, Validators.required],
       phone: ['', [Validators.required, PhoneNumberValidator, Validators.maxLength(12), Validators.minLength(6)]],
-      anh_chandung: ['', Validators.required],
+      anh_chandung: [null, Validators.required],
       cccd_so: [null, Validators.required],
-      cccd_ngaycap: ['', Validators.required],
+      cccd_ngaycap: ['', [Validators.required, DDMMYYYYDateFormatValidator]],
       cccd_noicap: ['', Validators.required],
-      cccd_img_truoc: [{}, Validators.required],
-      cccd_img_sau: [{}, Validators.required],
+      cccd_img_truoc: [null, Validators.required],
+      cccd_img_sau: [null, Validators.required],
       thuongtru_diachi: [{}, Validators.required],
       nguoinhan_hoten: ['', Validators.required],
       nguoinhan_phone: ['', [Validators.required, PhoneNumberValidator, Validators.maxLength(12), Validators.minLength(6)]],
@@ -90,12 +102,12 @@ export class ThongTinThiSinhComponent implements OnInit {
       lop10_truong: ['', Validators.required],
       lop11_truong: ['', Validators.required],
       lop12_truong: ['', Validators.required],
-      diem10ky1: [0, [Validators.required, NumberLessThanTenValidator]],
-      diem10ky2: [0, [Validators.required, NumberLessThanTenValidator]],
-      diem11ky1: [0, [Validators.required, NumberLessThanTenValidator]],
-      diem11ky2: [0, [Validators.required, NumberLessThanTenValidator]],
-      diem12ky1: [0, [Validators.required, NumberLessThanTenValidator]],
-      diem12ky2: [0, [Validators.required, NumberLessThanTenValidator]],
+      diem10ky1: [null, [Validators.required, NumberLessThanTenValidator]],
+      diem10ky2: [null, [Validators.required, NumberLessThanTenValidator]],
+      diem11ky1: [null, [Validators.required, NumberLessThanTenValidator]],
+      diem11ky2: [null, [Validators.required, NumberLessThanTenValidator]],
+      diem12ky1: [null, [Validators.required, NumberLessThanTenValidator]],
+      diem12ky2: [null, [Validators.required, NumberLessThanTenValidator]],
       status: [0],
       // nhan_thongtin:[0,Validators.required]
     });
@@ -122,15 +134,14 @@ export class ThongTinThiSinhComponent implements OnInit {
     this.notifi.isProcessing(true);
     this.thisinhInfoService.getUserInfo(user_id).subscribe({
       next: data => {
-        console.log(data);
-
         if (data && this.provinceOptions) {
-          console.log(data);
-
           this.checkdata = 1;
           this.titleBtn = "Cập nhật thông tin";
           this.formActive = this.listForm[FormType.UPDATE];
           this.formActive.object = data;
+          if (data.status === 1) {
+            this.formSave.disable();
+          }
           this.formSave.reset({
             user_id: this.auth.user.id,
             ten: data.ten,
@@ -206,6 +217,18 @@ export class ThongTinThiSinhComponent implements OnInit {
     this.f['ten'].setValue(this.f['hoten'].value.split(' ').pop());
     this.f['hoten'].setValue(this.f['hoten'].value?.toString().trim());
     this.f['nguoinhan_hoten'].setValue(this.f['nguoinhan_hoten'].value?.toString().trim());
+    const mattruoc = this.f['cccd_img_truoc'].value[0] != null ? this.f['cccd_img_truoc'].value : null;
+    const matsau = this.f['cccd_img_sau'].value[0] != null ? this.f['cccd_img_sau'].value : null;
+    const anh_chandung = this.f['anh_chandung'].value[0] != null ? this.f['anh_chandung'].value : null;
+
+    this.f['cccd_img_truoc'].setValue(mattruoc);
+    this.f['cccd_img_sau'].setValue(matsau);
+    this.f['anh_chandung'].setValue(anh_chandung);
+    this.f['nguoinhan_hoten'].setValue(this.f['nguoinhan_hoten'].value?.toString().trim());
+    console.log(
+      this.formSave.value
+    );
+
     if (this.formSave.valid) {
       this.formActive.data = this.formSave.value;
       this.OBSERVE_PROCESS_FORM_DATA.next(this.formActive);
@@ -217,20 +240,25 @@ export class ThongTinThiSinhComponent implements OnInit {
   }
 
   async privateData() {
-    const button = await this.notifi.confirmRounded('<p class="text-danger">Xác nhận</p>', 'Khoá thông tin', [BUTTON_NO, BUTTON_YES]);
-    if (button.name === BUTTON_YES.name) {
-      this.notifi.isProcessing(true);
-      this.thisinhInfoService.update(this.userInfo.id, { status: 1 }).subscribe({
-        next: () => {
-          this.notifi.toastSuccess('Khoá thông tin thành công');
-          this.notifi.isProcessing(false);
-          this._getDataUserInfo(this.auth.user.id);
-        }, error: (e) => {
-          this.notifi.toastError('Mất kết nối với máy chủ');
-          this.notifi.isProcessing(false);
+
+    if (this.userInfo) {
+      const button = await this.notifi.confirmRounded('<p class="text-danger">Xác nhận</p>', 'Khoá thông tin', [BUTTON_NO, BUTTON_YES]);
+      if (button.name === BUTTON_YES.name) {
+        this.notifi.isProcessing(true);
+        this.thisinhInfoService.update(this.userInfo.id, { status: 1 }).subscribe({
+          next: () => {
+            this.notifi.toastSuccess('Khoá thông tin thành công');
+            this.notifi.isProcessing(false);
+            this._getDataUserInfo(this.auth.user.id);
+          }, error: (e) => {
+            this.notifi.toastError('Mất kết nối với máy chủ');
+            this.notifi.isProcessing(false);
+          }
         }
+        )
       }
-      )
+    } else {
+      this.notifi.toastWarning('Bạn chưa lưu thông tin thí sinh');
     }
   }
 
@@ -238,22 +266,5 @@ export class ThongTinThiSinhComponent implements OnInit {
   changeQuequan(event) { this.f['quequan'].setValue(event); }
   changeNguoinhandc(event) { this.f['nguoinhan_diachi'].setValue(event); }
 
-  // changeCheckBox(event){
-  //   if (event.checked) {
-  //     const hoten = this.f['hoten'].value ? this.f['hoten'].value:'' ;
-  //     const phone = this.f['phone'].value ? this.f['phone'].value:'' ;
-  //     const thuongtru_diachi = this.f['thuongtru_diachi'].value ? this.f['thuongtru_diachi'].value:'' ;
-  //     this.f['nhan_thongtin'].setValue(1);
-  //     this.f['nguoinhan_hoten'].setValue(hoten);
-  //     this.f['nguoinhan_phone'].setValue(phone);
-  //     this.f['nguoinhan_diachi'].setValue(thuongtru_diachi);
-  //   } else {
-  //     this.f['nhan_thongtin'].setValue(0);
-  //     this.f['nguoinhan_hoten'].reset('');
-  //     this.f['nguoinhan_phone'].reset('');
-  //     this.f['nguoinhan_diachi'].reset('');
-  //   }
-  //   console.log(this.formSave.value);
-  // }
 }
 

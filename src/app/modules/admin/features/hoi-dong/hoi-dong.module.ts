@@ -16,10 +16,12 @@ import {TooltipModule} from "primeng/tooltip";
 import {SplitterModule} from "primeng/splitter";
 import {PaginatorModule} from "primeng/paginator";
 import {MatProgressBarModule} from "@angular/material/progress-bar";
+import { AddThiSinhComponent } from './hoi-dong-thi/add-thi-sinh/add-thi-sinh.component';
 @NgModule({
     declarations: [
         HoiDongThiComponent,
-        PhongThiComponent
+        PhongThiComponent,
+        AddThiSinhComponent
     ],
     imports: [
         CommonModule,

@@ -101,4 +101,23 @@ export class ThisinhInfoService {
     return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data && res.data[0] ? res.data[0] : null));
 
   }
+
+  getUserByIdarr(id: number): Observable<ThiSinhInfo[]> {
+    const conditions: OvicConditionParam[] = [
+      {
+        conditionName: 'id',
+        condition: OvicQueryCondition.equal,
+        value: id.toString(),
+      },
+      {
+        conditionName: 'is_deleted',
+        condition: OvicQueryCondition.equal,
+        value: '0',
+        orWhere: 'and'
+      },
+    ];
+    const params: HttpParams = this.httpParamsHelper.paramsConditionBuilder(conditions);
+    return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data));
+
+  }
 }

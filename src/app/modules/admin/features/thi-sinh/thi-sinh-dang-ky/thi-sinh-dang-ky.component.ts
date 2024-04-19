@@ -5,7 +5,7 @@ import { DanhMucToHopMonService } from "@shared/services/danh-muc-to-hop-mon.ser
 import { forkJoin } from "rxjs";
 import { AuthService } from "@core/services/auth.service";
 import { ThiSinhInfo } from "@shared/models/thi-sinh";
-import { DmMon, DmToHopMon } from "@shared/models/danh-muc";
+import { DmMon, DmToHopMon, KieuDuLieuNguLieu } from "@shared/models/danh-muc";
 import { NotificationService } from "@core/services/notification.service";
 import { AbstractControl, FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { KeHoachThi, ThptKehoachThiService } from "@shared/services/thpt-kehoach-thi.service";
@@ -37,10 +37,10 @@ export class ThiSinhDangKyComponent implements OnInit {
   dataOrders: OrdersTHPT[];
   listStyle = [
     {
-      value: 1, title: '<div class="thanh-toan true"><div><i class="pi pi-check-circle" ></i></div><label> Đã thanh toán</label></div>',
+      value: 1, title: '<div class="thanh-toan true"><div></div><label> Đã thanh toán</label></div>',
     },
     {
-      value: 0, title: '<div class="thanh-toan false"><div><i class="pi pi-times-circle" ></i></div><label> Chưa thanh toán</label></div>',
+      value: 0, title: '<div class="thanh-toan false"><div></div><label> Chưa thanh toán</label></div>',
     }
   ]
   hinhthucthi = [
@@ -108,23 +108,18 @@ export class ThiSinhDangKyComponent implements OnInit {
         let i = 1;
         this.dataOrders = data.map(m => {
           const monhoc = m['monhoc'].map(m => {
-
             return { tohopmon: this.dmToHopMon.find(f => f.id === m['tohop_monhoc']) ? this.dmToHopMon.find(f => f.id === m['tohop_monhoc'])['__tentohop_covered'] : null, tenmon: m['tenmon'] };
           });
-
           const uniqueTohop = this.uniqueTohop(monhoc);
-          console.log(uniqueTohop);
           m['_indexTable'] = i++;
           m['__kehoach_thi'] = this.keHoachThi && this.keHoachThi.find(f => f.id === m.kehoach_id).dotthi ? this.keHoachThi.find(f => f.id === m.kehoach_id).dotthi : '';
           m['__lephithi_covered'] = m.lephithi + ' VNĐ';
           m['__status_converted'] = m['trangthai_thanhtoan'] === 1 ? this.listStyle.find(f => f.value === 1).title : this.listStyle.find(f => f.value === 0).title;
           if (uniqueTohop) {
-            m['__monthi_covered'] = uniqueTohop && uniqueTohop[0]['tohopmon'] !== null ? uniqueTohop[0]['tohopmon'] : uniqueTohop.map(c => c['tenmon']).join(', ');
+            m['__monthi_covered'] = uniqueTohop && uniqueTohop[0]['tohopmon'] !== null ? uniqueTohop[0]['tohopmon'] : uniqueTohop.map(c => this.dmMon.find(v => v.id === parseInt(c['tenmon'])).tenmon).join(', ');
           }
-          return m
+          return m;
         });
-
-
         this.notifi.isProcessing(false);
       },
       error: (e) => {
@@ -161,7 +156,9 @@ export class ThiSinhDangKyComponent implements OnInit {
         })
         this.keHoachThi = keHoachThi;
         this.lephithiData = options;
-        this.getDataOrder();
+        if (this.userInfo) {
+          this.getDataOrder();
+        }
         this.notifi.isProcessing(false);
         this.isLoading = false;
 
@@ -202,9 +199,17 @@ export class ThiSinhDangKyComponent implements OnInit {
   }
   SaveForm() {
     const kehoachid = this.f['kehoach_id'].value;
+    if (this.formSave.valid) {
 
-    if (this.dataOrders && !this.dataOrders.some(obj => obj.kehoach_id === kehoachid)) {
-      if (this.formSave.valid) {
+      const monIds_select = this.f['mon_ids'].value;
+      let listMon_ids: number[] = [];
+      this.dataOrders.forEach(f => {
+        listMon_ids = listMon_ids.concat(f.mon_id, f.mon_id, f.mon_id);
+      });
+
+      listMon_ids = [...new Set(listMon_ids)]
+
+      if (!monIds_select.some(element => listMon_ids.includes(element))) {
         const formUp: FormGroup = this.fb.group({
           thisinh_id: this.userInfo.id,
           kehoach_id: kehoachid,
@@ -221,13 +226,12 @@ export class ThiSinhDangKyComponent implements OnInit {
           lephithi: this.hinhthucthiSlect === 0 ? this.lephithiData.value * this.dataMonslect.length : this.lephithiData.value * this.dataTohopmonslect[0].mon_ids.length,
           status: 1,
           tohop_mon_id: this.hinhthucthiSlect === 1 ? this.f['tohopmon_ids'].value : null,
-          mon_id: this.hinhthucthiSlect === 0 ? this.f['mon_ids'].value : null,
+          mon_id: this.hinhthucthiSlect === 0 ? this.f['mon_ids'].value : this.dmToHopMon.find(f => f.id === this.f['tohopmon_ids'].value).mon_ids,
         });
-        console.log(formUp.value);
         this.ordersService.create(formUp.value).subscribe({
           next: (id) => {
             this.UpOrderMonBylocal(id, this.userInfo.id, kehoachid, this.hinhthucthiSlect);
-            this.getPayment(id);
+            // this.getPayment(id);
             this.notifi.isProcessing(false);
             this.notifi.toastSuccess('Thí sinh đăng ký thành công');
           },
@@ -236,14 +240,17 @@ export class ThiSinhDangKyComponent implements OnInit {
             this.notifi.isProcessing(false);
           }
         })
-      } else {
-        this.notifi.toastWarning('Vui lòng chọn đủ thông tin!');
-      }
-    } else {
-      this.notifi.toastError('Đợt thi này bạn đã đăng ký');
-    }
 
+      } else {
+        this.notifi.toastError('Môn bạn chọn đã được đăng ký,vui lòng kiểm tra lại.');
+      }
+
+
+    } else {
+      this.notifi.toastError('Vui lòng chọn đủ thông tin');
+    }
   }
+
 
   UpOrderMonBylocal(order_id: number, thisinh_id: number, kehoach_id: number, hinhthucthi: number) {
     const formUp: FormGroup = this.fb.group({
@@ -266,7 +273,7 @@ export class ThiSinhDangKyComponent implements OnInit {
               thisinh_id: thisinh_id,
               kehoach_id: kehoach_id,
               tohop_monhoc: this.dataTohopmonslect[0].id,
-              tenmon: monselect ? monselect.tenmon : f,
+              tenmon: monselect ? monselect.id : f,
               lephithi: this.lephithiData.value
             });
             this.orderMonhocService.create(formUp.value).subscribe({
@@ -307,14 +314,14 @@ export class ThiSinhDangKyComponent implements OnInit {
         });
       }
     }
+
+    this.loadInit();
   }
 
   getPayment(id: number) {
     const fullUrl: string = `${location.origin}${this.router.serializeUrl(this.router.createUrlTree(['admin/thi-sinh/dang-ky/']))}`;
-    console.log(fullUrl);
     this.ordersService.getPayment(id, fullUrl).subscribe({
       next: (data) => {
-        console.log(data);
         window.location.assign(data);
         this.ngType = 0;
         this.notifi.isProcessing(false);
@@ -331,21 +338,26 @@ export class ThiSinhDangKyComponent implements OnInit {
         this.ngType = 1;
         this.notifi.isProcessing(false);
       },
-      error: (e) => {
+      error: () => {
         this.ngType = -1;
         this.notifi.isProcessing(false);
+        this.notifi.toastError('Bạn chưa thanh toán!');
       },
     })
   }
 
   btnchecksite(num: number) {
-    if (num === 1) {
-      this.ngType = 0;
-      this.getDataDanhMuc();
-    } if (num === -1) {
-      this.ngType = 0;
-      this.getDataDanhMuc();
-    }
+    // if (num === 1) {
+    //   this.ngType = 0;
+    //   this.getDataDanhMuc();
+    // } if (num === -1) {
+    //   this.ngType = 0;
+    //   this.getDataDanhMuc();
+    // }
+    this.ngType = 0;
+
+    this.router.navigate(['admin/thi-sinh/dang-ky/']);
+
   }
 
   uniqueTohop(data: { tohopmon: number | null, tenmon: string }[]): { tohopmon: number | null, tenmon: string }[] {
@@ -368,6 +380,23 @@ export class ThiSinhDangKyComponent implements OnInit {
 
   returnInfo() {
     this.router.navigate(['admin/thi-sinh/thong-tin/']);
+  }
+
+
+  async deleteRow(id: number) {
+    const confirm = await this.notifi.confirmDelete();
+    if (confirm) {
+      this.ordersService.delete(id).subscribe({
+        next: () => {
+          this.getDataOrder();
+          this.notifi.isProcessing(false);
+          this.notifi.toastSuccess('Thao tác thành công');
+        }, error: () => {
+          this.notifi.isProcessing(false);
+          this.notifi.toastError('Thao tác không thành công');
+        }
+      })
+    }
   }
 
 }

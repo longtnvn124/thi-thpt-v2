@@ -42,10 +42,10 @@ export class ThiSinhDuThiComponent implements OnInit {
 
   listStyle = [
     {
-      value: 1, title: '<div class="thanh-toan true"><div><i class="pi pi-check-circle" ></i></div><label> Đã thanh toán</label></div>',
+      value: 1, title: '<div class="thanh-toan true"><label> Đã thanh toán</label></div>',
     },
     {
-      value: 0, title: '<div class="thanh-toan false"><div><i class="pi pi-times-circle" ></i></div><label> Chưa thanh toán</label></div>',
+      value: 0, title: '<div class="thanh-toan false"><label> Chưa thanh toán</label></div>',
     }
   ]
   constructor(
@@ -123,13 +123,15 @@ export class ThiSinhDuThiComponent implements OnInit {
           m['_thisinh_gioitinh'] = thi_sinh && thi_sinh['gioitinh'] === 'nam' ? 'Nam' : 'Nữ';
           m['_thisinh_phone'] = thi_sinh ? thi_sinh['phone'] : '';
           if (uniqueTohop) {
-            m['__monthi_covered'] = uniqueTohop && uniqueTohop[0]['tohopmon'] !== null ? uniqueTohop[0]['tohopmon'] : uniqueTohop.map(c => c['tenmon']).join(', ');
+            // m['__monthi_covered'] = uniqueTohop && uniqueTohop[0]['tohopmon'] !== null ? uniqueTohop[0]['tohopmon'] : uniqueTohop.map(c => c['tenmon']).join(', ');
+            m['__monthi_covered'] = uniqueTohop && uniqueTohop[0]['tohopmon'] !== null ? uniqueTohop[0]['tohopmon'] : uniqueTohop.map(c => this.dmMon.find(v => v.id === parseInt(c['tenmon'])).tenmon).join(', ');
+
           }
           m['_kehoach_coverted'] = this.keHoachThi ? this.keHoachThi.find(f => f.id === m.kehoach_id).dotthi : '';
           m['__status_converted'] = m['trangthai_thanhtoan'] === 1 ? this.listStyle.find(f => f.value === 1).title : this.listStyle.find(f => f.value === 0).title;
           return m;
         })
-        
+
         this.notifi.isProcessing(false);
         this.isLoading = false;
 
@@ -161,12 +163,12 @@ export class ThiSinhDuThiComponent implements OnInit {
   }
 
   selectkeHoachThi(event) {
-   
+
     this._kehoach_id = event;
     this.getData(1, event, this._searchText);
   }
   changeInput(event) {
-   
+
     this.paginator.changePage(1);
     this._searchText = event;
     this.getData(this.page, this._kehoach_id, this._searchText);
@@ -193,20 +195,11 @@ export class ThiSinhDuThiComponent implements OnInit {
 
 
   userInfo: ThiSinhInfo;
+  thisinh_id: number;
   btnShowUser(id: number) {
     this.preSetupForm(this.menuName);
     this.notifi.isProcessing(true);
-    this.thisinhInfoService.getUserById(id).subscribe({
-      next: (data) => {
-        this.userInfo = data;
-        this.userInfo['__anh_chandung_covented'] = data.anh_chandung ? this.fileSerive.getPreviewLinkLocalFile(data.anh_chandung[0]) : '';
-        this.userInfo['__cccd_mattruoc_covented'] = data.cccd_img_truoc ? this.fileSerive.getPreviewLinkLocalFile(data.cccd_img_truoc[0]) : '';
-        this.userInfo['__cccd_matsau_covented'] = data.cccd_img_sau ? this.fileSerive.getPreviewLinkLocalFile(data.anh_chandung[0]) : '';
-        this.notifi.isProcessing(false);
-      }, error: (e) => {
-        this.notifi.isProcessing(false);
-        this.notifi.toastError('Tải dữ liệu thí sinh không thành công');
-      }
-    })
+    this.thisinh_id = id;
+
   }
 }

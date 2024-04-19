@@ -11,11 +11,13 @@ import { ButtonModule } from "primeng/button";
 import { RippleModule } from "primeng/ripple";
 import { TooltipModule } from "primeng/tooltip";
 import { PaginatorModule } from 'primeng/paginator';
+import { ThongTinThiSinhComponent } from './thi-sinh-du-thi/thong-tin-thi-sinh/thong-tin-thi-sinh.component';
 
 
 @NgModule({
     declarations: [
-        ThiSinhDuThiComponent
+        ThiSinhDuThiComponent,
+        ThongTinThiSinhComponent
     ],
     imports: [
         CommonModule,

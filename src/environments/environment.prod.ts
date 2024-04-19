@@ -7,7 +7,6 @@ export const environment = {
 // run locall
 // http://thi-thpt.tnu.vn 
 const realm       = 'thithpt';
-// const host        = [ 'h' , 't' , 't' , 'p' , 's' , ':' , '/' , '/' , 'a' , 'p' , 'i' , '-' , 'd' , 'e' , 'v' , '.' , 'i' , 'c' , 't' , 'u' , '.' , 'v' , 'n' ];
 const host        = [ 'h' , 't' , 't' , 'p' , 's' , ':' , '/' , '/' , 't' , 'n' , 'u' , '.' , 'v' , 'n' ];
 const port        = '10091';
 

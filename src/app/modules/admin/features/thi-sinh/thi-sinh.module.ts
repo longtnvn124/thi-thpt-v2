@@ -16,6 +16,7 @@ import {InputTextModule} from "primeng/inputtext";
 import {PaginatorModule} from "primeng/paginator";
 import { TraCuuKetQuaComponent } from './tra-cuu-ket-qua/tra-cuu-ket-qua.component';
 import {CheckboxModule} from "primeng/checkbox";
+import {TooltipModule} from "primeng/tooltip";
 
 
 @NgModule({
@@ -37,7 +38,8 @@ import {CheckboxModule} from "primeng/checkbox";
         TableModule,
         InputTextModule,
         PaginatorModule,
-        CheckboxModule
+        CheckboxModule,
+        TooltipModule
     ]
 })
 export class ThiSinhModule { }

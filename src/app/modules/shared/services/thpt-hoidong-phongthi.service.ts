@@ -46,6 +46,7 @@ export class ThptHoidongPhongthiService {
     return this.http.put<Dto>(''.concat(this.api, id.toString(10)), data);
   }
 
+
   delete(id: number): Observable<any> {
     return this.http.delete(''.concat(this.api, id.toString(10)));
   }
