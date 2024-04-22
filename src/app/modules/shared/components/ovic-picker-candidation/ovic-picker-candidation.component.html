@@ -1,0 +1,52 @@
+<div class="modal-header">
+  <h4 class="modal-title">Chọn thí sinh</h4>
+  <!-- <form class="employees-picker__head" [formGroup]="formGroup">
+    <div class="employees-picker__head__filter__wrap-search">
+      <input type="text" placeholder="Tìm kiếm theo tên" formControlName="search">
+    </div>
+  </form> -->
+  <button type="button" class="close" (click)="close()"><i class="pi pi-times"></i></button>
+</div>
+<div class="modal-body ovic-modal-body p-0">
+  <div class="employees-picker__body" [class.ovic-is-loading]="isLoading">
+    <p-table [(selection)]="_OrderUsers" [value]="data" [rowHover]="true" [rows]="rows" [showCurrentPageReport]="true"
+      [rowsPerPageOptions]="[10,25,50]">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>
+            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+          </th>
+          <th>Họ và tên</th>
+          <th class="ovic-w-120px">Ngày sinh</th>
+          <th class="ovic-w-120px">Giới tính</th>
+          <th class="ovic-w-120px">Số CCCD</th>
+          <th class="ovic-w-120px">Email</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-item let-i="rowIndex">
+        <tr>
+          <td>
+            <p-tableCheckbox [value]="item"></p-tableCheckbox>
+          </td>
+          <td>{{item['_hoten']}}</td>
+          <td>{{item['_ngaysinh']}}</td>
+          <td>{{item['_gioitinh']}}</td>
+          <td>{{item['_cccd_so']}}</td>
+          <td>{{item['_email']}}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+    <p-paginator [showCurrentPageReport]="true" [rows]="rows" [totalRecords]="recordsTotal" [pageLinkSize]="5"
+      (onPageChange)="paginate($event)"></p-paginator>
+    <button *ngIf="loadFail" (click)="loadData()" pButton pRipple type="button" class="p-button p-button-primary"
+      icon="pi pi-spin pi-spinner" label="Tải dữ liệu"></button>
+  </div>
+  <div class="employees-picker__foot"></div>
+</div>
+<div class="modal-footer">
+  <p class="modal-footer__selected-counter" *ngIf="_OrderUsers">Đã chọn <span>{{ _OrderUsers.length }}</span></p>
+  <button (click)="save()" pButton pRipple type="button" class="p-button p-button-success" icon="pi pi-save"
+    label="Chọn"></button>
+  <button (click)="close()" pButton pRipple type="button" class="p-button p-button-secondary ml-3" icon="pi pi-times"
+    label="Đóng"></button>
+</div>

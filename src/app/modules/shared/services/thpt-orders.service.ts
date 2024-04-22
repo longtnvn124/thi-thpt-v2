@@ -231,4 +231,36 @@ export class ThptOrdersService {
     const params: HttpParams = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }).set('with', 'thisinh,monhoc'));
     return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data));
   }
+
+  getdataByNotThisinhIds(paged: number, thisinh_Ids: number[], kehoach_id: number): Observable<{ data: OrdersTHPT[], recordsTotal: number }> {
+    const conditions: OvicConditionParam[] = [
+      {
+        conditionName: 'kehoach_id',
+        condition: OvicQueryCondition.equal,
+        value: kehoach_id.toString()
+      },
+      {
+        conditionName: 'trangthai_thanhtoan',
+        condition: OvicQueryCondition.equal,
+        value: '1',
+        orWhere: 'and'
+      },
+    ];
+
+    const fromObject = {
+
+      paged: paged,
+      limit: this.themeSettingsService.settings.rows,
+      exclude: thisinh_Ids.join(', '),
+      include_by: 'thisinh_id'
+      // orderby: 'status',x
+      // order: "ASC"// dieemr giarm dần,
+
+    }
+    const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }).set('with', 'thisinh'));
+    return this.http.get<Dto>(this.api, { params }).pipe(map(res => ({
+      recordsTotal: res.recordsFiltered,
+      data: res.data
+    })))
+  }
 }

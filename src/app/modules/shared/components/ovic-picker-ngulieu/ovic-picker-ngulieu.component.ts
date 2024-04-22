@@ -1,16 +1,16 @@
-import {Component, Input, OnInit, SimpleChanges} from '@angular/core';
-import {FormBuilder, FormGroup} from "@angular/forms";
-import {Ngulieu} from "@shared/models/quan-ly-ngu-lieu";
-import {NgbActiveModal} from "@ng-bootstrap/ng-bootstrap";
-import {ThemeSettingsService} from "@core/services/theme-settings.service";
-import {HelperService} from "@core/services/helper.service";
-import {AuthService} from "@core/services/auth.service";
-import {debounceTime, forkJoin} from "rxjs";
-import {NguLieuDanhSachService} from "@shared/services/ngu-lieu-danh-sach.service";
-import {DmChuyenMuc, DmLinhVuc, DmLoaiNguLieu} from "@shared/models/danh-muc";
-import {DanhMucLoaiNguLieuService} from "@shared/services/danh-muc-loai-ngu-lieu.service";
-import {DanhMucLinhVucService} from "@shared/services/danh-muc-linh-vuc.service";
-import {NotificationService} from "@core/services/notification.service";
+import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
+import { FormBuilder, FormGroup } from "@angular/forms";
+import { Ngulieu } from "@shared/models/quan-ly-ngu-lieu";
+import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
+import { ThemeSettingsService } from "@core/services/theme-settings.service";
+import { HelperService } from "@core/services/helper.service";
+import { AuthService } from "@core/services/auth.service";
+import { debounceTime, forkJoin } from "rxjs";
+import { NguLieuDanhSachService } from "@shared/services/ngu-lieu-danh-sach.service";
+import { DmChuyenMuc, DmLinhVuc, DmLoaiNguLieu } from "@shared/models/danh-muc";
+import { DanhMucLoaiNguLieuService } from "@shared/services/danh-muc-loai-ngu-lieu.service";
+import { DanhMucLinhVucService } from "@shared/services/danh-muc-linh-vuc.service";
+import { NotificationService } from "@core/services/notification.service";
 
 @Component({
   selector: 'ovic-picker-ngulieu',
@@ -52,7 +52,7 @@ export class OvicPickerNgulieuComponent implements OnInit {
     private danhMucLinhVucService: DanhMucLinhVucService,
     private notificationService: NotificationService
   ) {
-    this.formGroup = this.fb.group({search: ''});
+    this.formGroup = this.fb.group({ search: '' });
     this.rows = this.themeSettingsService.settings.rows;
     this.filter.select = this.select;
 
@@ -129,7 +129,7 @@ export class OvicPickerNgulieuComponent implements OnInit {
     this.activeModal.close([]);
   }
 
-  paginate({page}: { page: number }) {
+  paginate({ page }: { page: number }) {
     this.page = page + 1;
     this.loadData();
   }
@@ -159,4 +159,5 @@ export class OvicPickerNgulieuComponent implements OnInit {
   save() {
     this.activeModal.close(this._selected);
   }
+
 }

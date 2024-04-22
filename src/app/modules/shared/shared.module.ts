@@ -128,6 +128,7 @@ import { OvicMediaVrProductComponent } from './components/ovic-media-vr-product/
 import { OvicResizeDropdowDirective } from './directives/ovic-resize-dropdow.directive';
 import { OvicAvataTypeThptComponent } from "@shared/components/ovic-avata-type-thpt/ovic-avata-type-thpt.component";
 import { OvicCountdownComponent } from "@shared/components/ovic-countdown/ovic-countdown.component";
+import { OvicPickerCandidationComponent } from './components/ovic-picker-candidation/ovic-picker-candidation.component';
 
 @NgModule({
   declarations: [
@@ -214,6 +215,7 @@ import { OvicCountdownComponent } from "@shared/components/ovic-countdown/ovic-c
     OvicMediaVrProductComponent,
     OvicResizeDropdowDirective,
     OvicAvataTypeThptComponent,
+    OvicPickerCandidationComponent,
 
   ],
   imports: [

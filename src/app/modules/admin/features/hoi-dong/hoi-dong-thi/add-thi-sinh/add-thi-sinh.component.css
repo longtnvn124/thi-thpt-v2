@@ -1,0 +1,12 @@
+.add-container {
+    heigh: 100%;
+
+}
+
+.add-content {
+    height: calc(100% - 60px);
+}
+
+.add-footer {
+    height: 60px;
+}
