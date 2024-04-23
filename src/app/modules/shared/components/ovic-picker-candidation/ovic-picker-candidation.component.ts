@@ -84,11 +84,7 @@ export class OvicPickerCandidationComponent implements OnInit {
 
 
   save() {
-    console.log(this._OrderUsers);
-
-    const thisinh_ids = new Set(this._OrderUsers.map(m => m.thisinh_id));
-    console.log(thisinh_ids);
-
+    const thisinh_ids = this._OrderUsers.map(m => m.thisinh_id);
     this.activeModal.close(thisinh_ids);
   }
 }

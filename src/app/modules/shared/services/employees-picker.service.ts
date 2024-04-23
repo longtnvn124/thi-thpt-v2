@@ -82,9 +82,8 @@ export class EmployeesPickerService {
     return modal.result;
   }
 
-  pickerUser(user_ids: number[], kehoach_id: number): Promise<OrdersTHPT[]> {
-    console.log(user_ids);
-    console.log(kehoach_id);
+  pickerUser(user_ids: number[], kehoach_id: number): Promise<number[]> {
+
 
     const options: NgbModalOptions = {
       scrollable: true,

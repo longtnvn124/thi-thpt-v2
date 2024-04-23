@@ -95,8 +95,6 @@ export class PhongThiComponent implements OnInit {
     this.hoiDongService.getHoidongonly(this.hoidong_id).subscribe({
       next: (data) => {
         this.hoiDongData = data;
-        console.log(this.hoiDongData);
-
         this.loadDmData(data.id);
         this.notifi.isProcessing(false);
       }, error: (err) => {
@@ -135,36 +133,26 @@ export class PhongThiComponent implements OnInit {
 
   checkThisinh() {
     const tenmon = this.f['monthi'].value;
-    console.log(tenmon);
-
     if (tenmon) {
       this.loadingBtn = true;
       this.notifi.isProcessing(true);
       const kehoach_id = this.kehoach_id;
       this.orderService.getDataByKehoachIdAndStatus(kehoach_id).pipe(switchMap(m => {
-        console.log(m);
         const ids = m.map(c => c.id.toString());
-        console.log(ids);
-
         return forkJoin([of(m), this.orderMonHocService.getDataByKehoachIdAndOrderIds(ids, this.kehoach_id)]);
       })).subscribe({
         next: ([data1, data2]) => {
-          console.log(data2);
 
           const data = data2.filter(f => tenmon.includes(f.tenmon)).map(m => {
             const thisinh = m['thisinh'];
             m['_thisinh_ten'] = thisinh ? thisinh['ten'] : '';
             return m
           });
-
-          // this.thisinhOrder = this.sortByFirstLetterAlternate(data);
           this.thisinhOrder = this.collectData(data);
-          console.log(this.thisinhOrder);
           this.notifi.toastSuccess('load dữ liệu thành công!');
           this.loadingBtn = false;
 
         }, error: (e) => {
-          console.log(e);
           this.loadingBtn = false;
           this.notifi.isProcessing(false);
           this.notifi.toastError('load dữ liệu không thành công');
@@ -233,7 +221,6 @@ export class PhongThiComponent implements OnInit {
         this.notifi.toastSuccess('Số lượng thí sinh phù hợp');
         this.createdDatasRoom(this.thisinhOrder, soluong_thisinh_1phong, monSelect)
       }
-
     } else {
       this.notifi.toastWarning('Bạn chưa kiểm tra số lượng thi sinh đăng ký hoặc chưa nhập số lượng thí sinh trên 1 phòng');
     }
@@ -274,7 +261,6 @@ export class PhongThiComponent implements OnInit {
           this.hoidongPhongthiService.create(e).subscribe({
             next: (id) => {
               e['id'] = id;
-              console.log(e);
               this.createThisinhInPhongthi(e);
               this.notifi.toastSuccess('Tạo phòng thi thành công');
               this.notifi.isProcessing(false);
@@ -303,7 +289,6 @@ export class PhongThiComponent implements OnInit {
         thisinh_id: item,
         sobaodanh: phongthi.ma_phongthi + '.' + index_coverted
       }
-      console.log(data);
       i++;
 
       setTimeout(() => {
@@ -328,7 +313,6 @@ export class PhongThiComponent implements OnInit {
           m['__monthi'] = m.monthi_ids.map(f => this.dmMon.find(c => c.id === f).tenmon).join(', ');
           return m;
         })
-        console.log(this.hoiDongPhongThi);
         this.notifi.isProcessing(false);
       }, error: () => {
         this.notifi.isProcessing(false);
@@ -355,7 +339,6 @@ export class PhongThiComponent implements OnInit {
   getdataphongthithisisnh(page, item: ThptHoiDongPhongThi) {
     this.hoidongThisinhService.getDataByPhongthiAndHoidongId(this.page, item.id, item.hoidong_id).subscribe({
       next: ({ recordsTotal, data }) => {
-        console.log(data);
         this.recordsTotal = recordsTotal;
         this.TypeChangePage = 3;
         let index = 1;
@@ -385,7 +368,6 @@ export class PhongThiComponent implements OnInit {
     this.TypeChangePage = 0;
   }
   editDataPhongthi() {
-    console.log(this.formPhongthi.value);
     this.notifi.isProcessing(true);
     this.hoidongPhongthiService.update(this.hoiDongPhongThiSelect.id, this.formPhongthi.value).subscribe({
       next: (data) => {
@@ -449,10 +431,7 @@ export class PhongThiComponent implements OnInit {
         }
         await this.delay(200).toPromise(); // Wait 200ms before next iteration
       }
-
       const repostheading = 'Danh sách thí sinh (' + this.keHoachThi.dotthi + ' )';
-      console.log(hoidongPhongthiParams);
-
       this.exportExcelService.exportExcel(hoidongPhongthiParams, this.columns, this.keHoachThi.dotthi, repostheading)
       this.modalService.dismissAll();
     } else {
@@ -467,8 +446,6 @@ export class PhongThiComponent implements OnInit {
   delay(ms: number): Observable<any> {
     return interval(ms).pipe(take(1));
   }
-
-
   async SendEmailToThisinh() {
     if (this.hoiDongPhongThi) {
       this.modalService.open(this.templateWaiting, WAITING_POPUP);

@@ -9,18 +9,18 @@
 </div>
 <div class="modal-body ovic-modal-body p-0">
   <div class="employees-picker__body" [class.ovic-is-loading]="isLoading">
-    <p-table [(selection)]="_OrderUsers" [value]="data" [rowHover]="true" [rows]="rows" [showCurrentPageReport]="true"
-      [rowsPerPageOptions]="[10,25,50]">
+    <p-table [(selection)]="_OrderUsers" styleClass="p-datatable-gridlines" [value]="data" [rowHover]="true"
+      [rows]="rows" [showCurrentPageReport]="true" [rowsPerPageOptions]="[10,25,50]">
       <ng-template pTemplate="header">
         <tr>
-          <th>
+          <th class="ovic-w-50px">
             <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
           </th>
           <th>Họ và tên</th>
-          <th class="ovic-w-120px">Ngày sinh</th>
-          <th class="ovic-w-120px">Giới tính</th>
-          <th class="ovic-w-120px">Số CCCD</th>
-          <th class="ovic-w-120px">Email</th>
+          <th class="ovic-w-120px text-center">Ngày sinh</th>
+          <th class="ovic-w-120px text-center">Giới tính</th>
+          <th class="ovic-w-120px text-center">Số CCCD</th>
+          <th class="ovic-w-120px text-center">Email</th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-item let-i="rowIndex">
@@ -29,9 +29,9 @@
             <p-tableCheckbox [value]="item"></p-tableCheckbox>
           </td>
           <td>{{item['_hoten']}}</td>
-          <td>{{item['_ngaysinh']}}</td>
-          <td>{{item['_gioitinh']}}</td>
-          <td>{{item['_cccd_so']}}</td>
+          <td class="text-center">{{item['_ngaysinh']}}</td>
+          <td class="text-center">{{item['_gioitinh']}}</td>
+          <td class="text-end">{{item['_cccd_so']}}</td>
           <td>{{item['_email']}}</td>
         </tr>
       </ng-template>

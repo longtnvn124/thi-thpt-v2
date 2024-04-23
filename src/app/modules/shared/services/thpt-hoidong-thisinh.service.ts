@@ -1,3 +1,4 @@
+import { AuthService } from '@core/services/auth.service';
 import { Injectable } from '@angular/core';
 import { getRoute } from "@env";
 import { HttpClient, HttpParams } from "@angular/common/http";
@@ -18,7 +19,8 @@ export class ThptHoidongThisinhService {
   constructor(
     private http: HttpClient,
     private httpParamsHelper: HttpParamsHeplerService,
-    private themeSettingsService: ThemeSettingsService
+    private themeSettingsService: ThemeSettingsService,
+    private auth: AuthService
   ) {
   }
 
@@ -44,10 +46,15 @@ export class ThptHoidongThisinhService {
   update(id: number, data: any): Observable<any> {
     return this.http.put<Dto>(''.concat(this.api, id.toString(10)), data);
   }
-
   delete(id: number): Observable<any> {
-    return this.http.delete(''.concat(this.api, id.toString(10)));
+    const is_deleted = 1;
+    const deleted_by = this.auth.user.id;
+    return this.update(id, { is_deleted, deleted_by });
   }
+
+  // delete(id: number): Observable<any> {
+  //   return this.http.delete(''.concat(this.api, id.toString(10)));
+  // }
 
   search(page: number, ten: string): Observable<{ recordsTotal: number, data: ThptHoiDongThiSinh[] }> {
     const conditions: OvicConditionParam[] = [];
@@ -143,5 +150,27 @@ export class ThptHoidongThisinhService {
     return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data));
   }
 
+  getDataByHoiDongId(page: number, hoidong_id: number): Observable<{ recordsTotal: number, data: ThptHoiDongThiSinh[] }> {
+    const conditions: OvicConditionParam[] = [
+      {
+        conditionName: 'hoidong_id',
+        condition: OvicQueryCondition.equal,
+        value: hoidong_id.toString(),
+      },
+
+    ];
+
+    const fromObject = {
+      paged: page,
+      limit: this.themeSettingsService.settings.rows,
+      orderby: 'id',
+      order: 'ASC'
+    };
+    const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }).set('with', 'thisinh'));
+    return this.http.get<Dto>(this.api, { params }).pipe(map(res => ({
+      recordsTotal: res.recordsFiltered,
+      data: res.data
+    })))
+  }
 
 }
