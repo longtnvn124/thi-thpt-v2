@@ -5,6 +5,9 @@ import {DotThiComponent} from "@modules/admin/features/danh-muc/dot-thi/dot-thi.
 import {MonComponent} from "@modules/admin/features/danh-muc/mon/mon.component";
 import {TruongHocComponent} from "@modules/admin/features/danh-muc/truong-hoc/truong-hoc.component";
 import {LePhiThiComponent} from "@modules/admin/features/danh-muc/le-phi-thi/le-phi-thi.component";
+import {
+  KhaiBaoPhongThiComponent
+} from "@modules/admin/features/danh-muc/khai-bao-phong-thi/khai-bao-phong-thi.component";
 
 
 const routes: Routes = [
@@ -34,6 +37,11 @@ const routes: Routes = [
     data: {state: 'danh-muc--le-phi-thi'}
   },
   {
+    path: 'phong-thi',
+    component: KhaiBaoPhongThiComponent,
+    data: {state: 'danh-muc--phong-thi'}
+  },
+  {
     path: '',
     redirectTo: 'mon',
     pathMatch: 'full'
@@ -47,25 +55,3 @@ const routes: Routes = [
 })
 export class DanhMucRoutingModule {
 }
-
-
-// {
-//   path: 'chuyen-muc',
-//     component: ChuyenMucComponent,
-//   data: {state: 'danh-muc--chuyen-muc'}
-// },
-// {
-//   path: 'diem-di-tich',
-//     component: DiemDiTichComponent,
-//   data: {state: 'danh-muc--diem-di-tich'}
-// },
-// {
-//   path: 'linh-vuc',
-//     component: LinhVucComponent,
-//   data: {state: 'danh-muc--linh-vuc'}
-// },
-// {
-//   path: 'loai-ngu-lieu',
-//     component: LoaiNguLieuComponent,
-//   data: {state: 'danh-muc--loai-ngu-lieu'}
-// },

@@ -49,8 +49,8 @@
             (click)="loadInit()"></button>
         <button pButton pRipple class="mx-2 p-button-success" icon="pi pi-plus" label="Thêm mới"
             (click)="btnAddNew()"></button>
-        <button pButton pRipple class="mx-2 p-button-danger" icon="pi pi-trash" label="Xóa"
-            (click)="btndelete()"></button>
+        <button pButton pRipple class="mx-2 p-button-danger" [disabled]="dataSelct && dataSelct.length ? false:true"
+            icon="pi pi-trash" label="Xóa" (click)="btndelete()"></button>
 
     </div>
 

@@ -118,7 +118,7 @@ export const APP_STORES = 'thithpt4QfWtr6Z'; // no clear after logout
 export const SWITCH_DONVI_ID = 'thithptC@gGA506'; // no clear after logout
 
 export const X_APP_ID = '64c9a192-cc0e-4198-acb8-2188dbb472fa';//dev
-// export const X_APP_ID = '64267F1F-EBC6-4D47-8BAD-B4847DB01A93';// online
+// export const X_APP_ID = '3923CB7E-6B59-4BC6-812F-0E104785546B';// online id dev online
 
 export const imgFalback = 'assets/images/placeholder.jpg';
 

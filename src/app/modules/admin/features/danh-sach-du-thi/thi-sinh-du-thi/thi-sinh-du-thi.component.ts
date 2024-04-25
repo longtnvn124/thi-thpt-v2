@@ -110,11 +110,13 @@ export class ThiSinhDuThiComponent implements OnInit {
       next: ({ recordsTotal, data }) => {
         let index = 1;
         this.recordsTotal = recordsTotal;
-        this.listData = data.map(m => {
+        this.listData = data && data.length ? data.map(m => {
           const thi_sinh = m['thisinh'];
           const monhoc = m['monhoc'].map(m => {
             return { tohopmon: this.dmToHopMon.find(f => f.id === m['tohop_monhoc']) ? this.dmToHopMon.find(f => f.id === m['tohop_monhoc'])['__tentohop_covered'] : null, tenmon: m['tenmon'] };
           });
+          console.log(monhoc  );
+
           const uniqueTohop = this.uniqueTohop(monhoc);
           m['_indexTable'] = page > 10 ? (page * 10 + index++) : index++;
           m['_thisinh_hoten'] = thi_sinh ? thi_sinh['hoten'] : '';
@@ -130,7 +132,7 @@ export class ThiSinhDuThiComponent implements OnInit {
           m['_kehoach_coverted'] = this.keHoachThi ? this.keHoachThi.find(f => f.id === m.kehoach_id).dotthi : '';
           m['__status_converted'] = m['trangthai_thanhtoan'] === 1 ? this.listStyle.find(f => f.value === 1).title : this.listStyle.find(f => f.value === 0).title;
           return m;
-        })
+        }) : [];
 
         this.notifi.isProcessing(false);
         this.isLoading = false;

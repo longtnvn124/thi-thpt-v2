@@ -35,7 +35,7 @@
         </div>
       </form>
     </div>
-    <div class="container" *ngIf="thisinhOrder">
+    <div class="ovic-container" *ngIf="thisinhOrder">
       <div class="d-flex justify-content-start align-items-center" style="padding: 10px;color: #44c383;width: 100%;">
         <i class="pi pi-check-circle"></i>
         <span style="font-size:14px; margin-left: 5px;"> Có {{thisinhOrder.length}} thí sinh đã đăng ký môn !...</span>
@@ -165,7 +165,7 @@
 
                     <ng-template pTemplate="emptymessage">
                       <tr>
-                        <td colspan="6">Không có dữ liệu</td>
+                        <td colspan="8">Không có dữ liệu</td>
                       </tr>
                     </ng-template>
                     <ng-template pTemplate="body" let-item>

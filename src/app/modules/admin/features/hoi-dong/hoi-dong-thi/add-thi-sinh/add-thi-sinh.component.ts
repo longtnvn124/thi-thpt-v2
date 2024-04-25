@@ -32,7 +32,7 @@ export class AddThiSinhComponent implements OnInit {
   isloading: boolean = true;
   page: number = 1;
   recordsTotal: number;
-  dataSelct: ThptHoiDongThiSinh[];
+  dataSelct: ThptHoiDongThiSinh[] = [];
   listData: ThptHoiDongThiSinh[];
   constructor(
     private pickker: EmployeesPickerService,
@@ -130,19 +130,17 @@ export class AddThiSinhComponent implements OnInit {
         thisinh_id: r
       };
 
-      const request$ = forkJoin([
-        this.hoiDongThiSinhService.create(newObject),
-        this.thisinhInfoService.getUserById(r)
-      ]).pipe(
-        concatMap(([id, user]) => {
-          return of(null);
-        }),
-        delay(index * 500), 
-        catchError(error => {
-          console.error(error);
-          return of(null); 
-        })
-      );
+      const request$ =
+        this.hoiDongThiSinhService.create(newObject).pipe(
+          concatMap((id) => {
+            return of(null);
+          }),
+          delay(index * 500),
+          catchError(error => {
+            console.error(error);
+            return of(null);
+          })
+        );
 
       requests$.push(request$);
     });
@@ -188,6 +186,6 @@ export class AddThiSinhComponent implements OnInit {
       this.notifi.isProcessing(false);
       this.loadInit();
     }
-  } 
+  }
 
 }

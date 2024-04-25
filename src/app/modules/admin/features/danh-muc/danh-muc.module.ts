@@ -13,12 +13,6 @@ import {DialogModule} from 'primeng/dialog';
 import { EditorModule } from 'primeng/editor'
 import { ContextMenuModule } from 'primeng/contextmenu';
 import { MultiSelectModule } from 'primeng/multiselect';
-
-import { ChuyenMucComponent } from './chuyen-muc/chuyen-muc.component';
-import { LinhVucComponent } from './linh-vuc/linh-vuc.component';
-import { LoaiNguLieuComponent } from './loai-ngu-lieu/loai-ngu-lieu.component';
-import { DiemDiTichComponent } from './diem-di-tich/diem-di-tich.component';
-
 import {SplitterModule} from "primeng/splitter";
 import Quill from 'quill';
 import ImageResize from 'quill-image-resize-module';
@@ -29,20 +23,17 @@ import {CalendarModule} from "primeng/calendar";
 import { TruongHocComponent } from './truong-hoc/truong-hoc.component';
 import { LePhiThiComponent } from './le-phi-thi/le-phi-thi.component';
 import {InputTextModule} from "primeng/inputtext";
+import { KhaiBaoPhongThiComponent } from './khai-bao-phong-thi/khai-bao-phong-thi.component';
 Quill.register('modules/imageResize', ImageResize);
 
 @NgModule({
   declarations: [
-    ChuyenMucComponent,
-    LinhVucComponent,
-    LoaiNguLieuComponent,
-    DiemDiTichComponent,
     MonComponent,
     ToHopMonComponent,
     DotThiComponent,
     TruongHocComponent,
     LePhiThiComponent,
-
+    KhaiBaoPhongThiComponent,
   ],
     imports: [
         CommonModule,
