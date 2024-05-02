@@ -95,7 +95,7 @@ import { OvicLoggerDirective } from './directives/ovic-logger.directive';
 import { SideFiltersComponent } from './components/side-filters/side-filters.component';
 import { OvicDateInputComponent } from './components/ovic-date-input/ovic-date-input.component';
 import { InputMaskModule } from 'primeng/inputmask';
-import { OvicFlexibleTableNewComponent } from './components/ovic-flexible-table-new/ovic-flexible-table-new.component';
+import { OvicFlexibleTableNewComponent } from '@shared/components/ovic-flexible-table-new/ovic-flexible-table-new.component';
 import { PaginatorModule } from 'primeng/paginator';
 import {
   OvicInputAddressFourLayoutsComponent

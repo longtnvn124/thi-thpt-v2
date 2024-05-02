@@ -201,15 +201,20 @@ export class ThiSinhDangKyComponent implements OnInit {
     const kehoachid = this.f['kehoach_id'].value;
     if (this.formSave.valid) {
 
-      const monIds_select = this.f['mon_ids'].value;
+      const monIds_select = this.hinhthucthiSlect === 0 ? this.f['mon_ids'].value : this.dmToHopMon.find(f => f.id === this.f['tohopmon_ids'].value).mon_ids;
       let listMon_ids: number[] = [];
       this.dataOrders.forEach(f => {
-        listMon_ids = listMon_ids.concat(f.mon_id, f.mon_id, f.mon_id);
+        listMon_ids = listMon_ids.concat(f.mon_id);
       });
 
-      listMon_ids = [...new Set(listMon_ids)]
+      listMon_ids = [...new Set(listMon_ids)];
+      console.log(monIds_select);
+      console.log(listMon_ids);
+
 
       if (!monIds_select.some(element => listMon_ids.includes(element))) {
+        console.log(231231);
+
         const formUp: FormGroup = this.fb.group({
           thisinh_id: this.userInfo.id,
           kehoach_id: kehoachid,
@@ -229,11 +234,11 @@ export class ThiSinhDangKyComponent implements OnInit {
           mon_id: this.hinhthucthiSlect === 0 ? this.f['mon_ids'].value : this.dmToHopMon.find(f => f.id === this.f['tohopmon_ids'].value).mon_ids,
         });
         this.ordersService.create(formUp.value).subscribe({
-          next: (id) => {
-            this.UpOrderMonBylocal(id, this.userInfo.id, kehoachid, this.hinhthucthiSlect);
-            // this.getPayment(id);
+          next: async (id) => {
+            await this.UpOrderMonBylocal(id, this.userInfo.id, kehoachid, this.hinhthucthiSlect);
             this.notifi.isProcessing(false);
             this.notifi.toastSuccess('Thí sinh đăng ký thành công');
+            this.loadInit();
           },
           error: (e) => {
             this.notifi.toastError('Thí sinh đăng ký thất bại');
@@ -315,7 +320,7 @@ export class ThiSinhDangKyComponent implements OnInit {
       }
     }
 
-    this.loadInit();
+
   }
 
   getPayment(id: number) {
@@ -347,17 +352,9 @@ export class ThiSinhDangKyComponent implements OnInit {
   }
 
   btnchecksite(num: number) {
-    // if (num === 1) {
-    //   this.ngType = 0;
-    //   this.getDataDanhMuc();
-    // } if (num === -1) {
-    //   this.ngType = 0;
-    //   this.getDataDanhMuc();
-    // }
     this.ngType = 0;
-
     this.router.navigate(['admin/thi-sinh/dang-ky/']);
-
+    this.loadInit();
   }
 
   uniqueTohop(data: { tohopmon: number | null, tenmon: string }[]): { tohopmon: number | null, tenmon: string }[] {

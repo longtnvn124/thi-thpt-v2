@@ -74,7 +74,7 @@ export class AddThiSinhComponent implements OnInit {
           m['_gioitinh'] = thisinh && thisinh['gioitinh'] === 'nam' ? 'Nam' : 'Nữ';
           return m;
         })
-        console.log(this.listData);
+    
         this.isloading = false;
       }, error: () => {
         this.isloading = false;
@@ -93,15 +93,11 @@ export class AddThiSinhComponent implements OnInit {
       conllector.add(thisinh_id);
       return conllector;
     }, new Set<number>()) : new Set<number>();
-
-    console.log(isSet);
     try {
       const result = await this.pickker.pickerUser([], this.kehoach_id);
 
 
       if (result && result.length) {
-        console.log(result);
-
         const validObjects: Set<number> = result.reduce((collector, item) => {
           if (!isSet.has(item)) {
             collector.add(item);

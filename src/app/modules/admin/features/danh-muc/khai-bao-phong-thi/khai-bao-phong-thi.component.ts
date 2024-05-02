@@ -51,12 +51,15 @@ export class KhaiBaoPhongThiComponent implements OnInit {
   };
   needUpdate = false;
   btn_checkAdd: "Lưu lại" | "Cập nhật";
+
+  private inputChanged: Subject<DmPhongThi> = new Subject<DmPhongThi>();
   constructor(
     private danhMucPhongThiService: DanhMucPhongThiService,
     private notifi: NotificationService,
     private themeSettingsService: ThemeSettingsService,
     private fb: FormBuilder
   ) {
+
     const observeProcessFormData = this.OBSERVE_PROCESS_FORM_DATA.asObservable().pipe(debounceTime(100)).subscribe(form => this.__processFrom(form));
     this.subscription.add(observeProcessFormData);
     const observeProcessCloseForm = this.notifi.onSideNavigationMenuClosed().pipe(filter(menuName => menuName === this.menuName && this.needUpdate)).subscribe(() => this.loadData(this.page));
@@ -72,6 +75,7 @@ export class KhaiBaoPhongThiComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.inputChanged.pipe(debounceTime(500)).subscribe((item: DmPhongThi) => { this.updateContentByInput(item); });
     this.loadInit();
   }
 
@@ -178,14 +182,21 @@ export class KhaiBaoPhongThiComponent implements OnInit {
     }
   }
 
-
+  onInputChange(event: DmPhongThi) {
+    
+    this.inputChanged.next(event);
+  }
   updateContentByInput(item: DmPhongThi) {
-    console.log(item);
     const from = item.fromAt;
     const to = item.toAt;
-
     if (from <= to) {
-      this.danhMucPhongThiService.update(item.id, item).subscribe({
+      const newData = {
+        id: item.id,
+        fromAt: item.fromAt,
+        toAt: item.toAt,
+        soluong: item.soluong
+      }
+      this.danhMucPhongThiService.update(item.id, newData).subscribe({
         next: () => {
           this.loadData(this.page)
           this.notifi.toastSuccess('Cập nhật thành công');
@@ -195,7 +206,6 @@ export class KhaiBaoPhongThiComponent implements OnInit {
       })
     } else {
       this.notifi.toastWarning('Số bạn mới nhập không phù hợp ');
-      this.loadData(this.page);
     }
 
 

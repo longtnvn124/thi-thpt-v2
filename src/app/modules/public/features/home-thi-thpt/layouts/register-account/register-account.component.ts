@@ -6,6 +6,8 @@ import { Router } from "@angular/router";
 import { switchMap } from "rxjs";
 import { RegisterAccountService } from "@shared/services/register-account.service";
 import { NotificationService } from '@core/services/notification.service';
+import { getLocaleMonthNames } from '@angular/common';
+import { LoginComponent } from '@modules/public/features/login/login.component';
 
 @Component({
   selector: 'app-register-account',
@@ -27,7 +29,7 @@ export class RegisterAccountComponent implements OnInit {
     private notification: NotificationService
   ) {
     this.formSave = this.fb.group({
-      username: ['', Validators.required],
+      username: [''],
       email: ['', [Validators.required, EmailCheckValidator]],
       password: ['', [Validators.required, PassCheckValidator]],
       display_name: ['', Validators.required],
@@ -58,6 +60,10 @@ export class RegisterAccountComponent implements OnInit {
   }
 
   btnRegisterForm() {
+    const username = this.f['email'].value;
+    this.f['username'].setValue(username);
+    console.log(this.formSave.value);
+
     if (this.formSave.valid) {
       this.type_check_valid = 2;
       let username = this.f['username'].value?.trim();
@@ -75,8 +81,16 @@ export class RegisterAccountComponent implements OnInit {
           this.type_check_valid = 3;
           this.resetForm();
         }, error: (e) => {
-          console.log(e);
           this.type_check_valid = 1;
+          const message = e.error.message;
+          let errorMessage = "";
+          for (let key in message) {
+            if (message[key]) {
+              errorMessage += message[key] + ", ";
+            }
+          }
+          errorMessage = errorMessage.slice(0, -2);
+          this.notification.toastError(errorMessage);
         }
       })
     } else {

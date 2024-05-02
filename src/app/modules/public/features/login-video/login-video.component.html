@@ -11,10 +11,9 @@
         <div class="login-video__content__body">
             <form [formGroup]="formLogin">
                 <div class="form-group">
-                    <label for="user">Tài khoản</label>
+                    <label for="user">Email</label>
                     <input type="text" class="form-control" id="user" formControlName="username"
-                        placeholder="Tên tài khoản đăng nhập" autocomplete="username"
-                        (keydown.enter)="btnSignIn($event)">
+                        placeholder="Email đăng nhập" autocomplete="username" (keydown.enter)="btnSignIn($event)">
                 </div>
                 <div class="form-group mb-30 position-relative">
 

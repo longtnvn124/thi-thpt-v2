@@ -71,7 +71,7 @@ const appVersion = '1.0.0';
 
 export const APP_CONFIGS = {
   defaultRedirect: '/admin',
-  pageTitle: 'Phần mềm Quản lý Thi THPT V1',
+  pageTitle: 'VSAT - Đăng ký thi đánh giá năng lực phổ thông',
   multiLanguage: true,
   defaultLanguage: appDefaultLanguage, // không được bỏ trống trường này ngay cả khi multiLanguage = false
   languages: appLanguages,

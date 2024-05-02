@@ -5,7 +5,7 @@ import { HttpParamsHeplerService } from "@core/services/http-params-hepler.servi
 import { ThemeSettingsService } from "@core/services/theme-settings.service";
 import { map, Observable } from "rxjs";
 
-import { Dto, OvicConditionParam } from "@core/models/dto";
+import { Dto, OvicConditionParam, OvicQueryCondition } from "@core/models/dto";
 
 export interface DmPhongThi {
   id?: number;
@@ -54,5 +54,24 @@ export class DanhMucPhongThiService {
 
   delete(id: number): Observable<any> {
     return this.http.delete(''.concat(this.api, id.toString(10)));
+  }
+
+  getDataUnlimit(): Observable<DmPhongThi[]> {
+    const conditions: OvicConditionParam[] = [
+      {
+        conditionName: 'is_deleted',
+        condition: OvicQueryCondition.equal,
+        value: '0',
+      },
+    ];
+
+    const fromObject = {
+      paged: 1,
+      limit: -1,
+      orderby: 'id',
+      order: 'ASC'
+    };
+    const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }));
+    return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data));
   }
 }

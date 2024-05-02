@@ -1,23 +1,23 @@
-import { AuthService } from '@core/services/auth.service';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { getRoute } from "@env";
-import { HttpClient, HttpParams } from "@angular/common/http";
-import { HttpParamsHeplerService } from "@core/services/http-params-hepler.service";
-import { ThemeSettingsService } from "@core/services/theme-settings.service";
-import { ThptHoiDongThiSinh } from "@shared/models/thpt-model";
-import { Dto, OvicConditionParam, OvicQueryCondition } from "@core/models/dto";
-import { Observable } from "rxjs";
-import { map } from "rxjs/operators";
-import { KeHoachThi } from "@shared/services/thpt-kehoach-thi.service";
+import { OvicConditionParam, Dto, OvicQueryCondition } from '@core/models/dto';
+import { AuthService } from '@core/services/auth.service';
+import { HttpParamsHeplerService } from '@core/services/http-params-hepler.service';
+import { ThemeSettingsService } from '@core/services/theme-settings.service';
+import { getRoute } from '@env';
+import { Observable, map } from 'rxjs';
+import { ThptHoiDongThiSinh } from '../models/thpt-model';
+import { KeHoachThi } from './thpt-kehoach-thi.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ThptHoidongThisinhService {
-  private readonly api = getRoute('thpt-hoidong-thisinh/');
+export class ThptPhongthiThisinhService {
+
+  private readonly api = getRoute('thpt-phongthi-thisinh/');
 
   constructor(
-    private http: HttpClient,
+    private http: HttpClient, 
     private httpParamsHelper: HttpParamsHeplerService,
     private themeSettingsService: ThemeSettingsService,
     private auth: AuthService
@@ -192,5 +192,4 @@ export class ThptHoidongThisinhService {
     const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }).set('with', 'thisinh,orders'));
     return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data));
   }
-
 }

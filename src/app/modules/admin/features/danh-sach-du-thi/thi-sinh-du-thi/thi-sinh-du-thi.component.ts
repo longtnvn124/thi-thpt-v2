@@ -115,8 +115,6 @@ export class ThiSinhDuThiComponent implements OnInit {
           const monhoc = m['monhoc'].map(m => {
             return { tohopmon: this.dmToHopMon.find(f => f.id === m['tohop_monhoc']) ? this.dmToHopMon.find(f => f.id === m['tohop_monhoc'])['__tentohop_covered'] : null, tenmon: m['tenmon'] };
           });
-          console.log(monhoc  );
-
           const uniqueTohop = this.uniqueTohop(monhoc);
           m['_indexTable'] = page > 10 ? (page * 10 + index++) : index++;
           m['_thisinh_hoten'] = thi_sinh ? thi_sinh['hoten'] : '';

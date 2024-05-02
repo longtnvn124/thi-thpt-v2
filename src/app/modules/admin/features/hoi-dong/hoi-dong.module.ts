@@ -11,12 +11,13 @@ import { TableModule } from "primeng/table";
 import { SharedModule } from "../../../shared/shared.module";
 import { ReactiveFormsModule } from "@angular/forms";
 import { PhongThiComponent } from './hoi-dong-thi/phong-thi/phong-thi.component';
-import {MultiSelectModule} from "primeng/multiselect";
-import {TooltipModule} from "primeng/tooltip";
-import {SplitterModule} from "primeng/splitter";
-import {PaginatorModule} from "primeng/paginator";
-import {MatProgressBarModule} from "@angular/material/progress-bar";
+import { MultiSelectModule } from "primeng/multiselect";
+import { TooltipModule } from "primeng/tooltip";
+import { SplitterModule } from "primeng/splitter";
+import { PaginatorModule } from "primeng/paginator";
+import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { AddThiSinhComponent } from './hoi-dong-thi/add-thi-sinh/add-thi-sinh.component';
+import {RadioButtonModule} from "primeng/radiobutton";
 @NgModule({
     declarations: [
         HoiDongThiComponent,
@@ -37,7 +38,9 @@ import { AddThiSinhComponent } from './hoi-dong-thi/add-thi-sinh/add-thi-sinh.co
         TooltipModule,
         SplitterModule,
         PaginatorModule,
-        MatProgressBarModule
+        MatProgressBarModule,
+        RadioButtonModule,
+
     ]
 })
 export class HoiDongModule { }

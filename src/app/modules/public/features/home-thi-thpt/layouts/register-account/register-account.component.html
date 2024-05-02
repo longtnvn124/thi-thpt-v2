@@ -8,12 +8,10 @@
         <form [formGroup]="formSave" autocomplete="off">
           <div class="row row-cols-1">
             <div class="mb-3  col-12 col-lg-6">
-              <fieldset class="register-form-row"
-                [class.fieldset--error]="f['username'].touched && f['username'].invalid"
-                [class.fieldset--invalid]="f['username'].touched && f['username'].valid">
-                <label class="register-form-row__label">Tài khoản <span class="ovic-mark">*</span></label>
-                <input class="register-form-row__input" type="text" placeholder="Tài khoản" formControlName="username"
-                  autocomplete="off">
+              <fieldset class="register-form-row" [class.fieldset--error]="f['phone'].touched && f['phone'].invalid"
+                [class.fieldset--invalid]="f['phone'].touched && f['phone'].valid">
+                <label>Số điện thoại <span class="ovic-mark">*</span></label>
+                <input type="text" placeholder="Số điện thoại" formControlName="phone" autocomplete="off">
               </fieldset>
             </div>
             <div class="mb-3  col-12 col-lg-6 ovic-pl-0">
@@ -22,15 +20,6 @@
                 [class.fieldset--invalid]="f['display_name'].touched && f['display_name'].valid">
                 <label>Tên hiển thị <span class="ovic-mark">*</span></label>
                 <input type="text" placeholder="Tên hiển thị" formControlName="display_name" autocomplete="off">
-              </fieldset>
-            </div>
-          </div>
-          <div class="row mb-3 ">
-            <div class="col">
-              <fieldset class="register-form-row" [class.fieldset--error]="f['phone'].touched && f['phone'].invalid"
-                [class.fieldset--invalid]="f['phone'].touched && f['phone'].valid">
-                <label>Số điện thoại <span class="ovic-mark">*</span></label>
-                <input type="text" placeholder="Số điện thoại" formControlName="phone" autocomplete="off">
               </fieldset>
             </div>
           </div>
@@ -78,8 +67,11 @@
       <div class="register-footer">
         <div *ngIf="type_check_valid === 1"
           class="test-member__from__col test-member-size--max pb-0 justify-content-center">
-          <button (click)="btnRegisterForm()" class="p-button-success test-member__from__btn-submit" pButton pRipple
-            icon="pi pi-file-edit" label="Đăng ký"></button>
+          <button *ngIf="!formSave.valid" disabled class="p-button-success test-member__from__btn-submit" pButton
+            pRipple icon="pi pi-file-edit" label="Đăng ký"></button>
+          <button *ngIf="formSave.valid" (click)="btnRegisterForm()"
+            class="p-button-success test-member__from__btn-submit" pButton pRipple icon="pi pi-file-edit"
+            label="Đăng ký"></button>
 
         </div>
         <div *ngIf="type_check_valid === 2"

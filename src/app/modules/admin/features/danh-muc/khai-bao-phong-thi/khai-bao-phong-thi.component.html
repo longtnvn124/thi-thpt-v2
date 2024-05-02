@@ -14,19 +14,19 @@
               <div class="col-3">
                 <div class="form-row">
                   <label for="">Từ phòng</label>
-                  <input type="number" [(ngModel)]="item.fromAt" (ngModelChange)="updateContentByInput(item)">
+                  <input type="number" [(ngModel)]="item.fromAt" (ngModelChange)="onInputChange(item)">
                 </div>
               </div>
               <div class="col-4">
                 <div class="form-row" [class.fieldset--error]="formSave.invalid">
                   <label for="">Đến phòng</label>
-                  <input type="number" [(ngModel)]="item.toAt" (ngModelChange)="updateContentByInput(item)">
+                  <input type="number" [(ngModel)]="item.toAt" (ngModelChange)="onInputChange(item)">
                 </div>
               </div>
               <div class="col-4">
                 <div class="form-row">
                   <label for="">Số lượng thí sinh/ 1 phòng</label>
-                  <input type="number" [(ngModel)]="item.soluong" (ngModelChange)="updateContentByInput(item)">
+                  <input type="number" [(ngModel)]="item.soluong" (ngModelChange)="onInputChange(item)">
                 </div>
               </div>
               <div class="col-1">

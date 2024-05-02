@@ -13,17 +13,17 @@
       <div class="thpt-form-data ovic-side-navigation-content --no-footer">
         <div class="ovic-vertical__inputs ovic-vertical__inputs--layout-2">
           <form [formGroup]="formSave" autocomplete="off">
-            <div class="row row-cols-1">
+            <div class="row ">
               <div class="col-12 col-lg-8">
-                <div class="row ">
-                  <div class="col">
+                <div class="row row-cols-2">
+                  <div class="col col-lg-6 col-xl-6">
                     <div class="form-row" [class.fieldset--error]="f['hoten'].touched && f['hoten'].invalid"
                       [class.fieldset--invalid]="f['hoten'].touched && f['hoten'].valid">
                       <label>Họ và tên <span class="ovic-mark">*</span></label>
                       <input pInputText type="text" placeholder="Họ và tên" formControlName="hoten" autocomplete="off">
                     </div>
                   </div>
-                  <div class="col ovic-pl-0">
+                  <div class="col col-lg-6 col-xl-6 ovic-pl-0">
                     <div class="form-row" [class.fieldset--error]="f['phone'].touched && f['phone'].invalid"
                       [class.fieldset--invalid]="f['phone'].touched && f['phone'].valid">
                       <label>Số điện thoại<span class="ovic-mark">*</span></label>
@@ -32,8 +32,8 @@
                     </div>
                   </div>
                 </div>
-                <div class="row">
-                  <div class="col">
+                <div class="row row-cols-2">
+                  <div class="col col-lg-6 col-xl-6">
                     <div class="form-row" [class.fieldset--error]="f['ngaysinh'].touched && f['ngaysinh'].invalid"
                       [class.fieldset--invalid]="f['ngaysinh'].touched && f['ngaysinh'].valid">
                       <label>Ngày sinh <span class="ovic-mark">*</span></label>
@@ -45,7 +45,7 @@
                     </div>
 
                   </div>
-                  <div class="col ">
+                  <div class="col col-lg-6 col-xl-6 ">
                     <div class="form-row" [class.fieldset--error]="f['gioitinh'].touched && f['gioitinh'].invalid"
                       [class.fieldset--invalid]="f['gioitinh'].touched && f['gioitinh'].valid">
                       <label>Giới tính<span class="ovic-mark">*</span></label>
@@ -54,8 +54,8 @@
                     </div>
                   </div>
                 </div>
-                <div class="row">
-                  <div class="col">
+                <div class="row row-cols-2">
+                  <div class="col col-lg-6 col-xl-6">
                     <div class="form-row" [class.fieldset--error]="f['dantoc'].touched && f['dantoc'].invalid"
                       [class.fieldset--invalid]="f['dantoc'].touched && f['dantoc'].valid">
                       <label>Dân tộc <span class="ovic-mark">*</span></label>
@@ -65,7 +65,7 @@
                     </div>
 
                   </div>
-                  <div class="col ">
+                  <div class="col col-lg-6 col-xl-6 ">
                     <div class="form-row">
                       <label>Tôn giáo</label>
                       <input pInputText type="text" placeholder="vd:không,..." formControlName="tongiao"
@@ -73,8 +73,8 @@
                     </div>
                   </div>
                 </div>
-                <div class="row">
-                  <div class="col">
+                <div class="row row-cols-1">
+                  <div class="col col-lg-6 col-xl-6">
                     <div class="form-row" [class.fieldset--error]="f['noisinh'].touched && f['noisinh'].invalid"
                       [class.fieldset--invalid]="f['noisinh'].touched && f['noisinh'].valid">
                       <label>Nơi sinh <span class="ovic-mark">*</span></label>
@@ -84,7 +84,7 @@
                     </div>
 
                   </div>
-                  <div class="col ">
+                  <div class="col col-lg-6 col-xl-6 ">
                     <div class="form-row" [class.fieldset--error]="f['noisinhkhac'].touched && f['noisinhkhac'].invalid"
                       [class.fieldset--invalid]="f['noisinhkhac'].touched && f['noisinhkhac'].valid">
                       <label>Nơi sinh khác</label>
@@ -93,7 +93,7 @@
                   </div>
                 </div>
               </div>
-              <div class="col-12 col-lg-4">
+              <div class="mar-14px col-12 col-lg-4">
                 <ovic-avata-type-thpt [disabled]=" f['status'].value ===1" [formField]="f['anh_chandung']"
                   [aspectRatio]="2 / 3" [accept]="['.jpg', '.png', '.jpeg']"
                   [textView]="'Tải ảnh chân dung'"></ovic-avata-type-thpt>
@@ -113,12 +113,12 @@
                 <div class="form-row">
                   <label for=></label>
                   <div class="row w-100 m-0">
-                    <div class=" col-12 col-lg-6 ">
+                    <div class="p-0 col-12 col-lg-6 ">
                       <ovic-avata-type-thpt [formField]="f['cccd_img_truoc']" [aspectRatio]="5 / 3"
                         [disabled]=" f['status'].value ===1" [accept]="['.jpg', '.png', '.jpeg']"
                         [textView]="'Tải ảnh CCCD mặt trước'"></ovic-avata-type-thpt>
                     </div>
-                    <div class=" col-12 col-lg-6 ">
+                    <div class="p-0 col-12 col-lg-6 ">
                       <ovic-avata-type-thpt [formField]="f['cccd_img_sau']" [aspectRatio]="5 / 3"
                         [disabled]=" f['status'].value ===1" [accept]="['.jpg', '.png', '.jpeg']"
                         [textView]="'Tải ảnh CCCD mặt sau'"></ovic-avata-type-thpt>
@@ -204,8 +204,8 @@
                 <div class="form-row">
                   <label>Lớp 10<span class="ovic-mark">*</span></label>
                   <div class="w-100 form-row-ilement">
-                    <div class="row">
-                      <div class="col col-lg- col-md-63">
+                    <div class="row row-cols-2">
+                      <div class="col col-lg-3 col-md-6">
                         <div class="form-row"
                           [class.fieldset--error]="f['lop10_thanhpho'].touched && f['lop10_thanhpho'].invalid"
                           [class.fieldset--invalid]="f['lop10_thanhpho'].touched && f['lop10_thanhpho'].valid">
@@ -251,7 +251,7 @@
                 <div class="form-row">
                   <label>Lớp 11<span class="ovic-mark">*</span></label>
                   <div class="w-100 form-row-ilement">
-                    <div class="row">
+                    <div class="row row-cols-2">
                       <div class="col col-lg-3 col-md-6">
                         <div class="form-row"
                           [class.fieldset--error]="f['lop11_thanhpho'].touched && f['lop11_thanhpho'].invalid"
@@ -297,7 +297,7 @@
                 <div class="form-row">
                   <label>Lớp 12<span class="ovic-mark">*</span></label>
                   <div class="w-100 form-row-ilement">
-                    <div class="row">
+                    <div class="row row-cols-2">
                       <div class="col col-lg-3 col-md-6">
                         <div class="form-row"
                           [class.fieldset--error]="f['lop12_thanhpho'].touched && f['lop12_thanhpho'].invalid"
@@ -339,7 +339,7 @@
               </div>
 
             </div>
-            <div class="row">
+            <div class="row row-cols-2">
               <div class="col-12 col-lg-6 col-md-6">
                 <div class="form-row">
                   <label>Người nhận Phiếu điểm <span class="ovic-mark">*</span></label>

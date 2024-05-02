@@ -1,4 +1,4 @@
-.checkPhieunhan{
+.checkPhieunhan {
   display: flex;
   justify-content: center;
   margin-top: 11px;
@@ -6,4 +6,10 @@
   gap: 10px;
   border: 1px solid #ccc;
 
+}
+
+@media(max-width :1024px) {
+  .mar-14px {
+    margin-top: 20px;
+  }
 }

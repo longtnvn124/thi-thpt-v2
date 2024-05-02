@@ -1,3 +1,4 @@
+import { ThptPhongthiThisinhService } from './../../../../../shared/services/thpt-phongthi-thisinh.service';
 import { ThemeSettingsService } from './../../../../../../core/services/theme-settings.service';
 import { Observable, interval, of } from 'rxjs';
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
@@ -8,19 +9,20 @@ import { OrdersMonhocTHPT, ThptOrderMonhocService } from '@modules/shared/servic
 import { DanhMucMonService } from "@shared/services/danh-muc-mon.service";
 import { DanhMucToHopMonService } from "@shared/services/danh-muc-to-hop-mon.service";
 import { KeHoachThi, ThptKehoachThiService } from "@shared/services/thpt-kehoach-thi.service";
-import { ThptOrdersService } from "@shared/services/thpt-orders.service";
-import { forkJoin, switchMap } from 'rxjs';
-import { AbstractControl, FormBuilder, FormGroup } from "@angular/forms";
+import { forkJoin } from 'rxjs';
+import { AbstractControl, FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { ThptHoiDongPhongThi, ThptHoiDongThiSinh } from "@shared/models/thpt-model";
 import { ThptHoidongPhongthiService } from "@shared/services/thpt-hoidong-phongthi.service";
 import { ThptHoidongThisinhService } from '@modules/shared/services/thpt-hoidong-thisinh.service';
 import { Paginator } from "primeng/paginator";
 import { NgPaginateEvent } from "@shared/models/ovic-models";
 import { ExpostExcelPhongthiThisinhService } from '@modules/shared/services/expost-excel-phongthi-thisinh.service';
-import { take } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { WAITING_POPUP } from "@shared/utils/syscat";
 import { SenderEmailService } from '@modules/shared/services/sender-email.service';
+import { DanhMucPhongThiService, DmPhongThi } from "@shared/services/danh-muc-phong-thi.service";
+import { ThiSinhService } from '@modules/shared/services/thi-sinh.service';
 @Component({
   selector: 'app-phong-thi',
   templateUrl: './phong-thi.component.html',
@@ -32,7 +34,7 @@ export class PhongThiComponent implements OnInit {
   @ViewChild(Paginator) paginator: Paginator;
   @ViewChild('templateWaiting') templateWaiting: ElementRef;
   hoiDongData: ThptHoiDong;
-  TypeChangePage: 0 | 1 | 2 | 3 = 0; // 0: not data room//1:have data room //3:showDataroom
+  TypeChangePage: -1 | 0 | 1 | 2 | 3 = 0; // 0: not data room//1:have data room //3:showDataroom -1 load
 
   dmMon: DmMon[];
   dmToHopMon: DmToHopMon[];
@@ -47,6 +49,16 @@ export class PhongThiComponent implements OnInit {
   recordsTotal: number = 0;
   rows = this.themeSettingsService.settings.rows;
   thptThisinh: ThptHoiDongThiSinh[];
+
+
+  dataPhongThi: { phongthi: number, soluong: number }[] = [];
+  danhmucPhongThi: DmPhongThi[];
+  radioButton = [
+    { id: '1', label: "Sắp xếp Ngẫn nhiên", value: 'NN' },
+    { id: '2', label: "Sắp xếp từ a -> z", value: 'AZ' },
+  ]
+
+
   constructor(
     private themeSettingsService: ThemeSettingsService,
     private hoiDongService: ThptHoiDongService,
@@ -54,32 +66,23 @@ export class PhongThiComponent implements OnInit {
     private monService: DanhMucMonService,
     private tohopmonService: DanhMucToHopMonService,
     private kehoachThiService: ThptKehoachThiService,
-    private orderService: ThptOrdersService,
-    private orderMonHocService: ThptOrderMonhocService,
     private fb: FormBuilder,
     private hoidongPhongthiService: ThptHoidongPhongthiService,
     private hoidongThisinhService: ThptHoidongThisinhService,
     private exportExcelService: ExpostExcelPhongthiThisinhService,
     private modalService: NgbModal,
-    private senderEmailService: SenderEmailService
+    private senderEmailService: SenderEmailService,
+    private danhMucPhongThiService: DanhMucPhongThiService,
+    private phongthiThisinhService: ThptPhongthiThisinhService
   ) {
     this.formSave = this.fb.group({
+      ten_cathi: ['', Validators.required],
       hoidong_id: [this.hoidong_id],
       kehoach_id: [this.kehoach_id],
-      monthi: [null],
-      soluong_thisinh: [null],
-      soluong_phongthi: [null]
-    })
-    this.formPhongthi = this.fb.group({
-      kehoach_id: [null],
-      hoidong_id: [null],
-      mota: [""],
-      sothisinh: [null],
-      canbo_coithi: [''],
-      ma_phongthi: [''],
-      ten_phongthi: ['']
-    })
-
+      monthi: [null, Validators.required],
+      type_sapxep: ['NN', Validators.required],
+      tiento: ['', Validators.required]
+    });
   }
 
 
@@ -91,13 +94,14 @@ export class PhongThiComponent implements OnInit {
 
   loadInit() {
     this.notifi.isProcessing(true);
-
+    this.TypeChangePage = -1;
     this.hoiDongService.getHoidongonly(this.hoidong_id).subscribe({
       next: (data) => {
         this.hoiDongData = data;
         this.loadDmData(data.id);
+
         this.notifi.isProcessing(false);
-      }, error: (err) => {
+      }, error: () => {
         this.notifi.isProcessing(false);
         this.notifi.toastError('Mất kết nối với máy chủ');
       }
@@ -107,20 +111,23 @@ export class PhongThiComponent implements OnInit {
 
   loadDmData(kehoach_id: number) {
     this.notifi.isProcessing(true);
-    forkJoin<[DmMon[], DmToHopMon[], KeHoachThi]>([
+    forkJoin<[DmMon[], DmToHopMon[], KeHoachThi, DmPhongThi[]]>([
       this.monService.getDataUnlimit(),
       this.tohopmonService.getDataUnlimit(),
       this.kehoachThiService.getDataById(kehoach_id),
+      this.danhMucPhongThiService.getDataUnlimit()
 
     ]).subscribe({
-      next: ([mon, tohopmon, kehoachthi]) => {
+      next: ([mon, tohopmon, kehoachthi, dmPhonthi]) => {
         this.dmMon = mon;
         this.dmToHopMon = tohopmon;
         this.keHoachThi = kehoachthi;
+        this.danhmucPhongThi = dmPhonthi;
+        this.notifi.isProcessing(false);
+        this.dataPhongThi = this.convertData(this.danhmucPhongThi);
 
         this.loadDataPhongthi(this.kehoach_id, this.hoidong_id);
-        this.notifi.isProcessing(false);
-      }, error: (e) => {
+      }, error: () => {
         this.notifi.toastError('Mất kết nối với máy chủ');
         this.notifi.isProcessing(false);
       }
@@ -131,43 +138,166 @@ export class PhongThiComponent implements OnInit {
   }
 
 
-  checkThisinh() {
-    const tenmon = this.f['monthi'].value;
-    if (tenmon) {
-      this.loadingBtn = true;
-      this.notifi.isProcessing(true);
-      const kehoach_id = this.kehoach_id;
-      this.orderService.getDataByKehoachIdAndStatus(kehoach_id).pipe(switchMap(m => {
-        const ids = m.map(c => c.id.toString());
-        return forkJoin([of(m), this.orderMonHocService.getDataByKehoachIdAndOrderIds(ids, this.kehoach_id)]);
-      })).subscribe({
-        next: ([data1, data2]) => {
-
-          const data = data2.filter(f => tenmon.includes(f.tenmon)).map(m => {
-            const thisinh = m['thisinh'];
-            m['_thisinh_ten'] = thisinh ? thisinh['ten'] : '';
-            return m
-          });
-          this.thisinhOrder = this.collectData(data);
-          this.notifi.toastSuccess('load dữ liệu thành công!');
-          this.loadingBtn = false;
-
-        }, error: (e) => {
-          this.loadingBtn = false;
-          this.notifi.isProcessing(false);
-          this.notifi.toastError('load dữ liệu không thành công');
-        }
-      })
-    } else {
-      this.notifi.toastWarning('Vui lòng chọn môn học');
+  convertData(data: DmPhongThi[]) {
+    let result: any[] = [];
+    for (let item of data) {
+      let start = item.fromAt;
+      let end = item.toAt;
+      let soluong = item.soluong;
+      for (let i = start; i <= end; i++) {
+        result.push({ soluong: soluong, phongso: i });
+      }
     }
+    return result;
+  }
+
+  selectThisinhWithMonthi() {
+    this.notifi.isProcessing(true);
+    this.hoidongThisinhService.getDataByHoidongIdUnlimit(this.hoidong_id).subscribe({
+      next: (data) => {
+
+        const dataThisinhdanhky = data.map(m => {
+          const _dataOrder = m['orders'];
+
+          let mon_ids: number[] = [];
+          if (_dataOrder) {
+            _dataOrder.forEach(element => {
+              mon_ids = mon_ids.concat(element['mon_id']);
+            })
+            m['_monthi_ids'] = mon_ids;
+          } else {
+            m['_monthi_ids'] = [];
+          }
+
+          const thisinh = m['thisinh'];
+          m['_thisinh_ten'] = thisinh ? thisinh['ten'] : '';
+          return m;
+        })
+        this.thptThisinh = this.sortByFirstLetterAlternate(dataThisinhdanhky);
+        this.checkThiSinh();
+        this.notifi.isProcessing(false);
+      }, error: () => {
+        this.notifi.isProcessing(false);
+      }
+    })
+  }
+
+  checkThiSinh() {
+    if (this.formSave.valid) {
+      const monSelect = this.f['monthi'].value;
+      const typeSelect = this.f['type_sapxep'].value;
+      let check: boolean = true;
+      this.modalService.open(this.templateWaiting, WAITING_POPUP);
+      monSelect.forEach(item => {
+        let sobaodanh_index = 1;
+        const thisinh = this.thptThisinh.filter(f => f['_monthi_ids'].includes(item));
+        console.log(this.taoSoPhong(this.dataPhongThi, thisinh, typeSelect));
+
+        const phongthi = this.taoSoPhong(this.dataPhongThi, thisinh, typeSelect)
+        if (phongthi.length > 0) {
+          phongthi.forEach((phongthi, index) => {
+            const phongthiNew: { id?: number, thisinh_ids: number[], monthi_ids: number[], ma_phongthi: string, ten_phongthi: string, hoidong_id: number, kehoach_id: number, sothisinh:number } = {
+              kehoach_id: this.kehoach_id,
+              hoidong_id: this.hoidong_id,
+              monthi_ids: [].concat(item),
+              sothisinh: phongthi.soluong,
+              thisinh_ids: phongthi.thisinh_ids,
+              ma_phongthi: this.dmMon.find(f => f.id === item).kyhieu + '.P' + '.' + (index + 1),
+              ten_phongthi: this.dmMon.find(f => f.id === item).tenmon + "(Phòng " + (index + 1) + ', ' + this.f["ten_cathi"].value + ', ' + (this.dmMon.find(f => f.id === item).kyhieu + '.P' + '.' + (index + 1)) + '.' + this.kehoach_id + '.' + this.hoidong_id + ')',
+            }
+            console.log(phongthiNew);
+            this.notifi.isProcessing(true);
+            this.hoidongPhongthiService.create(phongthiNew).subscribe({
+              next: (id) => {
+                check = true;
+                phongthiNew.id = id;
+                const thisinhids = phongthiNew.thisinh_ids;
+                thisinhids.forEach(thisinhid => {
+                  const newThiSinh = {
+                    phongthi_id: phongthiNew.id,
+                    kehoach_id: this.kehoach_id,
+                    hoidong_id: this.hoidong_id,
+                    sobaodanh: this.dmMon.find(f => f.id === item).kyhieu + '.' + sobaodanh_index,
+                    thisinh_id: thisinhid
+                  }
+                  sobaodanh_index++;
+                  console.log(newThiSinh);
+                  this.phongthiThisinhService.create(newThiSinh).subscribe({
+                    next: (id) => {
+                      check = true;
+                      this.notifi.isProcessing(false);
+
+                    }, error: () => {
+                      check = false;
+                      this.notifi.isProcessing(false);
+                    }
+                  })
+                })
+
+              }, error: () => {
+                this.notifi.isProcessing(false);
+                check = false;
+
+              }
+            })
+
+          });
+        } else {
+          console.log('Không có phòng thi nào hợp lệ');
+
+        }
+      });
+      this.modalService.dismissAll();
+      if (check) {
+        this.notifi.toastSuccess('Tạo phòng thi Thành công');
+      } else {
+        this.notifi.toastError("Tạo phong thi không thành công");
+      }
 
 
+    } else {
+      this.notifi.toastError('Vui lòng kiểm tra lại thông tin nhập');
+    }
+  }
+
+  taoSoPhong(dsPhong, dsThiSinh: ThptHoiDongThiSinh[], type: 'NN' | 'AZ') {
+    // Tạo mảng phòng với số lượng thí sinh ban đầu là 0
+    const phongCanThiet = dsPhong.map((phong, index) => ({ phongso: phong.phongso, soluong: phong.soluong, thisinh_ids: [] }));
+    // Phân bổ thí sinh vào các phòng
+    if (type === "NN") {
+      let indexPhong = 0;
+      for (let i = 0; i < dsThiSinh.length; i++) {
+        const thiSinh = dsThiSinh[i];
+        if (phongCanThiet[indexPhong].thisinh_ids.length >= phongCanThiet[indexPhong].soluong) {
+          indexPhong++;
+        }
+        phongCanThiet[indexPhong].thisinh_ids.push(thiSinh.thisinh_id);
+      }
+      console.log(indexPhong);
+      return phongCanThiet.filter(phong => phong.thisinh_ids.length > 0);
+
+    }
+    if (type === "AZ") {
+      let indexPhong = 0;
+      let thisinh_length = dsThiSinh.length;
+      const dsPhongNew = []
+      for (let item of phongCanThiet) {
+        if (thisinh_length <= 0) break; // Điều kiện dừng
+        console.log(item);
+        dsPhongNew.push(item);
+        thisinh_length -= item.soluong;
+      }
+
+      for (let i = 0; i < dsThiSinh.length; i++) {
+        dsPhongNew[i % dsPhongNew.length].thisinh_ids.push(dsThiSinh[i].thisinh_id);
+      }
+      console.log(dsPhongNew);
+      return dsPhongNew;
+    }
   }
 
 
-
-  sortByFirstLetterAlternate(arr: OrdersMonhocTHPT[]) {
+  sortByFirstLetterAlternate(arr: ThptHoiDongThiSinh[]) {
     if (arr.length <= 0) {
       return arr;
     } else {
@@ -183,317 +313,23 @@ export class PhongThiComponent implements OnInit {
 
   }
 
-  collectData(data: OrdersMonhocTHPT[]) {
-    const uniqueObjects = data.reduce((acc, obj) => {
-      if (!acc.find(item => item.order_id === obj.order_id)) {
-        acc.push(obj);
-      }
-      return acc;
-    }, []);
-    // return uniqueObjects;
-    if (uniqueObjects.length <= 0) {
-      return uniqueObjects;
-    } else {
-      const sortedByFirstLetter = uniqueObjects.sort((a, b) => {
-        const nameA = a['_thisinh_ten'].charAt(0).toUpperCase();
-        const nameB = b['_thisinh_ten'].charAt(0).toUpperCase();
-        if (nameA < nameB) return -1;
-        if (nameA > nameB) return 1;
-        return 0;
-      });
-      return sortedByFirstLetter;
-    }
-
-
-  }
-
-
-  CreateRooms() {
-    const soluong_thisinh_1phong = this.f['soluong_thisinh'].value;
-    const soluong_thisinh = this.thisinhOrder ? this.thisinhOrder.length : null;
-    const monSelect = this.f['monthi'].value;
-
-    if (this.thisinhOrder && soluong_thisinh_1phong) {
-      if (soluong_thisinh < soluong_thisinh_1phong) {
-        this.notifi.toastWarning('Số lượng thí sinh trên 1 phòng thi không phù hợp');
-      }
-      else {
-        this.notifi.toastSuccess('Số lượng thí sinh phù hợp');
-        this.createdDatasRoom(this.thisinhOrder, soluong_thisinh_1phong, monSelect)
-      }
-    } else {
-      this.notifi.toastWarning('Bạn chưa kiểm tra số lượng thi sinh đăng ký hoặc chưa nhập số lượng thí sinh trên 1 phòng');
-    }
-  }
-
-  room: ThptHoiDongPhongThi[];
-
-  createdDatasRoom(thisinh: OrdersMonhocTHPT[], numofRooms: number, monSelect: number[]) {
-
-
-    const monSelecttoString = monSelect.map(m => this.dmMon.find(f => f.id === m).tenmon).join(', ');
-    const rooms: ThptHoiDongPhongThi[] = [];
-    for (let i = 1; i <= numofRooms; i++) {
-      const index = i < 10 ? '00' + i : i >= 10 && i < 100 ? '0' + i : i;
-      const item: ThptHoiDongPhongThi = {
-        ten_phongthi: 'Phòng thi' + i + '(' + 'Môn thi: ' + monSelecttoString + ')' + '(P' + index + '.' + this.kehoach_id + '.' + this.hoidong_id + ')',
-        kehoach_id: this.kehoach_id,
-        status: 1,
-        mota: '',
-        hoidong_id: this.hoidong_id,
-        sothisinh: 0,
-        canbo_coithi: '',
-        thisinh_ids: [],
-        monthi_ids: monSelect,
-        ma_phongthi: 'P' + index + '.' + this.kehoach_id + '.' + this.hoidong_id
-      }
-      rooms.push(item);
-    }
-    for (let i = 0; i < thisinh.length; i++) {
-      rooms[i % rooms.length].thisinh_ids.push(thisinh[i].thisinh_id);
-      rooms[i % rooms.length].sothisinh = rooms[i % rooms.length].thisinh_ids.length;
-    }
-
-    if (rooms) {
-      rooms.forEach((e, index) => {
-        setTimeout(() => {
-          this.notifi.isProcessing(true);
-          this.hoidongPhongthiService.create(e).subscribe({
-            next: (id) => {
-              e['id'] = id;
-              this.createThisinhInPhongthi(e);
-              this.notifi.toastSuccess('Tạo phòng thi thành công');
-              this.notifi.isProcessing(false);
-            }, error: () => {
-              this.notifi.toastError('Tạo phòng thi không thành công');
-              this.notifi.isProcessing(false);
-            }
-          })
-        }, index * 1000);
-      })
-    }
-
-  }
-
-
-  createThisinhInPhongthi(phongthi: ThptHoiDongPhongThi) {
-    const thisinhIds = phongthi.thisinh_ids;
-    let i = 1;
-
-    thisinhIds.forEach((item, index) => {
-      const index_coverted = i < 10 ? '00' + i : i >= 10 && i < 100 ? '0' + i : i;
-      const data: ThptHoiDongThiSinh = {
-        hoidong_id: phongthi.hoidong_id,
-        monthi_ids: phongthi.monthi_ids,
-        phongthi_id: phongthi.id,
-        thisinh_id: item,
-        sobaodanh: phongthi.ma_phongthi + '.' + index_coverted
-      }
-      i++;
-
-      setTimeout(() => {
-        this.hoidongThisinhService.create(data).subscribe({
-          next: (id) => {
-            this.notifi.toastSuccess('Thành công');
-          }, error: () => {
-            this.notifi.toastError('Mất kết nối với máy chủ');
-          }
-        })
-      }, index * 1000);
-    });;
-
-    this.loadDataPhongthi(this.kehoach_id, this.hoidong_id);
-
-  }
-
   loadDataPhongthi(kehoach_id: number, hoidong_id: number) {
     this.hoidongPhongthiService.getDataByKehoachIdAndHoidongId(kehoach_id, hoidong_id).subscribe({
       next: (data) => {
+        this.TypeChangePage = 1;
         this.hoiDongPhongThi = data.map(m => {
           m['__monthi'] = m.monthi_ids.map(f => this.dmMon.find(c => c.id === f).tenmon).join(', ');
           return m;
         })
+        console.log(this.hoiDongPhongThi);
+
         this.notifi.isProcessing(false);
       }, error: () => {
+        this.TypeChangePage = 0;
         this.notifi.isProcessing(false);
+        this.notifi.toastWarning('Load dữ liệu không thành công');
       }
     })
-  }
 
-
-  showThisinhInPhong(item: ThptHoiDongPhongThi) {
-    this.notifi.isProcessing(true);
-    this.formPhongthi.reset({
-      kehoach_id: item.kehoach_id,
-      hoidong_id: item.hoidong_id,
-      mota: item.mota,
-      sothisinh: item.sothisinh,
-      canbo_coithi: item.canbo_coithi,
-      ma_phongthi: item.ma_phongthi,
-      ten_phongthi: item.ten_phongthi
-    })
-    this.hoiDongPhongThiSelect = item;
-    this.getdataphongthithisisnh(1, item);
-  }
-
-  getdataphongthithisisnh(page, item: ThptHoiDongPhongThi) {
-    this.hoidongThisinhService.getDataByPhongthiAndHoidongId(this.page, item.id, item.hoidong_id).subscribe({
-      next: ({ recordsTotal, data }) => {
-        this.recordsTotal = recordsTotal;
-        this.TypeChangePage = 3;
-        let index = 1;
-        this.thptThisinh = data.map(m => {
-          m['__stt'] = index++;
-          const thisinh = m['thisinh'];
-          m['__hoten'] = thisinh ? thisinh['hoten'] : '';
-          m['__email'] = thisinh ? thisinh['email'] : '';
-          m['__phone'] = thisinh ? thisinh['phone'] : '';
-          m['__adress'] = thisinh ? thisinh['noisinh'] : '';
-          m['__dob'] = thisinh ? thisinh['ngaysinh'] : '';
-          m['__sex'] = thisinh && thisinh['gioitinh'] === 'nam' ? 'Nam' : 'Nữ';
-          return m;
-        });
-        this.notifi.isProcessing(false);
-      }, error: () => {
-        this.notifi.isProcessing(false);
-      }
-    })
-  }
-  paginate({ page }: NgPaginateEvent) {
-    this.page = page + 1;
-    this.getdataphongthithisisnh(this.page, this.hoiDongPhongThiSelect);
-  }
-
-  returnPhongthi() {
-    this.TypeChangePage = 0;
-  }
-  editDataPhongthi() {
-    this.notifi.isProcessing(true);
-    this.hoidongPhongthiService.update(this.hoiDongPhongThiSelect.id, this.formPhongthi.value).subscribe({
-      next: (data) => {
-        this.notifi.isProcessing(false);
-        this.notifi.toastSuccess('Cập nhật thành công');
-        this.loadDataPhongthi(this.kehoach_id, this.hoidong_id);
-
-      }, error: () => {
-        this.notifi.isProcessing(false);
-        this.notifi.toastError('Cập nhật không thành công !');
-      }
-    })
-  }
-  async deletePhongthi() {
-    const confirm = await this.notifi.confirmDelete();
-    if (confirm) {
-      this.hoidongPhongthiService.delete(this.hoiDongPhongThiSelect.id).subscribe({
-        next: () => {
-          this.notifi.isProcessing(false);
-          this.notifi.toastSuccess('Thao tác thành công');
-          this.loadDataPhongthi(this.kehoach_id, this.hoidong_id);
-          this.TypeChangePage = 0;
-        }, error: () => {
-          this.notifi.isProcessing(false);
-          this.notifi.toastError('Thao tác không thành công');
-        }
-      })
-    }
-  }
-
-
-  async expostExcelDataPhongThi() {
-    if (this.hoiDongPhongThi) {
-      this.modalService.open(this.templateWaiting, WAITING_POPUP);
-      const hoidongPhongthiParams = this.hoiDongPhongThi;
-
-      for (const f of hoidongPhongthiParams) {
-        try {
-          this.notifi.isProcessing(true);
-          const data = await this.hoidongThisinhService.getDataByPhongthiAndHoidongIdnotPage(f.id, f.hoidong_id).toPromise();
-          let index = 1;
-          const newData = data.map(m => {
-            const thisinh = m['thisinh'];
-            index++
-            return {
-              __stt: index++,
-              __sobaodanh: m.sobaodanh,
-              __hoten: thisinh['hoten'],
-              __sex: thisinh['gioitinh'] === 'nam' ? 'Nam' : 'Nữ',
-              __dob: thisinh['ngaysinh'],
-              __address: thisinh['noisinh'],
-              __phone: thisinh['phone'],
-              __email: thisinh['email'],
-            };
-          });
-          f['_thisinh'] = newData;
-          this.notifi.isProcessing(false);
-        } catch (error) {
-          console.error(error);
-          this.notifi.isProcessing(false);
-        }
-        await this.delay(200).toPromise(); // Wait 200ms before next iteration
-      }
-      const repostheading = 'Danh sách thí sinh (' + this.keHoachThi.dotthi + ' )';
-      this.exportExcelService.exportExcel(hoidongPhongthiParams, this.columns, this.keHoachThi.dotthi, repostheading)
-      this.modalService.dismissAll();
-    } else {
-      this.notifi.toastError('Người dùng chưa tạo phòng thi!');
-    }
-  }
-
-  columns = ['Stt', 'Số báo danh', 'Họ và tên', 'Giới tính', 'Ngày sinh', 'Nơi sinh', 'Số điện thoại', 'Email'];
-
-
-
-  delay(ms: number): Observable<any> {
-    return interval(ms).pipe(take(1));
-  }
-  async SendEmailToThisinh() {
-    if (this.hoiDongPhongThi) {
-      this.modalService.open(this.templateWaiting, WAITING_POPUP);
-      const hoidongPhongthiParams = this.hoiDongPhongThi;
-
-      for (const f of hoidongPhongthiParams) {
-        try {
-          this.notifi.isProcessing(true);
-          const data = await this.hoidongThisinhService.getDataByPhongthiAndHoidongIdnotPage(f.id, f.hoidong_id).toPromise();
-          let index = 1;
-          const newData = data.map(m => {
-            const thisinh = m['thisinh'];
-            index++
-            return {
-              __stt: index++,
-              __sobaodanh: m.sobaodanh,
-              __hoten: thisinh['hoten'],
-              __sex: thisinh['gioitinh'] === 'nam' ? 'Nam' : 'Nữ',
-              __dob: thisinh['ngaysinh'],
-              __address: thisinh['noisinh'],
-              __phone: thisinh['phone'],
-              __email: thisinh['email'],
-            };
-          });
-          f['_thisinh'] = newData;
-
-          newData.forEach(e => {
-            const param = {
-              title: "Thông báo thí sinh dự thi!",
-              name: e.__email,
-              to: e.__email,
-              message: "<div><p> Xin chào " + e.__hoten + "!</p><p>Bạn đã đăng ký dự thi !</p><p>Phòng thi : " + f.ten_phongthi + "</p><p>Mã Phòng thi: " + f.ma_phongthi + "</p><p>Số báo danh :" + e.__sobaodanh + "</p></div>"
-            }
-            this.senderEmailService.sendEmail(param).subscribe();
-          })
-          this.notifi.isProcessing(false);
-        } catch (e) {
-
-          this.notifi.isProcessing(false);
-        }
-
-
-        await this.delay(200).toPromise(); // Wait 200ms before next iteration
-      }
-      this.modalService.dismissAll();
-      this.notifi.toastSuccess('Hệ thống gửi email cho thí sinh thành công!');
-    } else {
-      this.notifi.toastError('Người dùng chưa tạo phòng thi!');
-    }
   }
 }
