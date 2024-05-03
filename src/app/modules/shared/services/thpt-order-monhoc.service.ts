@@ -7,6 +7,7 @@ import { AuthService } from "@core/services/auth.service";
 import { map, Observable } from "rxjs";
 import { Dto, OvicConditionParam, OvicQueryCondition } from "@core/models/dto";
 import { OrdersTHPT } from "@shared/services/thpt-orders.service";
+import {SumMonThi} from "@modules/admin/features/thi-sinh/thi-sinh-dang-ky/thi-sinh-dang-ky.component";
 
 export interface OrdersMonhocTHPT {
   id: number;
@@ -171,5 +172,10 @@ export class ThptOrderMonhocService {
     return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data));
   }
 
+
+  // https://api-dev.ictu.vn:10091/thithpt/api/thpt-order-monhoc/tenmon
+  getDataMonSelect(): Observable<SumMonThi[]>{
+      return this.http.get<Dto>(''.concat(this.api, 'tenmon')).pipe(map(res => res['tenmon']));
+  }
 }
 

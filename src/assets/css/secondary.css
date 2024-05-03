@@ -911,7 +911,7 @@ p .ql-align-center {
 /*----------------------------CSS REGISTER---------------------------------*/
 .register-cotainer {
   min-width: 300px;
-  max-width: 600px;
+  max-width: 500px;
   width: calc(100% - 40px);
   display: block;
   /*height:100%;*/
@@ -1134,11 +1134,11 @@ p .ql-align-center {
 }
 
 .test-submit-form div {
-  background-color: #22C55E;
+  background-color: #c9fbdb;
   display: flex;
   align-items: center;
   padding: 6px 14px;
-  color: #fff;
+  color: #357f1e;
   border-radius: 4px;
 }
 

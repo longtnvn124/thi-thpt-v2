@@ -1,13 +1,33 @@
 import { Component, OnInit } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, Validators } from "@angular/forms";
+import {AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators} from "@angular/forms";
 import { AuthService } from "@core/services/auth.service";
 import { EmailCheckValidator, PassCheckValidator, PhoneNumberValidator } from "@core/utils/validators";
 import { Router } from "@angular/router";
 import { switchMap } from "rxjs";
 import { RegisterAccountService } from "@shared/services/register-account.service";
 import { NotificationService } from '@core/services/notification.service';
-import { getLocaleMonthNames } from '@angular/common';
-import { LoginComponent } from '@modules/public/features/login/login.component';
+
+
+export function customInputValidator(): ValidatorFn {
+  return (control: AbstractControl): { [key: string]: any } | null => {
+    const inputValue: string = control.value;
+    const errors: { [key: string]: any } = {};
+    if (!/[A-Za-z]/.test(inputValue) || !/\d/.test(inputValue)) {
+      errors['noAlphaNumeric'] = true;
+    }
+    if (inputValue.length < 8) {
+      errors['minLength'] = true;
+    }
+    if (!/[^A-Za-z0-9]/.test(inputValue)) {
+      errors['noSpecialCharacter'] = true;
+    }
+    if (!/[A-Z]/.test(inputValue)) {
+      errors['noUpperCase'] = true;
+    }
+    return Object.keys(errors).length !== 0 ? errors : null;
+  };
+}
+
 
 @Component({
   selector: 'app-register-account',
@@ -15,10 +35,12 @@ import { LoginComponent } from '@modules/public/features/login/login.component';
   styleUrls: ['./register-account.component.css']
 })
 export class RegisterAccountComponent implements OnInit {
+
+
   changPassState: boolean = true;
   type_password: 'password' | 'text' = "password";
   formSave: FormGroup;
-
+  active_regiter :0|1 = 0;// fomr thường// fomr checkoke
   type_check_valid: 1 | 2 | 3 = 1;//1 chưa gửi //2:gửi thành công //3:gửi thất bai
 
   constructor(
@@ -29,9 +51,9 @@ export class RegisterAccountComponent implements OnInit {
     private notification: NotificationService
   ) {
     this.formSave = this.fb.group({
-      username: [''],
+      username: ['' ,[Validators.required, PhoneNumberValidator]],
       email: ['', [Validators.required, EmailCheckValidator]],
-      password: ['', [Validators.required, PassCheckValidator]],
+      password: ['', [Validators.required,PassCheckValidator,customInputValidator()]],
       display_name: ['', Validators.required],
       phone: [null, [Validators.required, PhoneNumberValidator, Validators.maxLength(12), Validators.minLength(6)]],
     });
@@ -60,9 +82,6 @@ export class RegisterAccountComponent implements OnInit {
   }
 
   btnRegisterForm() {
-    const username = this.f['email'].value;
-    this.f['username'].setValue(username);
-    console.log(this.formSave.value);
 
     if (this.formSave.valid) {
       this.type_check_valid = 2;
@@ -79,8 +98,11 @@ export class RegisterAccountComponent implements OnInit {
       })).subscribe({
         next: (data) => {
           this.type_check_valid = 3;
+          this.active_regiter =1;
           this.resetForm();
         }, error: (e) => {
+          this.active_regiter =0;
+
           this.type_check_valid = 1;
           const message = e.error.message;
           let errorMessage = "";
@@ -102,5 +124,9 @@ export class RegisterAccountComponent implements OnInit {
     this.router.navigate(['login']);
   }
 
-
+  exitForm(){
+    this.active_regiter = 0;
+    this.type_check_valid = 1;
+    this.resetForm();
+  }
 }

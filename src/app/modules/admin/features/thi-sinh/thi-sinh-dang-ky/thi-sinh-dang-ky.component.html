@@ -1,4 +1,4 @@
-<ng-container *ngIf="userInfo && userInfo.status === 1,else notStatus">
+<ng-container *ngIf="userInfo && userInfo.status === 0,else notStatus">
   <ng-container [ngSwitch]="ngType">
     <ng-container *ngSwitchCase="-1">
       <div class="w-100 d-flex flex-column justify-content-center align-items-center" style="height:calc(100vh - 90px)">
@@ -28,54 +28,73 @@
           <div class="ovic-vertical__inputs ovic-vertical__inputs--layout-2">
             <form [formGroup]="formSave" autocomplete="off">
               <div class="row row-cols-1">
-                <div class="col col-md-8 col-xl-8">
+                <div class="col col-md-12 col-xl-12">
                   <div class="row">
                     <div class="col">
                       <div class="form-row">
                         <label>Đợt thi <span class="ovic-mark">*</span></label>
-                        <p-dropdown class="w-100 " placeholder="Chọn đợt thi" [options]="keHoachThi"
-                          formControlName="kehoach_id" optionLabel="dotthi" optionValue="id"></p-dropdown>
+                        <div class="dotthi-container">
+                          <button pRipple pButton  *ngFor="let item of keHoachThi" (click)="selectDothi(item)"
+                                  [ngClass]="dotthi_id_select === item.id ? 'p-button-primary' : 'ovic-button-none-selected'"
+                                  [label]="item.dotthi" [icon]="'pi pi-circle'"
+                          >
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
-                  <div class="row">
-                    <div class="col">
+                  <div *ngIf="dotthi_id_select >0" class="row">
+                    <div *ngIf="dataMonSelect.length >0,else notMonSelect" class="col">
                       <div class="form-row">
-                        <label>Chọn hình thức thi <span class="ovic-mark">*</span></label>
-                        <p-dropdown class="w-100 " placeholder="chọn hình thức thi" [options]="hinhthucthi"
-                          optionLabel="label" optionValue="value" (onChange)="valueHinhthucThi($event)"></p-dropdown>
+                        <label>Chọn môn thi<span class="ovic-mark">*</span></label>
+                        <div class="dotthi-container">
+                          <button pButton pRipple *ngFor="let item of dataMonSelect" (click)="selectMonOfDmMon(item)"
+                                  [ngClass]="mon_ids_select.includes(item.id) ? 'p-button-primary' : 'ovic-button-none-selected'"
+                                  [label]="item['__tenmon_coverted']" [icon]="'pi pi-book'"
+                          ></button>
+                        </div>
                       </div>
                     </div>
-                    <div *ngIf="hinhthucthiSlect !== -1" class="col">
-                      <div class="form-row">
-                        <label [innerHTML]="hinhthucthiSlect === 0 ?'Môn thi':'Tổ hợp môn'"> <span
-                            class="ovic-mark">*</span></label>
-                        <p-multiSelect class="w-100" [style]="{'width':'100%'}" *ngIf="hinhthucthiSlect === 0"
-                          placeholder="Chọn môn thi..." class="w-100 " formControlName="mon_ids" [options]="dmMon"
-                          optionLabel="tenmon" optionValue="id" (onChange)="selectTypeMon(0, $event)"></p-multiSelect>
-                        <p-dropdown [style]="{'width':'100%'}" *ngIf="hinhthucthiSlect === 1"
-                          placeholder="Chọn tổ hợp môn..." class="w-100 " formControlName="tohopmon_ids"
-                          [options]="dmToHopMon" optionLabel="tentohop" optionValue="id" [filter]="true"
-                          (onChange)="selectTypeMon(1, $event)"></p-dropdown>
+                    <ng-template #notMonSelect>
+                      <div class="col">
+                        <div class="form-row">
+                          <label>Chọn môn thi<span class="ovic-mark">*</span></label>
+                          <div class="dotthi-container">
+                            Không đợt thi đã đăng ký đủ các môn.
+                          </div>
+                        </div>
                       </div>
-                    </div>
+                    </ng-template>
+<!--                    <div *ngIf="hinhthucthiSlect !== -1" class="col">-->
+<!--                      <div class="form-row">-->
+<!--                        <label [innerHTML]="hinhthucthiSlect === 0 ?'Môn thi':'Tổ hợp môn'"> <span-->
+<!--                            class="ovic-mark">*</span></label>-->
+<!--                        <p-multiSelect class="w-100" [style]="{'width':'100%'}" *ngIf="hinhthucthiSlect === 0"-->
+<!--                          placeholder="Chọn môn thi..." class="w-100 " formControlName="mon_ids" [options]="dmMon"-->
+<!--                          optionLabel="tenmon" optionValue="id" (onChange)="selectTypeMon(0, $event)"></p-multiSelect>-->
+<!--                        <p-dropdown [style]="{'width':'100%'}" *ngIf="hinhthucthiSlect === 1"-->
+<!--                          placeholder="Chọn tổ hợp môn..." class="w-100 " formControlName="tohopmon_ids"-->
+<!--                          [options]="dmToHopMon" optionLabel="tentohop" optionValue="id" [filter]="true"-->
+<!--                          (onChange)="selectTypeMon(1, $event)"></p-dropdown>-->
+<!--                      </div>-->
+<!--                    </div>-->
                   </div>
                 </div>
-                <div class="col col-md-4 col-xl-4 p-t-b-20px">
-                  <div class="mon-select">
-                    <div class="mon-select__title"> {{hinhthucthiSlect === 0 ? 'Môn thi đã chọn': 'Tổ hợp môn đã chọn'}}
-                    </div>
-                    <div class="mon-select__body">
-                      <ul class="mon-select__body--ul" *ngIf="hinhthucthiSlect=== 0">
-                        <li class="mon-select__body--li" *ngFor="let item of dataMonslect">{{item['tenmon']}}</li>
-                      </ul>
-                      <ul class="mon-select__body--ul" *ngIf="hinhthucthiSlect=== 1">
-                        <li class="mon-select__body--li" *ngFor="let item of dataTohopmonslect">
-                          {{item['__tentohop_covered']}}</li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
+<!--                <div class="col col-md-4 col-xl-4 p-t-b-20px">-->
+<!--                  <div class="mon-select">-->
+<!--                    <div class="mon-select__title"> {{hinhthucthiSlect === 0 ? 'Môn thi đã chọn': 'Tổ hợp môn đã chọn'}}-->
+<!--                    </div>-->
+<!--                    <div class="mon-select__body">-->
+<!--                      <ul class="mon-select__body&#45;&#45;ul" *ngIf="hinhthucthiSlect=== 0">-->
+<!--                        <li class="mon-select__body&#45;&#45;li" *ngFor="let item of dataMonslect">{{item['tenmon']}}</li>-->
+<!--                      </ul>-->
+<!--                      <ul class="mon-select__body&#45;&#45;ul" *ngIf="hinhthucthiSlect=== 1">-->
+<!--                        <li class="mon-select__body&#45;&#45;li" *ngFor="let item of dataTohopmonslect">-->
+<!--                          {{item['__tentohop_covered']}}</li>-->
+<!--                      </ul>-->
+<!--                    </div>-->
+<!--                  </div>-->
+<!--                </div>-->
               </div>
             </form>
 
@@ -92,8 +111,6 @@
             </div>
 
             <div style="padding: 20px 0;display: flex;justify-content: center;gap: 10px;">
-              <!--            <button pButton pRipple class="p-button-warning" icon="pi pi-sync" label="Tải lại trang" (click)="reLoadData()"></button>-->
-              <!--            <button pButton pRipple class="p-button-danger" icon="pi pi-credit-card" label="Thanh toán" (click)="getPayment()" ></button>-->
               <button pButton pRipple class="p-button-success" icon="pi pi-check-square" label="Đăng ký dự thi"
                 (click)="SaveForm()"></button>
             </div>
@@ -134,7 +151,6 @@
                     <th class="ovic-w-150px text-center">Thao tác</th>
                   </tr>
                 </ng-template>
-
                 <ng-template pTemplate="emptymessage">
                   <tr>
                     <td colspan="6">Không có dữ liệu</td>
@@ -158,19 +174,15 @@
                     <td class="ovic-w-100px text-center">
                       <div class="d-block --fs-14">
                         <div *ngIf="item.trangthai_thanhtoan === 1,else notPay">
-                          <button pButton pRipple label="Thanh toán" disabled icon="pi pi-credit-card"> </button>
-
+                          <button pButton pRipple label="Tải phiếu đăng ký" disabled > </button>
                         </div>
                         <ng-template #notPay>
                           <button pButton pRipple class="p-button-warning" [pTooltip]="'Thanh toán'"
                             [tooltipPosition]="'top'" icon="pi pi-credit-card" (click)="getPayment(item.id)"></button>
-
                           <button *ngIf="item.trangthai_thanhtoan === 0" pButton pRipple class="p-button-danger ml-1"
                             [pTooltip]="'Xoá'" [tooltipPosition]="'top'" icon="pi pi-trash"
                             (click)="deleteRow(item.id)"></button>
-
                         </ng-template>
-
                       </div>
                     </td>
                   </tr>

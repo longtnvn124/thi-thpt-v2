@@ -10,6 +10,8 @@ export interface KeHoachThi {
   nam: number;
   dotthi: string;
   soluong_toida: number;
+  ngaybatdau:string;
+  ngayketthuc:string;
   mota: string;
   status: 1 | 0;
 }

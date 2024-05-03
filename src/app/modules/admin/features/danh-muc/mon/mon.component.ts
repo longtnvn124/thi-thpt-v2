@@ -225,7 +225,6 @@ export class MonComponent implements OnInit {
           tenmon: '',
           kyhieu: '',
           status: '',
-
         });
         this.formActive = this.listForm[FormType.ADDITION];
         this.preSetupForm(this.menuName);
@@ -238,7 +237,6 @@ export class MonComponent implements OnInit {
           tenmon: object1.tenmon,
           kyhieu: object1.kyhieu,
           status: object1.status,
-
         })
         this.formActive = this.listForm[FormType.UPDATE];
         this.formActive.object = object1;

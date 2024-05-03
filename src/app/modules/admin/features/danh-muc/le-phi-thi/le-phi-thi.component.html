@@ -10,7 +10,7 @@
                   rowHover="true"
                   [rows]="15" tableName="Danh sách lệ phí thi" [tblStructure]="tblStructure"
                   (onButtonClick)="handleClickOnTable($event)" [enableSearch]="true" [enableSearchLocal]="false"
-                  (onSearch)="onSearch($event)" [searchDebounceTime]="800" [headerButtons]="headButtons"></ovic-table>
+                  (onSearch)="onSearch($event)" [searchDebounceTime]="800" ></ovic-table>
       <p-paginator class="p-paginator--custom" [showCurrentPageReport]="true" [rows]="rows"
                    [totalRecords]="recordsTotal" [pageLinkSize]="5" (onPageChange)="paginate($event)"></p-paginator>
     </ng-template>

@@ -53,8 +53,17 @@ export class KeHoachThiComponent implements OnInit {
       fieldType: 'normal',
       field: ['soluong_toida'],
       innerData: true,
-      header: 'Số lượng tối đa',
+      header: 'Số lượng đăng ký tối đa/ mỗi môn thi',
       sortable: false
+    },
+    {
+      fieldType: 'normal',
+      field: ['__time_coverted'],
+      innerData: true,
+      header: 'Thời hạn đăng ký',
+      sortable: false,
+      rowClass: 'ovic-w-200px text-center',
+      headClass: 'ovic-w-200px text-center',
     },
     {
       fieldType: 'normal',
@@ -102,8 +111,8 @@ export class KeHoachThiComponent implements OnInit {
     },
   ];
   listForm = {
-    [FormType.ADDITION]: {type: FormType.ADDITION, title: 'Thêm mới lệ phí thi', object: null, data: null},
-    [FormType.UPDATE]: {type: FormType.UPDATE, title: 'Cập nhật lệ phí thi', object: null, data: null}
+    [FormType.ADDITION]: {type: FormType.ADDITION, title: 'Thêm mới đợt thi', object: null, data: null},
+    [FormType.UPDATE]: {type: FormType.UPDATE, title: 'Cập nhật đợt thi', object: null, data: null}
   };
   formActive: FormKehoachthi;
   formSave: FormGroup;
@@ -141,7 +150,9 @@ export class KeHoachThiComponent implements OnInit {
     this.formSave = this.fb.group({
       nam: [null, Validators.required],
       dotthi: ['', Validators.required],
-      soluong_toida:[null, Validators.required],
+      soluong_toida:[0, Validators.required],
+      ngaybatdau:['',Validators.required],
+      ngayketthuc:['',Validators.required],
       mota:[''],
       status: 1,
     });
@@ -168,6 +179,7 @@ export class KeHoachThiComponent implements OnInit {
           // m['__value_converted'] = m.value + ' VNĐ';
           const sIndex = this.statusList.findIndex(i => i.value === m.status);
           m['__status'] = sIndex !== -1 ? this.statusList[sIndex].color : '';
+          m['__time_coverted'] =  this.strToTime(m.ngaybatdau) + ' - ' + this.strToTime(m.ngayketthuc);
           return m;
         })
         this.isLoading = false;
@@ -232,6 +244,8 @@ export class KeHoachThiComponent implements OnInit {
           soluong_toida:'',
           mota:'',
           status: 1,
+          ngaybatdau: '',
+          ngayketthuc: '',
 
         });
         this.formActive = this.listForm[FormType.ADDITION];
@@ -247,6 +261,8 @@ export class KeHoachThiComponent implements OnInit {
           soluong_toida:object1.soluong_toida,
           mota:object1.mota,
           status:object1.status,
+          ngaybatdau: object1.ngaybatdau ? new Date(object1.ngaybatdau) : null,
+          ngayketthuc:object1.ngayketthuc ? new Date(object1.ngayketthuc) : null,
         })
         this.formActive = this.listForm[FormType.UPDATE];
         this.formActive.object = object1;
@@ -282,10 +298,17 @@ export class KeHoachThiComponent implements OnInit {
 
     const titleInput = this.f['dotthi'].value.trim();
     this.f['dotthi'].setValue(titleInput);
+    const timeszone = this.formatSQLDateTime(new Date(this.formSave.value['ngaybatdau'])) <  this.formatSQLDateTime(new Date(this.formSave.value['ngayketthuc']));
     if (this.formSave.valid) {
       if (titleInput !== '') {
-        this.formActive.data = this.formSave.value;
-        this.OBSERVE_PROCESS_FORM_DATA.next(this.formActive);
+        if (timeszone){
+          this.formSave.value['ngaybatdau'] = this.formatSQLDateTime(new Date(this.formSave.value['ngaybatdau']));
+          this.formSave.value['ngayketthuc'] = this.formatSQLDateTime(new Date(this.formSave.value['ngayketthuc']));
+          this.formActive.data = this.formSave.value;
+          this.OBSERVE_PROCESS_FORM_DATA.next(this.formActive);
+        }else{
+          this.notificationService.toastWarning('Thời gian nhập không hợp lệ');
+        }
       } else {
         this.notificationService.toastError('Vui lòng không nhập khoảng trống');
       }
@@ -295,4 +318,24 @@ export class KeHoachThiComponent implements OnInit {
     }
   }
 
+  formatSQLDateTime(date: Date): string {
+    const y = date.getFullYear().toString();
+    const m = (date.getMonth() + 1).toString().padStart(2, '0');
+    const d = date.getDate().toString().padStart(2, '0');
+    const h = date.getHours().toString().padStart(2, '0');
+    const min = date.getMinutes().toString().padStart(2, '0');
+    const sec = '00';
+    //'YYYY-MM-DD hh:mm:ss' type of sql DATETIME format
+    return `${y}-${m}-${d}`;
+  }
+
+  strToTime(input: string): string {
+    const date = input ? new Date(input) : null;
+    let result = '';
+    if (date) {
+      result += [date.getDate().toString().padStart(2, '0'), (date.getMonth() + 1).toString().padStart(2, '0'), date.getFullYear().toString()].join('/');
+      // result += ' ' + [date.getHours().toString().padStart(2, '0'), date.getMinutes().toString().padStart(2, '0')].join(':');
+    }
+    return result;
+  }
 }

@@ -3,6 +3,7 @@ import * as moment from 'moment/moment';
 
 // export const PHONE_REGEX : RegExp        = /^(([+]{0,1}\d{2})|\d{2}?)[\-\s\d]{2,15}$/gmi;
 export const PHONE_REGEX : RegExp        = /^[+]*[(]?[0-9]{1,4}[)]?[-\s./0-9]*$/;
+export const USERNAME_REGEX : RegExp        = /^[+]*[(]?[0-9]{1,4}[)]?[-\s./0-9]*$/;
 
 // export const EMAIL_REGEX : RegExp        = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
 export const EMAIL_REGEX : RegExp        = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;

@@ -95,19 +95,19 @@ export class ThongTinThiSinhComponent implements OnInit {
       nguoinhan_phone: ['', [Validators.required, PhoneNumberValidator, Validators.maxLength(12), Validators.minLength(6)]],
       nguoinhan_diachi: [{}, Validators.required],
       khuvuc: [null, Validators.required],
-      namtotnghiep_thpt: [null, Validators.required],
-      lop10_thanhpho: [null, Validators.required],
-      lop11_thanhpho: [null, Validators.required],
-      lop12_thanhpho: [null, Validators.required],
-      lop10_truong: ['', Validators.required],
-      lop11_truong: ['', Validators.required],
-      lop12_truong: ['', Validators.required],
-      diem10ky1: [null, [Validators.required, NumberLessThanTenValidator]],
-      diem10ky2: [null, [Validators.required, NumberLessThanTenValidator]],
-      diem11ky1: [null, [Validators.required, NumberLessThanTenValidator]],
-      diem11ky2: [null, [Validators.required, NumberLessThanTenValidator]],
-      diem12ky1: [null, [Validators.required, NumberLessThanTenValidator]],
-      diem12ky2: [null, [Validators.required, NumberLessThanTenValidator]],
+      namtotnghiep_thpt: [null],
+      lop10_thanhpho: [null],
+      lop11_thanhpho: [null],
+      lop12_thanhpho: [null],
+      lop10_truong: [''],
+      lop11_truong: [''],
+      lop12_truong: [''],
+      diem10ky1: [null, [NumberLessThanTenValidator]],
+      diem10ky2: [null, [NumberLessThanTenValidator]],
+      diem11ky1: [null, [NumberLessThanTenValidator]],
+      diem11ky2: [null, [NumberLessThanTenValidator]],
+      diem12ky1: [null, [NumberLessThanTenValidator]],
+      diem12ky2: [null, [NumberLessThanTenValidator]],
       status: [0],
       // nhan_thongtin:[0,Validators.required]
     });
@@ -225,9 +225,7 @@ export class ThongTinThiSinhComponent implements OnInit {
     this.f['cccd_img_sau'].setValue(matsau);
     this.f['anh_chandung'].setValue(anh_chandung);
     this.f['nguoinhan_hoten'].setValue(this.f['nguoinhan_hoten'].value?.toString().trim());
-    console.log(
-      this.formSave.value
-    );
+
 
     if (this.formSave.valid) {
       this.formActive.data = this.formSave.value;

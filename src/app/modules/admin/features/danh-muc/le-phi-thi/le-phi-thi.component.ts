@@ -77,13 +77,7 @@ export class LePhiThiComponent implements OnInit {
           name: 'EDIT_DECISION',
           cssClass: 'btn-primary rounded'
         },
-        {
-          tooltip: 'Xoá',
-          label: '',
-          icon: 'pi pi-trash',
-          name: 'DELETE_DECISION',
-          cssClass: 'btn-danger rounded'
-        }
+
       ]
     }
   ];

@@ -36,6 +36,5 @@ export class RegisterAccountService {
     // return this.http.get<Dto>(''.concat(getRoute('verification/'),text),null).pipe(map(res=>res));
     const url = text ? ''.concat(getRoute('verification/'), text) : this.api;
     return this.http.get<Dto>(url).pipe(map(res => res.data));
-
   }
 }
