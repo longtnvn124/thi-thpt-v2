@@ -17,6 +17,8 @@ import {PaginatorModule} from "primeng/paginator";
 import { TraCuuKetQuaComponent } from './tra-cuu-ket-qua/tra-cuu-ket-qua.component';
 import {CheckboxModule} from "primeng/checkbox";
 import {TooltipModule} from "primeng/tooltip";
+import {DialogModule} from "primeng/dialog";
+import {TabViewModule} from "primeng/tabview";
 
 
 @NgModule({
@@ -25,21 +27,23 @@ import {TooltipModule} from "primeng/tooltip";
     ThongTinThiSinhComponent,
     TraCuuKetQuaComponent
   ],
-    imports: [
-        CommonModule,
-        ThiSinhRoutingModule,
-        SharedModule,
-        ReactiveFormsModule,
-        DropdownModule,
-        InputMaskModule,
-        RippleModule,
-        ButtonModule,
-        MultiSelectModule,
-        TableModule,
-        InputTextModule,
-        PaginatorModule,
-        CheckboxModule,
-        TooltipModule
-    ]
+  imports: [
+    CommonModule,
+    ThiSinhRoutingModule,
+    SharedModule,
+    ReactiveFormsModule,
+    DropdownModule,
+    InputMaskModule,
+    RippleModule,
+    ButtonModule,
+    MultiSelectModule,
+    TableModule,
+    InputTextModule,
+    PaginatorModule,
+    CheckboxModule,
+    TooltipModule,
+    DialogModule,
+    TabViewModule
+  ]
 })
 export class ThiSinhModule { }

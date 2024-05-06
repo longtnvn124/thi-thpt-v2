@@ -8,7 +8,8 @@ export const environment = {
 
 const realm = 'thithpt';
 const host = ['h', 't', 't', 'p', 's', ':', '/', '/', 'a', 'p', 'i', '-', 'd', 'e', 'v', '.', 'i', 'c', 't', 'u', '.', 'v', 'n'];
-// const host = ['h', 't', 't', 'p', 's', ':', '/', '/', 't', 'n', 'u', '.', 'v', 'n'];
+// const host = ['h', 't', 't', 'p', 's', ':', '/', '/', 'v', 's', 'a', 't', '.', 't', 'n', 'u', '.', 'e', 'd', 'u', '.', 'v', 'n'];
+
 
 const port = '10091';
 const port_socket = '10092';
@@ -70,8 +71,8 @@ const appDefaultLanguage = { name: 'vn', label: 'Tiếng việt' };
 const appVersion = '1.0.0';
 
 export const APP_CONFIGS = {
-  defaultRedirect: '/admin',
-  pageTitle: 'VSAT - Đăng ký thi đánh giá năng lực phổ thông',
+  defaultRedirect: '/admin/thi-sinh/thong-tin',
+  pageTitle: 'V-SAT-TNU | Đăng ký thi đánh giá đầu vào Đại học bằng hình thức thi trên máy tính của Đại học Thái Nguyên',
   multiLanguage: true,
   defaultLanguage: appDefaultLanguage, // không được bỏ trống trường này ngay cả khi multiLanguage = false
   languages: appLanguages,
@@ -118,7 +119,7 @@ export const APP_STORES = 'thithpt4QfWtr6Z'; // no clear after logout
 export const SWITCH_DONVI_ID = 'thithptC@gGA506'; // no clear after logout
 
 export const X_APP_ID = '64c9a192-cc0e-4198-acb8-2188dbb472fa';//dev
-// export const X_APP_ID = '3923CB7E-6B59-4BC6-812F-0E104785546B';// online id dev online
+// export const X_APP_ID = '339B39F7-1918-45B8-819F-765171EB45E5';// online id dev online
 
 export const imgFalback = 'assets/images/placeholder.jpg';
 

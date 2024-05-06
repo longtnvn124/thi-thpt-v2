@@ -41,4 +41,5 @@ export interface ThiSinhInfo {
   diem12ky1: string;
   diem12ky2: string;
   status: 0 | 1;// khoá
+  camket: 0 | 1;
 }

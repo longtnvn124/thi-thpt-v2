@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 
 import { FormType, OvicForm } from '@modules/shared/models/ovic-models';
 import { ThiSinhInfo } from "@shared/models/thi-sinh";
-import { AbstractControl, FormBuilder, FormGroup, Validators } from "@angular/forms";
+import {AbstractControl, FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import { debounceTime, Observable, Subject, Subscription } from "rxjs";
 import { DiaDanh } from '@modules/shared/models/location';
 import { AuthService } from '@core/services/auth.service';
@@ -52,15 +52,13 @@ export class ThongTinThiSinhComponent implements OnInit {
     { label: '2021', value: 4 },
     { label: '2020', value: 5 },
   ]
-
-
-
   khuvucdata = [
     { title: 'Khu vực 1', code: 'KV1' },
     { title: 'Khu vực 2', code: 'KV2' },
     { title: 'Khu vực 2 nông thôn', code: 'KV1-NT' },
     { title: 'Khu vực 3', code: 'KV3' }
   ]
+
   constructor(
     private fb: FormBuilder,
     private auth: AuthService,
@@ -75,19 +73,17 @@ export class ThongTinThiSinhComponent implements OnInit {
     this.formSave = this.fb.group({
       user_id: [this.auth.user.id, Validators.required],
       ten: [''],
-      hoten: ['', Validators.required],
+      hoten: [this.auth.user.display_name, Validators.required],
       ngaysinh: ['', [Validators.required, DDMMYYYYDateFormatValidator]],
       dantoc: ['', Validators.required],
       tongiao: [''],
       gioitinh: ['', Validators.required],
       noisinh: ['', Validators.required],
-      noisinhkhac: [''],
-      quequan: [{}, Validators.required],
-      phone: ['', [Validators.required, PhoneNumberValidator, Validators.maxLength(12), Validators.minLength(6)]],
+      phone: [this.auth.user.phone, [Validators.required, PhoneNumberValidator, Validators.minLength(6)]],
       anh_chandung: [null, Validators.required],
-      cccd_so: [null, Validators.required],
+      cccd_so: [this.auth.user.username, [Validators.required, PhoneNumberValidator]],
       cccd_ngaycap: ['', [Validators.required, DDMMYYYYDateFormatValidator]],
-      cccd_noicap: ['', Validators.required],
+      cccd_noicap: ['Cục quản lý hành chính về TTXH', Validators.required],
       cccd_img_truoc: [null, Validators.required],
       cccd_img_sau: [null, Validators.required],
       thuongtru_diachi: [{}, Validators.required],
@@ -95,7 +91,7 @@ export class ThongTinThiSinhComponent implements OnInit {
       nguoinhan_phone: ['', [Validators.required, PhoneNumberValidator, Validators.maxLength(12), Validators.minLength(6)]],
       nguoinhan_diachi: [{}, Validators.required],
       khuvuc: [null, Validators.required],
-      namtotnghiep_thpt: [null],
+      namtotnghiep_thpt: [null,[PhoneNumberValidator]],
       lop10_thanhpho: [null],
       lop11_thanhpho: [null],
       lop12_thanhpho: [null],
@@ -109,7 +105,7 @@ export class ThongTinThiSinhComponent implements OnInit {
       diem12ky1: [null, [NumberLessThanTenValidator]],
       diem12ky2: [null, [NumberLessThanTenValidator]],
       status: [0],
-      // nhan_thongtin:[0,Validators.required]
+      camket:[0,Validators.required]
     });
 
   }
@@ -151,8 +147,6 @@ export class ThongTinThiSinhComponent implements OnInit {
             dantoc: data.dantoc,
             tongiao: data.tongiao,
             noisinh: data.noisinh,
-            noisinhkhac: data.noisinhkhac,
-            quequan: data.quequan,
             phone: data.phone,
             anh_chandung: data.anh_chandung,
             cccd_so: data.cccd_so,
@@ -179,6 +173,7 @@ export class ThongTinThiSinhComponent implements OnInit {
             diem12ky1: data.diem12ky1,
             diem12ky2: data.diem12ky2,
             status: data.status,
+            camket: data.camket === 1 ? true : false
           });
           this.userInfo = data;
         } else {
@@ -196,21 +191,75 @@ export class ThongTinThiSinhComponent implements OnInit {
   }
   private __processFrom({ data, object, type }: FormThisinh) {
     this.notifi.isProcessing(true);
-    const observer$: Observable<any> = type === FormType.ADDITION ? this.thisinhInfoService.create(data) : this.thisinhInfoService.update(object.id, data);
-    observer$.subscribe({
-      next: () => {
-        if (type === FormType.ADDITION) {
-          this.formActive = this.listForm[FormType.UPDATE];
+    if(type === FormType.ADDITION){
+      this.thisinhInfoService.create(data).subscribe({
+        next: () => {
+          if (type === FormType.ADDITION) {
+            this.formActive = this.listForm[FormType.UPDATE];
+          }
+          this._getDataUserInfo(this.auth.user.id);
+          this.notifi.isProcessing(false);
+          this.notifi.toastSuccess('Thao tác thành công', 'Thông báo');
+        },
+        error: () => {
+          this.notifi.isProcessing(false);
+          this.notifi.toastError('Thao tác thất bại', 'Thông báo')
         }
-        this._getDataUserInfo(this.auth.user.id);
-        this.notifi.isProcessing(false);
-        this.notifi.toastSuccess('Thao tác thành công', 'Thông báo');
-      },
-      error: () => {
-        this.notifi.isProcessing(false);
-        this.notifi.toastError('Thao tác thất bại', 'Thông báo')
+      })
+    }
+    if(type === FormType.UPDATE){
+      const dataUpdate = {
+        user_id: this.auth.user.id,
+        ten: data.ten,
+        hoten: data.hoten,
+        ngaysinh: data.ngaysinh,
+        gioitinh: data.gioitinh,
+        dantoc: data.dantoc,
+        tongiao: data.tongiao,
+        noisinh: data.noisinh,
+        phone: data.phone,
+        anh_chandung: data.anh_chandung,
+        cccd_so: data.cccd_so,
+        cccd_ngaycap: data.cccd_ngaycap,
+        cccd_noicap: data.cccd_noicap,
+        cccd_img_truoc: data.cccd_img_truoc,
+        cccd_img_sau: data.cccd_img_sau,
+        thuongtru_diachi: data.thuongtru_diachi,
+        nguoinhan_hoten: data.nguoinhan_hoten,
+        nguoinhan_phone: data.nguoinhan_phone,
+        nguoinhan_diachi: data.nguoinhan_diachi,
+        khuvuc: data.khuvuc,
+        namtotnghiep_thpt: data.namtotnghiep_thpt,
+        lop10_thanhpho: data.lop10_thanhpho,
+        lop11_thanhpho: data.lop11_thanhpho,
+        lop12_thanhpho: data.lop12_thanhpho,
+        lop10_truong: data.lop11_truong,
+        lop11_truong: data.lop11_truong,
+        lop12_truong: data.lop12_truong,
+        diem10ky1: data.diem10ky1,
+        diem10ky2: data.diem10ky2,
+        diem11ky1: data.diem11ky1,
+        diem11ky2: data.diem11ky2,
+        diem12ky1: data.diem12ky1,
+        diem12ky2: data.diem12ky2,
+        status: data.status,
       }
-    });
+      this.thisinhInfoService.update(object.id, dataUpdate).subscribe({
+        next: () => {
+          if (type === FormType.ADDITION) {
+            this.formActive = this.listForm[FormType.UPDATE];
+          }
+          this._getDataUserInfo(this.auth.user.id);
+          this.notifi.isProcessing(false);
+          this.notifi.toastSuccess('Thao tác thành công', 'Thông báo');
+        },
+        error: () => {
+          this.notifi.isProcessing(false);
+          this.notifi.toastError('Thao tác thất bại', 'Thông báo')
+        }
+      })
+    }
+
   }
 
   saveForm() {
@@ -226,6 +275,10 @@ export class ThongTinThiSinhComponent implements OnInit {
     this.f['anh_chandung'].setValue(anh_chandung);
     this.f['nguoinhan_hoten'].setValue(this.f['nguoinhan_hoten'].value?.toString().trim());
 
+    const check_camket = this.f['camket'].value ? 1 : 0;
+
+    this.f['camket'].setValue(check_camket);
+    console.log(this.formSave.value)
 
     if (this.formSave.valid) {
       this.formActive.data = this.formSave.value;
@@ -252,8 +305,7 @@ export class ThongTinThiSinhComponent implements OnInit {
             this.notifi.toastError('Mất kết nối với máy chủ');
             this.notifi.isProcessing(false);
           }
-        }
-        )
+        })
       }
     } else {
       this.notifi.toastWarning('Bạn chưa lưu thông tin thí sinh');
@@ -263,6 +315,7 @@ export class ThongTinThiSinhComponent implements OnInit {
   changeThuongchu(event) { this.f['thuongtru_diachi'].setValue(event); }
   changeQuequan(event) { this.f['quequan'].setValue(event); }
   changeNguoinhandc(event) { this.f['nguoinhan_diachi'].setValue(event); }
+
 
 }
 

@@ -1098,7 +1098,7 @@ p .ql-align-center {
   justify-content: center;
   align-items: center;
   font-size: 14px;
-  padding: 10px;
+  padding:  3px 6px;
   border-radius: 10px;
 
 }
@@ -1112,7 +1112,16 @@ p .ql-align-center {
   color: red;
   background: #ebc0c0;
 }
-
+.thanh-toan.check {
+  color: #ffffff;
+  background: #ffa500;
+  text-align:center;
+}
+.thanh-toan.wait {
+  color: #6080e3;
+  background: #57b0f6;
+  text-align:center;
+}
 
 .thanh-toan i {
   font-size: 3rem;
@@ -1172,4 +1181,29 @@ p .ql-align-center {
 
 .waiting-container .waiting-content {
   width: 100%;
+}
+/*==========================================*/
+@media (max-width: 1024px) {
+  .ovic-input-address-four-layouts__row{
+    flex-direction: column;
+  }
+}
+
+.dal-thanhtoan .p-dialog{
+  max-width:700px;
+  width:100%
+
+}
+
+@media(max-width: 1024px){
+  .dal-thanhtoan .p-dialog{
+    width:calc(100% - 20px);
+  }
+
+}
+.no-scroll{
+  overflow: hidden;
+}
+.ovic-ui-table.site-thpt .p-datatable-tbody > tr > td {
+  padding: 5px;
 }

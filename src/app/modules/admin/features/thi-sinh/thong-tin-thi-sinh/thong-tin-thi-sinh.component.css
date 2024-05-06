@@ -13,3 +13,12 @@
     margin-top: 20px;
   }
 }
+
+.checkCamket{
+  display:flex;
+  padding: 20px 0 0 0;
+  gap: 10px;
+  justify-content: center;
+  align-items: flex-end;
+  font-size: 15px;
+}

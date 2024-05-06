@@ -12,24 +12,30 @@ import { RippleModule } from "primeng/ripple";
 import { TooltipModule } from "primeng/tooltip";
 import { PaginatorModule } from 'primeng/paginator';
 import { ThongTinThiSinhComponent } from './thi-sinh-du-thi/thong-tin-thi-sinh/thong-tin-thi-sinh.component';
+import { ThiSinhDangKyThiComponent } from './thi-sinh-du-thi/thi-sinh-dang-ky-thi/thi-sinh-dang-ky-thi.component';
+import {CheckboxModule} from "primeng/checkbox";
+import {MatProgressBarModule} from "@angular/material/progress-bar";
 
 
 @NgModule({
     declarations: [
         ThiSinhDuThiComponent,
-        ThongTinThiSinhComponent
+        ThongTinThiSinhComponent,
+        ThiSinhDangKyThiComponent
     ],
-    imports: [
-        CommonModule,
-        DanhSachDuThiRoutingModule,
-        SharedModule,
-        TableModule,
-        DropdownModule,
-        InputTextModule,
-        ButtonModule,
-        RippleModule,
-        TooltipModule,
-        PaginatorModule,
-    ]
+  imports: [
+    CommonModule,
+    DanhSachDuThiRoutingModule,
+    SharedModule,
+    TableModule,
+    DropdownModule,
+    InputTextModule,
+    ButtonModule,
+    RippleModule,
+    TooltipModule,
+    PaginatorModule,
+    CheckboxModule,
+    MatProgressBarModule,
+  ]
 })
 export class DanhSachDuThiModule { }

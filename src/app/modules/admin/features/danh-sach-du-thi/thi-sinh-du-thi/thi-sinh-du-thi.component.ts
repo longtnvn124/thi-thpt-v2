@@ -1,18 +1,17 @@
-import { ThemeSettingsService } from './../../../../../core/services/theme-settings.service';
-import { KeHoachThi, ThptKehoachThiService } from '@shared/services/thpt-kehoach-thi.service';
-import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { OrdersTHPT, ThptOrdersService } from "@shared/services/thpt-orders.service";
-import { NotificationService } from "@core/services/notification.service";
-import { DanhMucMonService } from "@shared/services/danh-muc-mon.service";
-import { DanhMucToHopMonService } from "@shared/services/danh-muc-to-hop-mon.service";
-import { Subscription, forkJoin } from "rxjs";
-import { DmMon, DmToHopMon } from "@shared/models/danh-muc";
-import { NgPaginateEvent } from '@modules/shared/models/ovic-models';
-import { Paginator } from 'primeng/paginator';
-import { ThisinhInfoService } from '@modules/shared/services/thisinh-info.service';
-import { LoopPingPong } from 'three';
-import { ThiSinhInfo } from '@modules/shared/models/thi-sinh';
-import { FileService } from '@core/services/file.service';
+import {KeHoachThi, ThptKehoachThiService} from '@shared/services/thpt-kehoach-thi.service';
+import {Component, ElementRef, OnInit, TemplateRef, ViewChild} from '@angular/core';
+import {OrdersTHPT, ThptOrdersService} from "@shared/services/thpt-orders.service";
+import {NotificationService} from "@core/services/notification.service";
+import {DanhMucMonService} from "@shared/services/danh-muc-mon.service";
+import {Subscription, forkJoin, filter, Subject, debounceTime} from "rxjs";
+import {DmMon,} from "@shared/models/danh-muc";
+import {Paginator} from 'primeng/paginator';
+import {NgPaginateEvent, OvicTableStructure} from "@shared/models/ovic-models";
+import {BUTTON_NO, BUTTON_YES, OvicButton} from "@core/models/buttons";
+import {ThemeSettingsService} from "@core/services/theme-settings.service";
+import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
+import {WAITING_POPUP} from "@shared/utils/syscat";
+import {ExportThiSinhDuThiService} from "@shared/services/export-thi-sinh-du-thi.service";
 
 @Component({
   selector: 'app-thi-sinh-du-thi',
@@ -20,186 +19,348 @@ import { FileService } from '@core/services/file.service';
   styleUrls: ['./thi-sinh-du-thi.component.css']
 })
 export class ThiSinhDuThiComponent implements OnInit {
-  @ViewChild('fromUser', { static: true }) template: TemplateRef<any>;
+  @ViewChild('fromUser', {static: true}) fromUser: TemplateRef<any>;
+  @ViewChild('formregister', {static: true}) formregister: TemplateRef<any>;
+  @ViewChild('templateWaiting') templateWaiting: ElementRef;
   @ViewChild(Paginator) paginator: Paginator;
 
   isLoading: boolean = true;
   loadInitFail: boolean = false;
-  dmMon: DmMon[];
-  dmToHopMon: DmToHopMon[];
-  keHoachThi: KeHoachThi[];
+
+  dsMon: DmMon[];
+  dsKehoachthi: KeHoachThi[];
+
   recordsTotal: number;
   listData: OrdersTHPT[];
+  dataSelct: OrdersTHPT[] = [];
   page: number = 1;
 
-  _kehoach_id: number = null;
-  _searchText: string = '';
+  kehoach_id: number = 0;
+
+  tblStructure: OvicTableStructure[] = [
+    {
+      fieldType: 'normal',
+      field: ['hoten'],
+      innerData: true,
+      header: 'Họ và tên',
+      sortable: false
+    },
+    {
+      fieldType: 'normal',
+      field: ['cccd_so'],
+      innerData: true,
+      header: 'Số CCCD',
+      sortable: false,
+      headClass: 'ovic-w-130px text-center',
+      rowClass: 'ovic-w-130px text-center'
+    },
+    {
+      fieldType: 'normal',
+      field: ['phone'],
+      innerData: true,
+      header: 'Số điện thoại',
+      sortable: false,
+      headClass: 'ovic-w-130px text-center',
+      rowClass: 'ovic-w-130px text-center'
+    },
+    {
+      fieldType: 'normal',
+      field: ['ngaysinh'],
+      innerData: true,
+      header: 'Ngày sinh',
+      sortable: false,
+      headClass: 'ovic-w-150px text-center',
+      rowClass: 'ovic-w-150px text-right'
+    },
+    {
+      fieldType: 'normal',
+      field: ['_gioitinh_converted'],
+      innerData: true,
+      header: 'Giới tính',
+      sortable: false,
+      headClass: 'ovic-w-130px text-center',
+      rowClass: 'ovic-w-130px text-center'
+    },
+    {
+      fieldType: 'normal',
+      field: ['_dc_tc_coververted'],
+      innerData: true,
+      header: 'Địa chỉ thường trú',
+      sortable: false
+    },
+    {
+      tooltip: '',
+      fieldType: 'buttons',
+      field: [],
+      rowClass: 'ovic-w-150px text-center',
+      checker: 'fieldName',
+      header: 'Thao tác',
+      sortable: false,
+      headClass: 'ovic-w-120px text-center',
+      buttons: [
+        {
+          tooltip: 'Thông tin chi tiết',
+          label: '',
+          icon: 'pi pi-file',
+          name: 'INFO_DECISION',
+          cssClass: 'btn-primary rounded'
+        },
+        {
+          tooltip: 'Chi tiết đăng ký',
+          label: '',
+          icon: 'pi pi-database',
+          name: 'INFO_REGITTER',
+          cssClass: 'btn-warning rounded'
+        }
+      ]
+    }
+  ];
+
   rows = this.themeSettingsService.settings.rows;
   menuName = 'thisinhduthi';
   sizeFullWidth: number;
   subscription = new Subscription();
-
+  index = 1;
+  search = '';
+  needUpdate = false;
+  private inputChanged: Subject<string> = new Subject<string>();
 
   listStyle = [
+    {value: 1, title: '<div class="thanh-toan true text-center"><div></div><label>Đăng ký thành công</label></div>',},
+    {value: 0, title: '<div class="thanh-toan false text-center"><div></div><label>Chưa thanh toán</label></div>',},
     {
-      value: 1, title: '<div class="thanh-toan true"><label> Đã thanh toán</label></div>',
+      value: -1,
+      title: '<div class="thanh-toan check text-center"><div></div><label>Đã thanh toán, chờ duyệt</label></div>',
     },
-    {
-      value: 0, title: '<div class="thanh-toan false"><label> Chưa thanh toán</label></div>',
-    }
+    {value: 2, title: '<div class="thanh-toan check text-center"><div></div><label>Giao dịch đang xử lý</label></div>',}
   ]
+
   constructor(
     private themeSettingsService: ThemeSettingsService,
-    private orderServcier: ThptOrdersService,
+    private ordersService: ThptOrdersService,
     private notifi: NotificationService,
     private monService: DanhMucMonService,
-    private toHopMonService: DanhMucToHopMonService,
     private thptKehoachThiService: ThptKehoachThiService,
-    private thisinhInfoService: ThisinhInfoService,
-    private fileSerive: FileService
-
+    private modalService: NgbModal,
+    private exportThiSinhDuThiService: ExportThiSinhDuThiService
   ) {
+
+    const observeProcessCloseForm = this.notifi.onSideNavigationMenuClosed().pipe(filter(menuName => menuName === this.menuName && this.needUpdate)).subscribe(() => this.loadData(this.page));
+    this.subscription.add(observeProcessCloseForm);
     const observerOnResize = this.notifi.observeScreenSize.subscribe(size => this.sizeFullWidth = size.width)
     this.subscription.add(observerOnResize);
   }
 
   ngOnInit(): void {
+    this.inputChanged.pipe(debounceTime(1000)).subscribe((item: string) => {
+      this.searchContentByInput(item);
+    });
 
-    forkJoin<[DmMon[], DmToHopMon[], KeHoachThi[]]>(
-      this.monService.getDataUnlimit(),
-      this.toHopMonService.getDataUnlimit(),
-      this.thptKehoachThiService.getDataUnlimit()
-    ).subscribe({
-      next: ([dmMon, dmToHopMon, kehoachthi]) => {
-        this.dmMon = dmMon;
-        this.dmToHopMon = dmToHopMon.map(m => {
-          let mon_ids_covered: string[] = [];
-          m.mon_ids.forEach(f => {
-            const name = this.dmMon && this.dmMon.find(a => a.id === f) ? this.dmMon.find(a => a.id === f).tenmon : '';
-            mon_ids_covered.push(name);
-          })
-          m['__mon_ids_covered'] = mon_ids_covered ? mon_ids_covered : null;
-          m['__tentohop_covered'] = mon_ids_covered ? m.tentohop + '(' + mon_ids_covered.join(', ') + ' )' : null;
-          return m;
-        });
-
-        this.keHoachThi = kehoachthi;
-        if (this.dmMon && this.dmToHopMon) {
-          this.loadInit();
-        }
-        this.notifi.isProcessing(false);
-      }, error: (e) => {
-        this.notifi.isProcessing(false);
-      }
-    })
+    this.loadInit();
   }
 
 
   loadInit() {
-    this.getData(1, null, null);
-  }
-
-  getData(page: number, kehoach_id: number, search: string) {
-
-    this.page = page ? page : this.page;
-    this._searchText = search ? search : this._searchText;
-    this._kehoach_id = kehoach_id ? kehoach_id : this._kehoach_id;
-    this.notifi.isProcessing(true);
-    this.isLoading = true;
-    this.orderServcier.getDataByWithThisinhAndSearchAndPage(this.page, kehoach_id, this._searchText).subscribe({
-      next: ({ recordsTotal, data }) => {
-        let index = 1;
-        this.recordsTotal = recordsTotal;
-        this.listData = data && data.length ? data.map(m => {
-          const thi_sinh = m['thisinh'];
-          const monhoc = m['monhoc'].map(m => {
-            return { tohopmon: this.dmToHopMon.find(f => f.id === m['tohop_monhoc']) ? this.dmToHopMon.find(f => f.id === m['tohop_monhoc'])['__tentohop_covered'] : null, tenmon: m['tenmon'] };
-          });
-          const uniqueTohop = this.uniqueTohop(monhoc);
-          m['_indexTable'] = page > 10 ? (page * 10 + index++) : index++;
-          m['_thisinh_hoten'] = thi_sinh ? thi_sinh['hoten'] : '';
-          m['_thisinh_email'] = thi_sinh ? thi_sinh['email'] : '';
-          m['_thisinh_noisinh'] = thi_sinh ? thi_sinh['noisinh'] : '';
-          m['_thisinh_gioitinh'] = thi_sinh && thi_sinh['gioitinh'] === 'nam' ? 'Nam' : 'Nữ';
-          m['_thisinh_phone'] = thi_sinh ? thi_sinh['phone'] : '';
-          if (uniqueTohop) {
-            // m['__monthi_covered'] = uniqueTohop && uniqueTohop[0]['tohopmon'] !== null ? uniqueTohop[0]['tohopmon'] : uniqueTohop.map(c => c['tenmon']).join(', ');
-            m['__monthi_covered'] = uniqueTohop && uniqueTohop[0]['tohopmon'] !== null ? uniqueTohop[0]['tohopmon'] : uniqueTohop.map(c => this.dmMon.find(v => v.id === parseInt(c['tenmon'])).tenmon).join(', ');
-
-          }
-          m['_kehoach_coverted'] = this.keHoachThi ? this.keHoachThi.find(f => f.id === m.kehoach_id).dotthi : '';
-          m['__status_converted'] = m['trangthai_thanhtoan'] === 1 ? this.listStyle.find(f => f.value === 1).title : this.listStyle.find(f => f.value === 0).title;
-          return m;
-        }) : [];
-
-        this.notifi.isProcessing(false);
-        this.isLoading = false;
-
-
-      }, error: () => {
-        this.isLoading = false;
-        this.notifi.isProcessing(false);
-        this.notifi.toastError('Mất kết nối với máy chủ');
+    forkJoin<[DmMon[], KeHoachThi[]]>(
+      this.monService.getDataUnlimit(),
+      this.thptKehoachThiService.getDataUnlimit()
+    ).subscribe({
+      next: ([mon, kehoachthi]) => {
+        this.dsMon = mon;
+        console.log(kehoachthi)
+        console.log(this.dsMon);
+        this.dsKehoachthi = kehoachthi;
+        if (this.dsMon && this.dsKehoachthi) {
+          this.loadData(1);
+        }
       }
     })
-  };
+  }
 
-  uniqueTohop(data: { tohopmon: number | null, tenmon: string }[]): { tohopmon: number | null, tenmon: string }[] {
-    const uniqueNames: Record<number | null, boolean> = {};
-    const result: { tohopmon: number | null, tenmon: string }[] = [];
-
-    data.forEach(item => {
-      if (item.tohopmon !== null) {
-        if (!uniqueNames[item.tohopmon]) {
-          uniqueNames[item.tohopmon] = true;
-          result.push(item);
-        }
-      } else {
-        result.push(item);
+  loadData(page: number, kehoach_id?: number, search?: string) {
+    this.isLoading = true;
+    const limit = this.themeSettingsService.settings.rows;
+    this.index = (page * limit) - limit + 1;
+    this.notifi.isProcessing(true);
+    this.ordersService.getDataByWithThisinhAndSearchAndPage(page, kehoach_id, search).subscribe({
+      next: ({recordsTotal, data}) => {
+        this.recordsTotal = recordsTotal
+        this.listData = data.map((m, index) => {
+          const thisinh = m['thisinh'];
+          m['_indexTable'] = index + 1;
+          m['__order_id_coverted'] = 'VSAT' + m.id;
+          m['__thisinh_hoten'] = thisinh ? thisinh['hoten'] : '';
+          m['__thisinh_phone'] = thisinh ? thisinh['phone'] : '';
+          m['__thisinh_cccd'] = thisinh ? thisinh['cccd_so'] : '';
+          m['__thisinh_ngaysinh'] = thisinh ? thisinh['ngaysinh'] : '';
+          m['__thisinh_gioitinh'] = thisinh ? thisinh['gioitinh'] : '';
+          m['__thisinh_phone'] = thisinh ? thisinh['phone'] : '';
+          m['__thisinh_email'] = thisinh ? thisinh['email'] : '';
+          m['giadich'] = m.trangthai_thanhtoan === 1 ? m['transaction_id'] : 'Giao dịch chuyển khoản';
+          m['__dotthi_coverted'] = this.dsKehoachthi.find(f => f.id === m.kehoach_id).dotthi;
+          m['__mon_converted'] = m.mon_id ? m.mon_id.map(f => this.dsMon && this.dsMon.find(a => a.id === f) ? this.dsMon.find(a => a.id === f).tenmon : '') : [];
+          m['__status_converted'] = m.trangthai_thanhtoan === 1 ? this.listStyle.find(f => f.value === 1).title : (m.trangthai_thanhtoan === 0 && m.trangthai_chuyenkhoan === 0 ? this.listStyle.find(f => f.value === 0).title : (m.trangthai_thanhtoan === 0 && m.trangthai_chuyenkhoan === 1 ? this.listStyle.find(f => f.value === -1).title : (m.trangthai_thanhtoan === 2 ? this.listStyle.find(f => f.value === 2).title : '')));
+          return m;
+        })
+        console.log(data)
+        this.notifi.isProcessing(false);
+        this.isLoading = false;
+      }, error: () => {
+        this.notifi.isProcessing(false);
+        this.isLoading = false;
+        this.notifi.toastError('Load dữ liệu không thành công');
       }
-    });
+    })
 
-    return result;
   }
 
-  selectkeHoachThi(event) {
-
-    this._kehoach_id = event;
-    this.getData(1, event, this._searchText);
-  }
-  changeInput(event) {
-
-    this.paginator.changePage(1);
-    this._searchText = event;
-    this.getData(this.page, this._kehoach_id, this._searchText);
+  loadDropdow(event) {
+    console.log(event);
+    this.kehoach_id = event;
+    this.page = 1;
+    this.loadData(this.page, this.kehoach_id, this.search);
   }
 
-  paginate({ page }: NgPaginateEvent) {
-    this.page = page + 1;
-    this.getData(this.page, this._kehoach_id, this._searchText);
-  }
   closeForm() {
     this.loadInit();
     this.notifi.closeSideNavigationMenu(this.menuName);
   }
 
-  private preSetupForm(name: string) {
-    this.notifi.isProcessing(false);
+  onSearch(text: string) {
+    this.search = text;
+    this.paginator.changePage(1);
+    this.page = 1;
+    this.loadData(1, this.kehoach_id, text);
+  }
+
+  paginate({page}: NgPaginateEvent) {
+    this.page = page + 1;
+    this.loadData(this.page);
+  }
+
+  thisinh_id: number;
+
+  searchContentByInput(text: string) {
+    this.page = 1;
+
+    var viTri = text.indexOf("vsat");
+
+    if (viTri === -1) {
+      var phanTuSau = text;
+      this.search = phanTuSau;
+
+    } else {
+      var phanTuSau = text.slice(viTri + 4);
+      this.search = phanTuSau;
+
+    }
+
+    this.loadData(1, this.kehoach_id, this.search);
+  }
+
+  onInputChange(event: string) {
+
+    this.inputChanged.next(event);
+  }
+
+  btnViewTT(item: OrdersTHPT) {
+    this.thisinh_id = item.thisinh_id;
     this.notifi.openSideNavigationMenu({
-      name,
-      template: this.template,
+      name: this.menuName,
+      template: this.fromUser,
       size: this.sizeFullWidth,
       offsetTop: '0px'
     });
   }
 
+  async btnCheckTT() {
+    if (this.dataSelct.length > 0) {
+      const select_ids = this.dataSelct.map(m => m.id);
+      const select_leght = this.dataSelct.length;
+      const button = await this.notifi.confirmRounded('<p class="text-danger">Xác nhận</p>', 'Cập nhật trạng thái thanh toán của ' + select_leght + ' thí sinh.', [BUTTON_YES, BUTTON_NO]);
+      if (button.name === BUTTON_YES.name) {
+        this.notifi.isProcessing(true);
+        this.modalService.open(this.templateWaiting, WAITING_POPUP);
+        this.ordersService.activeOrder(select_ids).subscribe({
+          next: () => {
+            this.modalService.dismissAll();
+            this.loadData(this.page, this.kehoach_id, this.search);
+            this.notifi.toastSuccess('Thao tác thành công');
+            this.notifi.isProcessing(false);
+          }, error: () => {
 
-  userInfo: ThiSinhInfo;
-  thisinh_id: number;
-  btnShowUser(id: number) {
-    this.preSetupForm(this.menuName);
-    this.notifi.isProcessing(true);
-    this.thisinh_id = id;
+            this.notifi.toastError('Thao tác không thành công');
+          }
+        })
 
+      }
+      // this.modalService.open(this.templateWaiting, WAITING_POPUP);
+      // this.modalService.dismissAll();
+    } else {
+      this.notifi.toastWarning('Vui lòng chọn thi sinh');
+    }
   }
+
+  btnExportExcel() {
+
+    if (this.kehoach_id !== 0) {
+      this.notifi.isProcessing(true);
+      this.modalService.open(this.templateWaiting, WAITING_POPUP);
+      this.ordersService.getDataByKehoachId(this.kehoach_id).subscribe({
+        next: (data) => {
+          const dataExport = data.map((m, index) => {
+            const thisinh = m['thisinh'];
+            m['__index'] = index + 1;
+            m['__maDK'] = "VSAT" + m.id;
+            m['__trangthai_thanhtoan'] = m.trangthai_thanhtoan === 1 ? 'Đăng ký thành công' : (m.trangthai_thanhtoan === 0 && m.trangthai_chuyenkhoan === 0 ? 'Chưa thanh toán' : (m.trangthai_thanhtoan === 0 && m.trangthai_chuyenkhoan === 1 ? 'Đã thanh toán,đang xử lý' : ''));
+            m['__hoten'] = thisinh ? thisinh['hoten'] : '';
+            m['__ngaysinh'] = thisinh ? thisinh['ngaysinh'] : '';
+            m['__gioitinh'] = thisinh && thisinh['gioitinh'] === 'nam' ? 'Nam' : "Nữ";
+            m['__email'] = thisinh ? thisinh['email'] : "";
+            m['__cccd'] = thisinh ? thisinh['cccd_so'] : "";
+            m['__phone'] = thisinh ? thisinh['phone'] : '';
+            this.dsMon.forEach(f => {
+              m[f.kyhieu] = m.mon_id.find(n => n === f.id) ? this.dsMon.find(a => a.id === f.id).tenmon : '';
+            })
+            return {
+              index: m['__index'],
+              id: m.id,
+              madk: m['__maDK'],
+              status: m['__trangthai_thanhtoan'],
+              hoten: m['__hoten'],
+              ngaysinh: m['__ngaysinh'],
+              gioitinh: m['__gioitinh'],
+              cccd: m['__cccd'],
+              email: m['__email'],
+              phone: m['__phone'],
+              toan: m['TH'],
+              li: m['VL'],
+              hoa: m['HH'],
+              sinh: m['SH'],
+              lich: m['LS'],
+              dia: m['DL'],
+              anh: m['TA']
+            };
+          });
+
+
+          if (dataExport) {
+            this.modalService.dismissAll();
+            this.exportThiSinhDuThiService.exportToLong(dataExport, this.dsKehoachthi.find(f => f.id === this.kehoach_id).dotthi);
+          }
+          this.notifi.isProcessing(false);
+          this.modalService.dismissAll();
+        },
+        error: () => {
+          this.modalService.dismissAll();
+          this.notifi.toastError('Thao tác không thành công');
+          this.notifi.isProcessing(false)
+        }
+      })
+    } else {
+      this.notifi.toastError('Vui lòng chọn đợt thi');
+    }
+  }
+
+
 }

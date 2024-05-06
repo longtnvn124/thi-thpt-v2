@@ -191,8 +191,6 @@ export class PhongThiComponent implements OnInit {
       monSelect.forEach(item => {
         let sobaodanh_index = 1;
         const thisinh = this.thptThisinh.filter(f => f['_monthi_ids'].includes(item));
-        console.log(this.taoSoPhong(this.dataPhongThi, thisinh, typeSelect));
-
         const phongthi = this.taoSoPhong(this.dataPhongThi, thisinh, typeSelect)
         if (phongthi.length > 0) {
           phongthi.forEach((phongthi, index) => {
@@ -205,7 +203,7 @@ export class PhongThiComponent implements OnInit {
               ma_phongthi: this.dmMon.find(f => f.id === item).kyhieu + '.P' + '.' + (index + 1),
               ten_phongthi: this.dmMon.find(f => f.id === item).tenmon + "(Phòng " + (index + 1) + ', ' + this.f["ten_cathi"].value + ', ' + (this.dmMon.find(f => f.id === item).kyhieu + '.P' + '.' + (index + 1)) + '.' + this.kehoach_id + '.' + this.hoidong_id + ')',
             }
-            console.log(phongthiNew);
+
             this.notifi.isProcessing(true);
             this.hoidongPhongthiService.create(phongthiNew).subscribe({
               next: (id) => {
@@ -221,7 +219,7 @@ export class PhongThiComponent implements OnInit {
                     thisinh_id: thisinhid
                   }
                   sobaodanh_index++;
-                  console.log(newThiSinh);
+
                   this.phongthiThisinhService.create(newThiSinh).subscribe({
                     next: (id) => {
                       check = true;
@@ -243,7 +241,7 @@ export class PhongThiComponent implements OnInit {
 
           });
         } else {
-          console.log('Không có phòng thi nào hợp lệ');
+
 
         }
       });
@@ -273,7 +271,7 @@ export class PhongThiComponent implements OnInit {
         }
         phongCanThiet[indexPhong].thisinh_ids.push(thiSinh.thisinh_id);
       }
-      console.log(indexPhong);
+
       return phongCanThiet.filter(phong => phong.thisinh_ids.length > 0);
 
     }
@@ -283,7 +281,7 @@ export class PhongThiComponent implements OnInit {
       const dsPhongNew = []
       for (let item of phongCanThiet) {
         if (thisinh_length <= 0) break; // Điều kiện dừng
-        console.log(item);
+
         dsPhongNew.push(item);
         thisinh_length -= item.soluong;
       }
@@ -291,7 +289,7 @@ export class PhongThiComponent implements OnInit {
       for (let i = 0; i < dsThiSinh.length; i++) {
         dsPhongNew[i % dsPhongNew.length].thisinh_ids.push(dsThiSinh[i].thisinh_id);
       }
-      console.log(dsPhongNew);
+
       return dsPhongNew;
     }
   }
@@ -321,7 +319,7 @@ export class PhongThiComponent implements OnInit {
           m['__monthi'] = m.monthi_ids.map(f => this.dmMon.find(c => c.id === f).tenmon).join(', ');
           return m;
         })
-        console.log(this.hoiDongPhongThi);
+
 
         this.notifi.isProcessing(false);
       }, error: () => {

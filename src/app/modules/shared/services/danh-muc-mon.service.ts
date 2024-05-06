@@ -56,7 +56,7 @@ export class DanhMucMonService {
     const fromObject = {
       paged: page,
       limit: this.themeSettingsService.settings.rows,
-      orderby: 'tenmon',
+      orderby: 'id',
       order: 'ASC'
     };
     if (ten) {
@@ -86,7 +86,7 @@ export class DanhMucMonService {
     const fromObject = {
       paged: 1,
       limit: -1,
-      orderby: 'tenmon',
+      orderby: 'id',
       order: 'ASC'
     };
     const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({fromObject}));

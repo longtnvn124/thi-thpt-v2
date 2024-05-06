@@ -14,7 +14,7 @@ const routes : Routes = [
 		children         : [
 			{
 				path       : '' ,
-				redirectTo : 'dashboard' ,
+				redirectTo : 'thi-sinh' ,
 				pathMatch  : 'prefix'
 			} ,
 			{
@@ -22,6 +22,8 @@ const routes : Routes = [
 				component : HomeComponent ,
 				data      : { state : 'dashboard' }
 			} ,
+
+
 			{
 				path      : 'content-none' ,
 				component : ContentNoneComponent ,
@@ -66,7 +68,7 @@ const routes : Routes = [
 			} ,
 			{
 				path       : '**' ,
-				redirectTo : '/admin/dashboard' ,
+				redirectTo : '/admin/thi-sinh' ,
 				pathMatch  : 'prefix'
 			}
 		]

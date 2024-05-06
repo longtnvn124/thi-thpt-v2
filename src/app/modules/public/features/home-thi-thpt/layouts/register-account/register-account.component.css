@@ -55,3 +55,12 @@
     padding: 0 5px;
     left: 0;
   }
+
+  .div-err{
+    line-height: 20px;
+    background: #f5f4e3;
+    border-left: 1px solid #f54b4b;
+    margin-top: 12px;
+    padding: 2px 1px;
+  }
+

@@ -218,7 +218,7 @@ export class KeHoachThiComponent implements OnInit {
     this.notificationService.openSideNavigationMenu({
       name,
       template: this.template,
-      size: 800,
+      size: 1024,
       offsetTop: '0px'
     });
   }
@@ -253,8 +253,11 @@ export class KeHoachThiComponent implements OnInit {
         break;
       case 'EDIT_DECISION':
         this.btn_checkAdd = "Cập nhật";
-
         const object1 = this.listData.find(u => u.id === decision.id);
+
+        this.formActive = this.listForm[FormType.UPDATE];
+        this.formActive.object = object1;
+        this.preSetupForm(this.menuName);
         this.formSave.reset({
           nam:object1.nam,
           dotthi:object1.dotthi,
@@ -264,9 +267,8 @@ export class KeHoachThiComponent implements OnInit {
           ngaybatdau: object1.ngaybatdau ? new Date(object1.ngaybatdau) : null,
           ngayketthuc:object1.ngayketthuc ? new Date(object1.ngayketthuc) : null,
         })
-        this.formActive = this.listForm[FormType.UPDATE];
-        this.formActive.object = object1;
-        this.preSetupForm(this.menuName);
+        console.log(this.formSave.value);
+
         break;
       case 'DELETE_DECISION':
         const confirm = await this.notificationService.confirmDelete();

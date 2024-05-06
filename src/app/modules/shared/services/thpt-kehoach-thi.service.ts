@@ -92,7 +92,7 @@ export class ThptKehoachThiService {
     const fromObject = {
       paged: 1,
       limit: -1,
-      orderby: 'dotthi',
+      orderby: 'id',
       order: 'ASC'
     };
     const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }));
@@ -112,6 +112,22 @@ export class ThptKehoachThiService {
       paged: 1,
       limit: 1,
       orderby: 'dotthi',
+      order: "ASC"
+    }
+    const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }));
+    return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data[0]));
+  }
+  getdataBystatus(): Observable<KeHoachThi[]>{
+    const conditions: OvicConditionParam[] = [
+      {
+        conditionName: 'status',
+        condition: OvicQueryCondition.equal,
+        value: '1'
+      }
+
+    ];
+    const fromObject = {
+      orderby: 'id',
       order: "ASC"
     }
     const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }));

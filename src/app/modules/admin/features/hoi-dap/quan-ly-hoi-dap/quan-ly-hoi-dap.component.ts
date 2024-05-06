@@ -264,8 +264,6 @@ export class QuanLyHoiDapComponent implements OnInit {
   saveForm() {
     const titleInput = this.f['question'].value.trim();
     this.f['question'].setValue(titleInput);
-    console.log(this.formSave.value);
-
     if (this.formSave.valid) {
       if (titleInput !== '') {
         this.formActive.data = this.formSave.value;

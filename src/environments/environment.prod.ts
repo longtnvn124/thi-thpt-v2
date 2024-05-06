@@ -5,7 +5,7 @@ export const environment = {
 };
 
 // run locall
-// http://thi-thpt.tnu.vn 
+// http://thi-thpt.tnu.vn
 const realm = 'thithpt';
 const host = ['h', 't', 't', 'p', 's', ':', '/', '/', 'v', 's', 'a', 't', '.', 't', 'n', 'u', '.', 'e', 'd', 'u', '.', 'v', 'n'];
 const port = '8091';
@@ -69,7 +69,7 @@ const appVersion = '1.0.0';
 
 export const APP_CONFIGS = {
   defaultRedirect: '/admin',
-  pageTitle: 'VSAT - Đăng ký thi đánh giá năng lực phổ thông',
+  pageTitle: 'V-SAT-TNU | Đăng ký thi đánh giá đầu vào Đại học bằng hình thức thi trên máy tính của Đại học Thái Nguyên',
   multiLanguage: true,
   defaultLanguage: appDefaultLanguage, // không được bỏ trống trường này ngay cả khi multiLanguage = false
   languages: appLanguages,

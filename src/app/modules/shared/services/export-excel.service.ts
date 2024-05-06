@@ -110,7 +110,6 @@ export class ExportExcelService {
         });
         worksheet.getColumn(columnIndex + 2).width = maxLength + 2;
       });
-
     });
 
     // save Excel File

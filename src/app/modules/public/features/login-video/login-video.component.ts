@@ -107,7 +107,7 @@ export class LoginVideoComponent implements OnInit, AfterViewInit, OnDestroy {
 				{ width: '100%', size: 'large', type: 'standard', shape: 'square', logo_alignment: 'left', text: 'signin_with', theme: 'filled_blue' }  // customization attributes
 			);
 		}
-		this.video.nativeElement.onplay = () => this.isVideoBackgroundPLaying = true;
+		// this.video.nativeElement.onplay = () => this.isVideoBackgroundPLaying = true;
 	}
 
 	playBackgroundVideo() {
@@ -194,30 +194,34 @@ export class LoginVideoComponent implements OnInit, AfterViewInit, OnDestroy {
 		// 	this.title.setTitle( 'Đăng nhập tài khoản' );
 		// 	this.loading = false;
 		// }
-		if (this.auth.isLoggedIn()) {
+    console.log(this.auth.user['verified']);
+    if (this.auth.user['verified'] === 1){
+      if (this.auth.isLoggedIn()) {
+      	const roles = this.auth.roles;
+      	const checkThisinh = roles.length === 1 && roles.find(f => f.id === 87);
+      	if (this.auth.isLoggedIn()) {
+      		if (checkThisinh) {
+      			this.router.navigate(['test']);
+      			this.loading = false;
+      		} else {
+      			const redirect = this.params && this.params.hasOwnProperty('redirect') ? this.params['redirect'] : APP_CONFIGS.defaultRedirect;
+      			const pageTitle = APP_CONFIGS.pageTitle || 'admin area';
+      			this.title.setTitle(pageTitle);
+      			await this.router.navigate([redirect], { queryParams: this.params });
+      			this.loading = false;
+      		}
+      	}
+      	else {
+      		this.title.setTitle('Đăng nhập tài khoản');
+      		this.loading = false;
+      		this.notification.toastError("Sai tài khoản hoặc mật khẩu");
+      	}
+      }
+    }else{
+      this.notification.toastError("Bạn chưa xác nhận Email, vui lòng xác nhận Email rồi quay lại.");
 
-			const roles = this.auth.roles;
-			const checkThisinh = roles.length === 1 && roles.find(f => f.id === 87);
-			if (this.auth.isLoggedIn()) {
-				if (checkThisinh) {
-					this.router.navigate(['test']);
-					this.loading = false;
-				} else {
-					const redirect = this.params && this.params.hasOwnProperty('redirect') ? this.params['redirect'] : APP_CONFIGS.defaultRedirect;
-					const pageTitle = APP_CONFIGS.pageTitle || 'admin area';
-					this.title.setTitle(pageTitle);
-					await this.router.navigate([redirect], { queryParams: this.params });
-					this.loading = false;
-				}
-			}
-			else {
-				this.title.setTitle('Đăng nhập tài khoản');
-				this.loading = false;
-				this.notification.toastError("Sai tài khoản hoặc mật khẩu");
-			}
+    }
 
-
-		}
 	}
 
 	changePasswordMode() {

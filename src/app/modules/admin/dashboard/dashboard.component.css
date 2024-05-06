@@ -173,3 +173,17 @@
 body .btn--flat {
 	border-radius: 0;
 }
+
+.trogiup{
+  color: #fff;
+  margin-right: 10px;
+  border-radius: 4px;
+}
+.trogiup >a{
+  color:#fff;
+}
+
+.trogiup:hover{
+  background: #0d47a1;
+
+}

@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { ThptHoiDong } from '@modules/shared/services/thpt-hoi-dong.service';
 import { Paginator } from 'primeng/paginator';
 import { EmployeesPickerService } from "@shared/services/employees-picker.service";
@@ -10,8 +10,6 @@ import { NgPaginateEvent } from '@modules/shared/models/ovic-models';
 import { NotificationService } from '@core/services/notification.service';
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { Observable, catchError, concatMap, delay, finalize, forkJoin, of } from 'rxjs';
-import { ThiSinhInfo } from '@modules/shared/models/thi-sinh';
-import { ThiSinhService } from '@modules/shared/services/thi-sinh.service';
 import { ThisinhInfoService } from '@modules/shared/services/thisinh-info.service';
 
 @Component({
@@ -40,7 +38,7 @@ export class AddThiSinhComponent implements OnInit {
     private themeSettingsService: ThemeSettingsService,
     private hoiDongThiSinhService: ThptHoidongThisinhService,
     private notifi: NotificationService,
-    private modalService: NgbModal,
+
     private thisinhInfoService: ThisinhInfoService
 
   ) { }
@@ -74,7 +72,7 @@ export class AddThiSinhComponent implements OnInit {
           m['_gioitinh'] = thisinh && thisinh['gioitinh'] === 'nam' ? 'Nam' : 'Nữ';
           return m;
         })
-    
+
         this.isloading = false;
       }, error: () => {
         this.isloading = false;

@@ -1,25 +1,26 @@
-import { Component, OnInit } from '@angular/core';
-import { ThisinhInfoService } from "@shared/services/thisinh-info.service";
-import { DanhMucMonService } from "@shared/services/danh-muc-mon.service";
-import { DanhMucToHopMonService } from "@shared/services/danh-muc-to-hop-mon.service";
-import { forkJoin } from "rxjs";
-import { AuthService } from "@core/services/auth.service";
-import { ThiSinhInfo } from "@shared/models/thi-sinh";
-import { DmMon, DmToHopMon, KieuDuLieuNguLieu } from "@shared/models/danh-muc";
-import { NotificationService } from "@core/services/notification.service";
-import { AbstractControl, FormBuilder, FormGroup, Validators } from "@angular/forms";
-import { KeHoachThi, ThptKehoachThiService } from "@shared/services/thpt-kehoach-thi.service";
-import { Options, ThptOptionsService } from "@shared/services/thpt-options.service";
-import {OrdersMonhocTHPT, ThptOrderMonhocService} from "@shared/services/thpt-order-monhoc.service";
-import { OrdersTHPT, ThptOrdersService } from "@shared/services/thpt-orders.service";
-import { ActivatedRoute, Router } from "@angular/router";
+import {Component, OnInit} from '@angular/core';
+import {ThisinhInfoService} from "@shared/services/thisinh-info.service";
+import {DanhMucMonService} from "@shared/services/danh-muc-mon.service";
+import {DanhMucToHopMonService} from "@shared/services/danh-muc-to-hop-mon.service";
+import {forkJoin} from "rxjs";
+import {AuthService} from "@core/services/auth.service";
+import {ThiSinhInfo} from "@shared/models/thi-sinh";
+import {DmMon, DmToHopMon} from "@shared/models/danh-muc";
+import {NotificationService} from "@core/services/notification.service";
+import {AbstractControl, FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {KeHoachThi, ThptKehoachThiService} from "@shared/services/thpt-kehoach-thi.service";
+import {Options, ThptOptionsService} from "@shared/services/thpt-options.service";
+import {ThptOrderMonhocService} from "@shared/services/thpt-order-monhoc.service";
+import {OrdersTHPT, ThptOrdersService} from "@shared/services/thpt-orders.service";
+import {ActivatedRoute, Router} from "@angular/router";
 import {OvicEmailObject, SenderEmailService} from "@shared/services/sender-email.service";
-import {Auth} from "@core/models/auth";
+
 
 export interface SumMonThi {
-  tenmon:number,
-  total:number,
+  tenmon: number,
+  total: number,
 }
+
 @Component({
   selector: 'app-thi-sinh-dang-ky',
   templateUrl: './thi-sinh-dang-ky.component.html',
@@ -29,36 +30,45 @@ export class ThiSinhDangKyComponent implements OnInit {
   ngType: 1 | 0 | -1 = 0;//0: form,1:thanh toasn thanh coong, -1:chờ thanh toán,
   isLoading: boolean = true;
   loadInitFail = false;
-  dotthi_id_select :number =0;
-  mon_ids_select :number[] = [];
+  dotthi_id_select: number = 0;
+  mon_ids_select: number[] = [];
   userInfo: ThiSinhInfo;
   dmMon: DmMon[];
   dmToHopMon: DmToHopMon[];
   keHoachThi: KeHoachThi[];
   private _user_id: number;
   formSave: FormGroup;
-  totalDangkyMonThi:SumMonThi[];
+  totalDangkyMonThi: SumMonThi[];
   dataOrders: OrdersTHPT[];
   listStyle = [
     {
-      value: 1, title: '<div class="thanh-toan true"><div></div><label> Đã thanh toán</label></div>',
+      value: 1, title: '<div class="thanh-toan true text-center"><div></div><label>Đăng ký thành công</label></div>',
     },
     {
-      value: 0, title: '<div class="thanh-toan false"><div></div><label> Chưa thanh toán</label></div>',
+      value: 0, title: '<div class="thanh-toan false text-center"><div></div><label>Chưa thanh toán</label></div>',
+    },
+    {
+      value: -1, title: '<div class="thanh-toan check text-center"><div></div><label>Đã thanh toán, chờ duyệt</label></div>',
+    },
+    {
+      value: 2, title: '<div class="thanh-toan check text-center"><div></div><label>Giao dịch đang xử lý</label></div>',
     }
   ]
-  hinhthucthi = [
-    { label: 'Từng môn', value: 0 },
-    { label: 'Tổ hợp Môn', value: 1 },
-  ];
+
 
   noicapdata = [
-    { title: 'Cục quản lý hành chính về TTXH', code: '1' },
+    {title: 'Cục quản lý hành chính về TTXH', code: '1'},
   ]
   hinhthucthiSlect: 0 | 1 | -1 = 0;//0:mon//1:tohopmon
   dataTohopmonslect: DmToHopMon[];
   dataMonslect: DmMon[];
   lephithiData: Options;
+
+  displayMaximizable: boolean = false;
+  content_pay: string = '';
+  orderParram: OrdersTHPT;
+  activeIndex1: number = 0;
+
   constructor(
     private thisinhInfoService: ThisinhInfoService,
     private monService: DanhMucMonService,
@@ -72,15 +82,14 @@ export class ThiSinhDangKyComponent implements OnInit {
     private ordersService: ThptOrdersService,
     private router: Router,
     private activeRouter: ActivatedRoute,
-    private senderEmailService:SenderEmailService,
-
+    private senderEmailService: SenderEmailService,
   ) {
     this._user_id = this.auth.user.id;
     this.formSave = this.fb.group({
       user_id: [null],
       kehoach_id: [null, Validators.required],
       // hinhthucthi:[null,Validators.required], //1:tohopmon,2:mon thi,
-      mon_ids: [[]],
+      mon_ids: [[], Validators.required],
       tohopmon_ids: [null],
     })
   }
@@ -108,6 +117,7 @@ export class ThiSinhDangKyComponent implements OnInit {
   }
 
   loadInit() {
+    this.dotthi_id_select = 0;
     this.getDataDanhMuc();
   }
 
@@ -116,25 +126,18 @@ export class ThiSinhDangKyComponent implements OnInit {
       next: (data) => {
         let i = 1;
         this.dataOrders = data.map(m => {
-          const monhoc = m['monhoc'].map(m => {
-            return { tohopmon: this.dmToHopMon.find(f => f.id === m['tohop_monhoc']) ? this.dmToHopMon.find(f => f.id === m['tohop_monhoc'])['__tentohop_covered'] : null, tenmon: m['tenmon'] };
-          });
-          const uniqueTohop = this.uniqueTohop(monhoc);
           m['_indexTable'] = i++;
           m['__kehoach_thi'] = this.keHoachThi && this.keHoachThi.find(f => f.id === m.kehoach_id).dotthi ? this.keHoachThi.find(f => f.id === m.kehoach_id).dotthi : '';
-          m['__lephithi_covered'] = m.lephithi + ' VNĐ';
-          m['__status_converted'] = m['trangthai_thanhtoan'] === 1 ? this.listStyle.find(f => f.value === 1).title : this.listStyle.find(f => f.value === 0).title;
-          console.log()
-          m['__monthi_covered'] =this.dmMon ? m.mon_id.map(b=> this.dmMon.find(f=>f.id ==b )?  this.dmMon.find(f=>f.id ==b ).tenmon :'').join(', ') : '';
-          // if (uniqueTohop) {
+          m['__lephithi_covered'] = m.lephithi;
 
-            // m['__monthi_covered'] = uniqueTohop && uniqueTohop[0]['tohopmon'] !== null ? uniqueTohop[0]['tohopmon'] : uniqueTohop.map(c => this.dmMon.find(v => v.id === parseInt(c['tenmon'])).tenmon).join(', ');
-          // }
+          m['__status_converted'] =m.trangthai_thanhtoan === 1 ? this.listStyle.find(f => f.value === 1).title : (m.trangthai_thanhtoan === 0 && m.trangthai_chuyenkhoan === 0 ? this.listStyle.find(f => f.value === 0).title : (m.trangthai_thanhtoan=== 0 && m.trangthai_chuyenkhoan === 1 ? this.listStyle.find(f => f.value === -1).title :(m.trangthai_thanhtoan=== 2 ? this.listStyle.find(f => f.value === 2).title : '' ) ));
+          m['__monthi_covered'] = this.dmMon ? m.mon_id.map(b => this.dmMon.find(f => f.id == b) ? this.dmMon.find(f => f.id == b).tenmon : '').join(', ') : '';
           return m;
         });
+
         this.notifi.isProcessing(false);
       },
-      error: (e) => {
+      error: () => {
         this.notifi.isProcessing(false);
         this.notifi.toastError('Không load được dữ liệu');
       }
@@ -154,7 +157,7 @@ export class ThiSinhDangKyComponent implements OnInit {
 
       ]
     ).subscribe({
-      next: ([thisinhInfo, dmMon, dmtohopmon, keHoachThi, options, ]) => {
+      next: ([thisinhInfo, dmMon, dmtohopmon, keHoachThi, options,]) => {
 
         this.userInfo = thisinhInfo;
         this.dmMon = dmMon;
@@ -170,6 +173,7 @@ export class ThiSinhDangKyComponent implements OnInit {
         })
         this.keHoachThi = keHoachThi;
         this.lephithiData = options;
+        this.lephithiData['_value_coverted'] = options.value.toLocaleString('vi-VN', {style: 'currency', currency: 'VND'});
         if (this.userInfo) {
           this.getDataOrder();
         }
@@ -188,10 +192,8 @@ export class ThiSinhDangKyComponent implements OnInit {
   selectTypeMon(type: 1 | 0, event) {
     if (type === 1) {
       const id = event.value;
-      const tohopmomselect = this.dmToHopMon.filter(f => f.id === id);
-      this.dataTohopmonslect = tohopmomselect;
-    }
-    else {
+      this.dataTohopmonslect = this.dmToHopMon.filter(f => f.id === id);
+    } else {
       const ids = event.map(m => {
         const check = this.dmMon.find(f => f.id === m);
         return check;
@@ -200,158 +202,98 @@ export class ThiSinhDangKyComponent implements OnInit {
     }
   }
 
-
-
-  valueHinhthucThi(event) {
-    this.hinhthucthiSlect = event.value;
+  resetForm() {
+    this.formSave.reset({
+      user_id: null,
+      kehoach_id: null,
+      mon_ids: [],
+      tohopmon_ids: [null],
+    })
   }
+
   get f(): { [key: string]: AbstractControl<any> } {
     return this.formSave.controls;
   }
-  reLoadData() {
 
-  }
   SaveForm() {
     const kehoachid = this.f['kehoach_id'].value;
     if (this.formSave.valid) {
       this.dataMonSelect = []
+      this.mon_ids_select = [];
+      const kehoach_id = this.dotthi_id_select;
       this.dotthi_id_select = 0;
-      this.mon_ids_select = []
       const monIds_select = this.hinhthucthiSlect === 0 ? this.f['mon_ids'].value : this.dmToHopMon.find(f => f.id === this.f['tohopmon_ids'].value).mon_ids;
       let listMon_ids: number[] = [];
-      this.dataOrders.forEach(f => {
+      this.dataOrders.filter(f=>f.kehoach_id === kehoach_id).forEach(f => {
         listMon_ids = listMon_ids.concat(f.mon_id);
       });
-
       listMon_ids = [...new Set(listMon_ids)];
-      if (!monIds_select.some(element => listMon_ids.includes(element))) {
-        const formUp: FormGroup = this.fb.group({
-          thisinh_id: this.userInfo.id,
-          kehoach_id: kehoachid,
-          mota: '',
-          lephithi: null,
-          status: null,
-          tohop_mon_id: null,
-          mon_id: null,
-        });
-        formUp.reset({
-          thisinh_id: this.userInfo.id,
-          kehoach_id: kehoachid,
-          mota: '',
-          lephithi: this.hinhthucthiSlect === 0 ? this.lephithiData.value * this.dataMonslect.length : this.lephithiData.value * this.dataTohopmonslect[0].mon_ids.length,
-          status: 1,
-          tohop_mon_id: this.hinhthucthiSlect === 1 ? this.f['tohopmon_ids'].value : null,
-          mon_id: this.hinhthucthiSlect === 0 ? this.f['mon_ids'].value : this.dmToHopMon.find(f => f.id === this.f['tohopmon_ids'].value).mon_ids,
-        });
-        this.ordersService.create(formUp.value).subscribe({
-          next: async (id) => {
-            // await this.UpOrderMonBylocal(id, this.userInfo.id, kehoachid, this.hinhthucthiSlect);
-            const order  = {
-              id : id,
-              thisinh_id: this.userInfo.id,
-              kehoach_id: kehoachid,
-              mota: '',
-              lephithi: this.hinhthucthiSlect === 0 ? this.lephithiData.value * this.dataMonslect.length : this.lephithiData.value * this.dataTohopmonslect[0].mon_ids.length,
-              status: 1,
-              tohop_mon_id: this.hinhthucthiSlect === 1 ? this.f['tohopmon_ids'].value : null,
-              mon_id: this.hinhthucthiSlect === 0 ? this.f['mon_ids'].value : this.dmToHopMon.find(f => f.id === this.f['tohopmon_ids'].value).mon_ids,
+      const check = !monIds_select.some(element => listMon_ids.includes(element));
+
+      if (monIds_select.length > 0) {
+        if (check) {
+          const formUp: FormGroup = this.fb.group({
+            thisinh_id: this.userInfo.id,
+            kehoach_id: kehoachid,
+            mota: '',
+            lephithi: null,
+            status: null,
+            tohop_mon_id: null,
+            mon_id: null,
+          });
+          formUp.reset({
+            thisinh_id: this.userInfo.id,
+            kehoach_id: kehoachid,
+            mota: '',
+            lephithi: this.hinhthucthiSlect === 0 ? this.lephithiData.value * this.dataMonslect.length : this.lephithiData.value * this.dataTohopmonslect[0].mon_ids.length,
+            status: 1,
+            tohop_mon_id: this.hinhthucthiSlect === 1 ? this.f['tohopmon_ids'].value : null,
+            mon_id: this.hinhthucthiSlect === 0 ? this.f['mon_ids'].value : this.dmToHopMon.find(f => f.id === this.f['tohopmon_ids'].value).mon_ids,
+          });
+          this.ordersService.create(formUp.value).subscribe({
+            next: async (id) => {
+              const order = {
+                id: id,
+                thisinh_id: this.userInfo.id,
+                kehoach_id: kehoachid,
+                mota: '',
+                lephithi: this.hinhthucthiSlect === 0 ? this.lephithiData.value * this.dataMonslect.length : this.lephithiData.value * this.dataTohopmonslect[0].mon_ids.length,
+                status: 1,
+                tohop_mon_id: this.hinhthucthiSlect === 1 ? this.f['tohopmon_ids'].value : null,
+                mon_id: this.hinhthucthiSlect === 0 ? this.f['mon_ids'].value : this.dmToHopMon.find(f => f.id === this.f['tohopmon_ids'].value).mon_ids,
+              }
+              this.notifi.isProcessing(false);
+              this.notifi.toastSuccess('Thí sinh đăng ký thành công');
+              this.sendEmail(this.userInfo, order);
+              this.loadInit();
+              this.resetForm();
+
+            },
+            error: () => {
+              this.notifi.toastError('Thí sinh đăng ký thất bại');
+              this.notifi.isProcessing(false);
             }
-            this.notifi.isProcessing(false);
-            this.notifi.toastSuccess('Thí sinh đăng ký thành công');
-            this.sendEmail(this.userInfo,order);
-            this.loadInit();
-          },
-          error: (e) => {
-            this.notifi.toastError('Thí sinh đăng ký thất bại');
-            this.notifi.isProcessing(false);
-          }
-        })
-
+          })
+        } else {
+          this.notifi.toastError('Môn bạn chọn đã được đăng ký,vui lòng kiểm tra lại.');
+        }
       } else {
-        this.notifi.toastError('Môn bạn chọn đã được đăng ký,vui lòng kiểm tra lại.');
+        this.notifi.toastError('Bạn chưa chọn môn thi');
       }
-
-
     } else {
       this.notifi.toastError('Vui lòng chọn đủ thông tin');
     }
   }
 
-
-  UpOrderMonBylocal(order_id: number, thisinh_id: number, kehoach_id: number, hinhthucthi: number) {
-    const formUp: FormGroup = this.fb.group({
-      order_id: null,
-      thisinh_id: this.userInfo.id,
-      kehoach_id: null,
-      tohop_monhoc: null,
-      tenmon: null,
-      lephithi: null,
-    });
-
-    if (hinhthucthi === 1) {
-      if (this.dataTohopmonslect) {
-        this.dataTohopmonslect[0].mon_ids.forEach((f, index) => {
-          this.notifi.isProcessing(true);
-          setTimeout(() => {
-            const monselect = this.dmMon.find(a => a.id === f);
-            formUp.reset({
-              order_id: order_id,
-              thisinh_id: thisinh_id,
-              kehoach_id: kehoach_id,
-              tohop_monhoc: this.dataTohopmonslect[0].id,
-              tenmon: monselect ? monselect.id : f,
-              lephithi: this.lephithiData.value
-            });
-            this.orderMonhocService.create(formUp.value).subscribe({
-              next: () => {
-                this.notifi.isProcessing(false);
-              },
-              error: () => {
-                this.notifi.isProcessing(false);
-              }
-            })
-          }, (index + 1) * 200);
-
-        })
-      }
-    } else if (hinhthucthi === 0) {
-      if (this.dataMonslect) {
-        this.dataMonslect.forEach((f, index1) => {
-          this.notifi.isProcessing(true);
-          setTimeout(() => {
-            const newDmMon = f;
-            formUp.reset({
-              order_id: order_id,
-              thisinh_id: thisinh_id,
-              kehoach_id: kehoach_id,
-              tohop_monhoc: null,
-              tenmon: newDmMon ? newDmMon.id : f.id,
-              lephithi: this.lephithiData.value
-            });
-            this.orderMonhocService.create(formUp.value).subscribe({
-              next: () => {
-                this.notifi.isProcessing(false);
-              },
-              error: () => {
-                this.notifi.isProcessing(false);
-              }
-            })
-          }, (index1 + 1) * 200);
-        });
-      }
-    }
-
-
-  }
-
   getPayment(id: number) {
     const fullUrl: string = `${location.origin}${this.router.serializeUrl(this.router.createUrlTree(['admin/thi-sinh/dang-ky/']))}`;
-    this.ordersService.getPayment(id, fullUrl).subscribe({
+    const content = 'VSAT' + id;
+    this.ordersService.getPayment(id, fullUrl,content).subscribe({
       next: (data) => {
         window.location.assign(data);
         this.ngType = 0;
         this.notifi.isProcessing(false);
-      }, error: (e) => {
+      }, error: () => {
         this.notifi.isProcessing(false);
       }
     })
@@ -360,7 +302,7 @@ export class ThiSinhDangKyComponent implements OnInit {
   checkCodeParram(text: string) {
     this.notifi.isProcessing(true);
     this.ordersService.checkPaymentByUser(text).subscribe({
-      next: (data) => {
+      next: () => {
         this.ngType = 1;
         this.notifi.isProcessing(false);
       },
@@ -372,28 +314,10 @@ export class ThiSinhDangKyComponent implements OnInit {
     })
   }
 
-  btnchecksite(num: number) {
+  btnchecksite() {
     this.ngType = 0;
     this.router.navigate(['admin/thi-sinh/dang-ky/']);
     this.loadInit();
-  }
-
-  uniqueTohop(data: { tohopmon: number | null, tenmon: string }[]): { tohopmon: number | null, tenmon: string }[] {
-    const uniqueNames: Record<number | null, boolean> = {};
-    const result: { tohopmon: number | null, tenmon: string }[] = [];
-
-    data.forEach(item => {
-      if (item.tohopmon !== null) {
-        if (!uniqueNames[item.tohopmon]) {
-          uniqueNames[item.tohopmon] = true;
-          result.push(item);
-        }
-      } else {
-        result.push(item);
-      }
-    });
-
-    return result;
   }
 
   returnInfo() {
@@ -417,45 +341,42 @@ export class ThiSinhDangKyComponent implements OnInit {
   }
 
   dataMonSelect: DmMon[] = [];
-  selectDothi(item:KeHoachThi){
+
+  selectDothi(item: KeHoachThi) {
     this.dotthi_id_select = item.id;
     this.f['kehoach_id'].setValue(this.dotthi_id_select);
     this.notifi.isProcessing(true);
     this.orderMonhocService.getDataMonSelect().subscribe({
-      next:(data)=>{
+      next: (data) => {
         this.totalDangkyMonThi = data;
-        console.log(this.totalDangkyMonThi);
-        this.dataMonSelect = this.dmMon.map(m=>{
-          const check = this.totalDangkyMonThi.find(t=>t.tenmon === m.id) ? this.totalDangkyMonThi.find(t=>t.tenmon === m.id).total :0;
-          const total_remaining = (item.soluong_toida - check) < 0 ? 0 : (item.soluong_toida - check) ;
+        this.dataMonSelect = this.dmMon.map(m => {
+          const check = this.totalDangkyMonThi.find(t => t.tenmon === m.id) ? this.totalDangkyMonThi.find(t => t.tenmon === m.id).total : 0;
+          const total_remaining = (item.soluong_toida - check) < 0 ? 0 : (item.soluong_toida - check);
           // m['_total_dangky'] = 0;
           m['_total_dangky'] = total_remaining;
-          m['__tenmon_coverted'] = m.tenmon + ' ['  + total_remaining + ']';
+          m['__tenmon_coverted'] = m.tenmon + ' [' + total_remaining + ']';
           return m;
-        }).filter(f=>f['_total_dangky'] >0);
+        }).filter(f => f['_total_dangky'] > 0);
         this.notifi.isProcessing(false);
       },
-      error:()=>{
+      error: () => {
         this.notifi.isProcessing(false);
       }
     })
-    console.log(this.dmMon)
-
   }
-  selectMonOfDmMon(item:DmMon){
-    const monselect = !this.mon_ids_select.find(f=>f === item.id) ? [].concat(this.mon_ids_select, item.id) : this.mon_ids_select.filter(f=>f !== item.id);
+
+  selectMonOfDmMon(item: DmMon) {
+    const monselect = !this.mon_ids_select.find(f => f === item.id) ? [].concat(this.mon_ids_select, item.id) : this.mon_ids_select.filter(f => f !== item.id);
     this.mon_ids_select = monselect;
-    console.log(this.mon_ids_select);
+
     this.f['mon_ids'].setValue(this.mon_ids_select);
     this.selectTypeMon(0, this.mon_ids_select);
   }
 
-  sendEmail(user,order){
-    console.log(user);
-    console.log(order);
+  sendEmail(user, order) {
 
     let message = `
-        <p>Xin chào ${user.hoten} !</p>
+
         <p>Bạn đã đăng ký thi Bài thi đánh giá đầu vào đại học bằng hinh thức thi trên máy tính của Đại học Thái Nguyên (V-SAT-TNU):</p>
 
         <p style="font-weight:700;">THÔNG TIN ĐĂNG KÝ:</p>
@@ -470,7 +391,7 @@ export class ThiSinhDangKyComponent implements OnInit {
             </tr>
             <tr>
                 <td style="width:100px;">Giới tính:</td>
-                <td style="font-weight:600">${user.gioitinh === 'nam' ? "Nam": 'Nữ'}</td>
+                <td style="font-weight:600">${user.gioitinh === 'nam' ? "Nam" : 'Nữ'}</td>
             </tr>
             <tr>
                 <td style="width:100px;">Nơi sinh:</td>
@@ -486,57 +407,98 @@ export class ThiSinhDangKyComponent implements OnInit {
             </tr>
             <tr>
                 <td style="width:100px;">Nơi cấp:</td>
-                <td style="font-weight:600">${this.noicapdata.find(f => f.code === user.cccd_noicap)?.title || 'Không xác định'}</td>
+                <td style="font-weight:600">${user.cccd_noicap ? user.cccd_noicap :'Không xác định'}</td>
             </tr>
         </table>
 
         <p>CÁC MÔN ĐÃ ĐĂNG KÝ</p>
-        <table style="border: 1px solid black;border-collapse: collapse;">
-          <tr>
-            <th width="100px">Môn thi</th>
-            <th width="100px">Đơn giá (VNĐ)</th>
+        <table style=" border: 1px solid black;border-collapse: collapse;">
+          <tr style="border: 1px solid black;border-collapse: collapse;">
+            <th style="border: 1px solid black;border-collapse: collapse;text-align:center;" width="50px"><strong>STT</strong></th>
+            <th style="border: 1px solid black;border-collapse: collapse;text-align:center;" width="150px"><strong>Môn thi</strong></th>
+            <th style="border: 1px solid black;border-collapse: collapse;text-align:center;" width="150px"><strong>Đơn giá </strong></th>
           </tr>
     `;
     const ordermon_ids = order.mon_id;
-    ordermon_ids.forEach(i => {
+    ordermon_ids.forEach((i, index) => {
       const mon = this.dmMon.find(f => f.id === i);
       if (mon) {
         message += `
-      <tr>
-        <td>${mon.tenmon}</td>
-        <td>${this.lephithiData.value}</td>
+      <tr style="border: 1px solid black;border-collapse: collapse;">
+        <td style="border: 1px solid black;border-collapse: collapse; text-align:center;">${index + 1}</td>
+        <td style="border: 1px solid black;border-collapse: collapse;">${mon.tenmon}</td>
+        <td style="border: 1px solid black;border-collapse: collapse; text-align:right;">${ parseInt(String(this.lephithiData.value)).toLocaleString('vi-VN', {style: 'currency', currency: 'VND'})}</td>
       </tr>
     `;
       }
     });
-
     message += `
   <tr>
-    <th>Tổng (VNĐ)</th>
-    <td>${order.lephithi}</td>
+    <th colspan="2" style="border: 1px solid black;border-collapse: collapse;"><strong>Tổng (VNĐ)</strong></th>
+    <td style="border: 1px solid black;border-collapse: collapse;text-align:right;"><strong> ${order.lephithi.toLocaleString('vi-VN', {
+      style: 'currency',
+      currency: 'VND'
+    })}</strong></td>
   </tr>
     </table>
-    <p>Vui lòng hoàn thành bước tiếp theo để hoàn thành đăng ký thi !!!</p>
+    <p style="color: #ce3b04;">- Trạng thái thanh toán: Chưa thanh toán.</p>
+    <p>- Bạn vui lòng thanh toán lệ phí thi để hoàn tất quá trình đăng ký thi.</p>
 `;
-
-    console.log(message);
-
-    const emailsend :OvicEmailObject = {
-      name: "Email thông báo đăng ký thành công "    ,
-      to:  this.auth.user.email ,
-      title:' Email thông báo đăng ký thành công' ,
+    const emailsend: OvicEmailObject = {
+      name: "Email thông báo đăng ký thành công ",
+      to: this.auth.user.email,
+      title: ' Email thông báo đăng ký thành công',
       message: message
     }
     this.notifi.isProcessing(true)
     this.senderEmailService.sendEmail(emailsend).subscribe({
-      next:()=>{
+      next: () => {
         this.notifi.isProcessing(false)
         this.notifi.toastSuccess("Hệ thống gửi Email đăng ký thi thành công.");
-      },error:()=>{
+      }, error: () => {
         this.notifi.isProcessing(false)
-      this.notifi.toastError('Hệ thống gửi Email đăng ký không thành công');
+        this.notifi.toastError('Hệ thống gửi Email đăng ký không thành công');
       }
     })
+  }
+
+
+  btnThanhToan(item: OrdersTHPT) {
+    this.displayMaximizable = true;
+    this.content_pay = 'VSAT' + item.id;
+    this.orderParram = item;
+  }
+
+  btnGetPay() {
+
+    if (this.orderParram !== null) {
+      this.getPayment(this.orderParram.id);
+    }
+  }
+
+  btnCheckChuyenkhoan() {
+    this.notifi.isProcessing(true)
+    this.ordersService.update(this.orderParram.id, {trangthai_chuyenkhoan: 1}).subscribe({
+      next: () => {
+        this.displayMaximizable = false;
+        this.loadInit();
+        this.notifi.isProcessing(false);
+        this.notifi.toastSuccess('Chúng tôi đã ghi nhận trạng thái thanh toán của bạn, chúng tôi sẽ kiểm tra thanh toán và phản hồi cho bạn trong vòng 24h.');
+
+      }, error: () => {
+        this.notifi.isProcessing(false);
+        this.notifi.toastSuccess('Thao tác không thành công');
+      }
+    })
+  }
+  isScrollEnabled: boolean =false
+  toggleScroll() {
+    this.isScrollEnabled = !this.isScrollEnabled;
+    if (!this.isScrollEnabled) {
+      document.body.classList.add('no-scroll');
+    } else {
+      document.body.classList.remove('no-scroll');
+    }
   }
 
 }

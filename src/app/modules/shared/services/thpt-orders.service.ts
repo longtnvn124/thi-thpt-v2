@@ -14,12 +14,13 @@ export interface OrdersTHPT {
   kehoach_id: number;
   mota: string;
   lephithi: number;
-  trangthai_thanhtoan: 0 | 1;
+  trangthai_thanhtoan: number;
   sotien_thanhtoan: number;
   thoigian_thanhtoan: string;
   status: 1 | 0;
   mon_id: number[];
   tohop_mon_id: number;
+  trangthai_chuyenkhoan:number;
 }
 @Injectable({
   providedIn: 'root'
@@ -99,12 +100,13 @@ export class ThptOrdersService {
     return this.update(id, { is_deleted, deleted_by });
   }
 
-  getPayment(id: number, url: string): Observable<any> {
+  getPayment(id: number, url: string, orderDescription:string): Observable<any> {
     const conditions: OvicConditionParam[] = [
 
     ];
     const fromObject = {
       returnUrl: url,
+      orderDescription:orderDescription
     }
     const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }));
     return this.http.get<Dto>(''.concat(this.api, id.toString(10) + '/create-payment-url'), { params }).pipe(map(res => res.data));
@@ -180,12 +182,6 @@ export class ThptOrdersService {
   // getDataByWithThisinh()
   getDataByWithThisinhAndSearchAndPage(page: number, kehoach_id: number, search?: string): Observable<{ recordsTotal: number, data: OrdersTHPT[] }> {
     const conditions: OvicConditionParam[] = [
-      {
-        conditionName: 'is_deleted',
-        condition: OvicQueryCondition.equal,
-        value: '0',
-
-      },
     ];
     if (kehoach_id) {
       conditions.push({
@@ -196,13 +192,13 @@ export class ThptOrdersService {
       })
     }
     const fromObject = {
-      thisinh_hoten: search && search !== null || search && search !== undefined ? search : '',
+      search: search ? search : '',
       paged: page,
       limit: this.themeSettingsService.settings.rows,
-      orderby: 'status',
-      order: "DESC"// dieemr giarm dần
+      orderby: 'id',
+      order: "DESC"// dieemr giarm dần DESC
     }
-    const params: HttpParams = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }).set('with', 'thisinh,monhoc'));
+    const params: HttpParams = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }).set('with', 'thisinh'));
     return this.http.get<Dto>(this.api, { params }).pipe(map(res => ({ data: res.data, recordsTotal: res.recordsFiltered })));
   }
 
@@ -252,9 +248,9 @@ export class ThptOrdersService {
       paged: paged,
       limit: this.themeSettingsService.settings.rows,
       exclude: thisinh_Ids.join(', '),
-      include_by: 'thisinh_id'
-      // orderby: 'status',x
-      // order: "ASC"// dieemr giarm dần,
+      include_by: 'thisinh_id',
+      orderby: 'id',
+      order: "ASC"// dieemr giarm dần,
 
     }
     const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }).set('with', 'thisinh'));
@@ -262,5 +258,29 @@ export class ThptOrdersService {
       recordsTotal: res.recordsFiltered,
       data: res.data
     })))
+  }
+
+  activeOrder(ids:number[]):Observable<any>{
+    return this.http.post<Dto>(this.api +'active-order/', {ids: ids});
+  }
+
+  getDataByKehoachId(kehoach_id: number): Observable<OrdersTHPT[]> {
+    const conditions: OvicConditionParam[] = [
+      {
+        conditionName: 'kehoach_id',
+        condition: OvicQueryCondition.equal,
+        value: kehoach_id.toString(),
+      },
+
+    ];
+    const fromObject = {
+      paged: 1,
+      limit: -1,
+      orderby: 'id',
+      order: "ASC",// dieemr giarm dần,
+
+    }
+    const params: HttpParams = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }).set('with', 'thisinh'));
+    return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data));
   }
 }
