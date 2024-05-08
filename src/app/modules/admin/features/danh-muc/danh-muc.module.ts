@@ -24,6 +24,7 @@ import { TruongHocComponent } from './truong-hoc/truong-hoc.component';
 import { LePhiThiComponent } from './le-phi-thi/le-phi-thi.component';
 import {InputTextModule} from "primeng/inputtext";
 import { KhaiBaoPhongThiComponent } from './khai-bao-phong-thi/khai-bao-phong-thi.component';
+import { DoiTuongUuTienComponent } from './doi-tuong-uu-tien/doi-tuong-uu-tien.component';
 Quill.register('modules/imageResize', ImageResize);
 
 @NgModule({
@@ -34,6 +35,7 @@ Quill.register('modules/imageResize', ImageResize);
     TruongHocComponent,
     LePhiThiComponent,
     KhaiBaoPhongThiComponent,
+    DoiTuongUuTienComponent,
   ],
     imports: [
         CommonModule,

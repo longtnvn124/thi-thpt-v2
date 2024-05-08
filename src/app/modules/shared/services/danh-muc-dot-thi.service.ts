@@ -12,7 +12,6 @@ import {Dto, OvicConditionParam, OvicQueryCondition} from "@core/models/dto";
 })
 export class DanhMucDotThiService {
   private readonly api = getRoute('thpt-dotthi/');
-
   constructor(
     private http: HttpClient,
     private httpParamsHelper: HttpParamsHeplerService,

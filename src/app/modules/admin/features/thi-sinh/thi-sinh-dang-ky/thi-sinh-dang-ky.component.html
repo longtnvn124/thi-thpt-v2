@@ -1,7 +1,8 @@
 <ng-container *ngIf="userInfo && userInfo.status === 0,else notStatus" >
   <ng-container [ngSwitch]="ngType">
     <ng-container *ngSwitchCase="-1">
-      <div class="w-100 d-flex flex-column justify-content-center align-items-center" style="height:calc(100vh - 90px)">
+<!--      <div class="w-100 d-flex flex-column justify-content-center align-items-center" style="height:calc(100vh - 90px)">-->
+      <div class="w-100 d-flex flex-column justify-content-center align-items-center" style="height:100%">
         <div>
           <i class="pi pi-spin pi-spinner" style="font-size: 4rem"></i>
         </div>
@@ -12,7 +13,8 @@
       </div>
     </ng-container>
     <ng-container *ngSwitchCase="1">
-      <div class="w-100 d-flex flex-column justify-content-center align-items-center" style="height:calc(100vh - 90px)">
+<!--      <div class="w-100 d-flex flex-column justify-content-center align-items-center" style="height:calc(100vh - 90px)">-->
+      <div class="w-100 d-flex flex-column justify-content-center align-items-center" style="height:100%">
         <div>
           <i class="pi pi-check-circle p-button-success" style="font-size: 4rem"></i>
         </div>
@@ -23,7 +25,8 @@
       </div>
     </ng-container>
     <ng-container *ngSwitchCase="0">
-      <div class="ovic-container overflow-hidden overflow-x-auto overflow-y-auto " style="height:calc(100vh - 60px - 30px)">
+<!--      <div class="ovic-container overflow-hidden overflow-x-auto overflow-y-auto " style="height:calc(100vh - 60px - 30px)">-->
+      <div class="ovic-container " style="height:100%">
         <div class="thpt-form-data ovic-side-navigation-content --no-footer">
           <div class="ovic-vertical__inputs ovic-vertical__inputs--layout-2">
             <form [formGroup]="formSave" autocomplete="off">
@@ -34,7 +37,7 @@
                       <div class="form-row">
                         <label>Đợt thi <span class="ovic-mark">*</span></label>
                         <div class="dotthi-container">
-                          <button pRipple pButton *ngFor="let item of keHoachThi" (click)="selectDothi(item)"
+                          <button pRipple pButton *ngFor="let item of keHoachThi_dangky" (click)="selectDothi(item)"
                                   [ngClass]="dotthi_id_select === item.id ? 'p-button-primary' : 'ovic-button-none-selected'"
                                   [label]="item.dotthi" [icon]="'pi pi-circle'">
                           </button>
@@ -109,7 +112,7 @@
                   </ng-template>
                   <ng-template pTemplate="emptymessage">
                     <tr>
-                      <td colspan="6">Không có dữ liệu</td>
+                      <td colspan="7">Không có dữ liệu</td>
                     </tr>
                   </ng-template>
                   <ng-template pTemplate="body" let-item>
@@ -120,7 +123,9 @@
                         <div class="d-block --fs-14 font-weight-bold" [innerHTML]="item['__kehoach_thi']"></div>
                       </td>
                       <td class="ovic-w-260px">
-                        <div class="d-block --fs-14" [innerHTML]="item['__monthi_covered']"></div>
+                        <div class="d-flex flex-wrap " style="gap:6px;" >
+                           <div *ngFor=" let mon of item['__monthi_covered']" [ngClass]=" 'mon-thi mon-' + mon['kyhieu'] " >{{mon['tenmon']}}</div>
+                        </div>
                       </td>
                       <td class="ovic-w-100px">
                         <div class="d-block --fs-14 text-right"
@@ -133,6 +138,7 @@
                         <div class="d-block --fs-14">
                           <div *ngIf="item.trangthai_thanhtoan === 1,else notPay">
                             <button pButton pRipple label="Tải phiếu đăng ký" disabled></button>
+<!--                            <button pButton pRipple label="Tải phiếu đăng ký"  (click)="btnEpostPDF(item)"></button>-->
                           </div>
                           <ng-template #notPay>
                             <div *ngIf="item.trangthai_chuyenkhoan === 0 && item.trangthai_thanhtoan === 0">
@@ -154,10 +160,10 @@
                               ></button>
                             </div>
                             <div *ngIf="item.trangthai_thanhtoan === 2">
-                              <button pButton pRipple class="p-button-warning" [pTooltip]="'Thanh toán'" [disabled]="true"
-                                      [tooltipPosition]="'top'" icon="pi pi-credit-card"></button>
-                              <button pButton pRipple class="p-button-danger ml-1" [disabled]="true"
-                                      [pTooltip]="'Xoá'" [tooltipPosition]="'top'" icon="pi pi-trash"
+                              <button pButton pRipple class="p-button-warning" [pTooltip]="'Thanh toán'"
+                                      [tooltipPosition]="'top'" icon="pi pi-credit-card" (click)="getPayment(item.id)"></button>
+                              <button pButton pRipple class="p-button-danger ml-1"
+                                      [pTooltip]="'Xoá'" [tooltipPosition]="'top'" icon="pi pi-trash" (click)="deleteRow(item.id)"
                               ></button>
 
                             </div>

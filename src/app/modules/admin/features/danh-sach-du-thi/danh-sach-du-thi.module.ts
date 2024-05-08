@@ -15,6 +15,10 @@ import { ThongTinThiSinhComponent } from './thi-sinh-du-thi/thong-tin-thi-sinh/t
 import { ThiSinhDangKyThiComponent } from './thi-sinh-du-thi/thi-sinh-dang-ky-thi/thi-sinh-dang-ky-thi.component';
 import {CheckboxModule} from "primeng/checkbox";
 import {MatProgressBarModule} from "@angular/material/progress-bar";
+import {MatListModule} from "@angular/material/list";
+import {MatMenuModule} from "@angular/material/menu";
+import {MatIconModule} from "@angular/material/icon";
+import {MatButtonModule} from "@angular/material/button";
 
 
 @NgModule({
@@ -36,6 +40,10 @@ import {MatProgressBarModule} from "@angular/material/progress-bar";
     PaginatorModule,
     CheckboxModule,
     MatProgressBarModule,
+    MatListModule,
+    MatMenuModule,
+    MatIconModule,
+    MatButtonModule,
   ]
 })
 export class DanhSachDuThiModule { }

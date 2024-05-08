@@ -14,6 +14,7 @@ import {ThptOrderMonhocService} from "@shared/services/thpt-order-monhoc.service
 import {OrdersTHPT, ThptOrdersService} from "@shared/services/thpt-orders.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {OvicEmailObject, SenderEmailService} from "@shared/services/sender-email.service";
+import {HtmlToPdfService} from "@shared/services/html-to-pdf.service";
 
 
 export interface SumMonThi {
@@ -36,6 +37,7 @@ export class ThiSinhDangKyComponent implements OnInit {
   dmMon: DmMon[];
   dmToHopMon: DmToHopMon[];
   keHoachThi: KeHoachThi[];
+  keHoachThi_dangky:KeHoachThi[];
   private _user_id: number;
   formSave: FormGroup;
   totalDangkyMonThi: SumMonThi[];
@@ -51,7 +53,7 @@ export class ThiSinhDangKyComponent implements OnInit {
       value: -1, title: '<div class="thanh-toan check text-center"><div></div><label>Đã thanh toán, chờ duyệt</label></div>',
     },
     {
-      value: 2, title: '<div class="thanh-toan check text-center"><div></div><label>Giao dịch đang xử lý</label></div>',
+      value: 2, title: '<div class="thanh-toan check text-center"><div></div><label>Đang thực hiện thanh toán</label></div>',
     }
   ]
 
@@ -83,6 +85,7 @@ export class ThiSinhDangKyComponent implements OnInit {
     private router: Router,
     private activeRouter: ActivatedRoute,
     private senderEmailService: SenderEmailService,
+    private htmlToPdfService : HtmlToPdfService
   ) {
     this._user_id = this.auth.user.id;
     this.formSave = this.fb.group({
@@ -131,7 +134,7 @@ export class ThiSinhDangKyComponent implements OnInit {
           m['__lephithi_covered'] = m.lephithi;
 
           m['__status_converted'] =m.trangthai_thanhtoan === 1 ? this.listStyle.find(f => f.value === 1).title : (m.trangthai_thanhtoan === 0 && m.trangthai_chuyenkhoan === 0 ? this.listStyle.find(f => f.value === 0).title : (m.trangthai_thanhtoan=== 0 && m.trangthai_chuyenkhoan === 1 ? this.listStyle.find(f => f.value === -1).title :(m.trangthai_thanhtoan=== 2 ? this.listStyle.find(f => f.value === 2).title : '' ) ));
-          m['__monthi_covered'] = this.dmMon ? m.mon_id.map(b => this.dmMon.find(f => f.id == b) ? this.dmMon.find(f => f.id == b).tenmon : '').join(', ') : '';
+          m['__monthi_covered'] = this.dmMon ? m.mon_id.map(b => this.dmMon.find(f => f.id == b) ? this.dmMon.find(f => f.id == b) : []) : [];
           return m;
         });
 
@@ -158,7 +161,7 @@ export class ThiSinhDangKyComponent implements OnInit {
       ]
     ).subscribe({
       next: ([thisinhInfo, dmMon, dmtohopmon, keHoachThi, options,]) => {
-
+        const date = new Date();
         this.userInfo = thisinhInfo;
         this.dmMon = dmMon;
         this.dmToHopMon = dmtohopmon.map(m => {
@@ -171,6 +174,7 @@ export class ThiSinhDangKyComponent implements OnInit {
           m['__tentohop_covered'] = mon_ids_covered ? m.tentohop + '(' + mon_ids_covered.join(', ') + ' )' : null;
           return m;
         })
+        this.keHoachThi_dangky = keHoachThi.filter(f=> new Date(f.ngayketthuc).getTime() > new Date().getTime());
         this.keHoachThi = keHoachThi;
         this.lephithiData = options;
         this.lephithiData['_value_coverted'] = options.value.toLocaleString('vi-VN', {style: 'currency', currency: 'VND'});
@@ -499,6 +503,12 @@ export class ThiSinhDangKyComponent implements OnInit {
     } else {
       document.body.classList.remove('no-scroll');
     }
+  }
+
+  btnEpostPDF(item:OrdersTHPT){
+    console.log(item)
+    this.htmlToPdfService.expostWordToPDF(item);
+
   }
 
 }

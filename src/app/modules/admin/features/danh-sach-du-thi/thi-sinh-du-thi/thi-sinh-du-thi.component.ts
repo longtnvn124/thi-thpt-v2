@@ -1,5 +1,5 @@
 import {KeHoachThi, ThptKehoachThiService} from '@shared/services/thpt-kehoach-thi.service';
-import {Component, ElementRef, OnInit, TemplateRef, ViewChild} from '@angular/core';
+import {Component, ElementRef, HostListener, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {OrdersTHPT, ThptOrdersService} from "@shared/services/thpt-orders.service";
 import {NotificationService} from "@core/services/notification.service";
 import {DanhMucMonService} from "@shared/services/danh-muc-mon.service";
@@ -23,6 +23,10 @@ export class ThiSinhDuThiComponent implements OnInit {
   @ViewChild('formregister', {static: true}) formregister: TemplateRef<any>;
   @ViewChild('templateWaiting') templateWaiting: ElementRef;
   @ViewChild(Paginator) paginator: Paginator;
+  @HostListener('window:resize', ['$event']) onResize(event: Event): void {
+    this.isSmallScreen = window.innerWidth >1550;
+  }
+  isSmallScreen:boolean = window.innerWidth >1600;
 
   isLoading: boolean = true;
   loadInitFail: boolean = false;
@@ -155,11 +159,8 @@ export class ThiSinhDuThiComponent implements OnInit {
     this.inputChanged.pipe(debounceTime(1000)).subscribe((item: string) => {
       this.searchContentByInput(item);
     });
-
     this.loadInit();
   }
-
-
   loadInit() {
     forkJoin<[DmMon[], KeHoachThi[]]>(
       this.monService.getDataUnlimit(),
@@ -167,8 +168,6 @@ export class ThiSinhDuThiComponent implements OnInit {
     ).subscribe({
       next: ([mon, kehoachthi]) => {
         this.dsMon = mon;
-        console.log(kehoachthi)
-        console.log(this.dsMon);
         this.dsKehoachthi = kehoachthi;
         if (this.dsMon && this.dsKehoachthi) {
           this.loadData(1);
@@ -187,7 +186,7 @@ export class ThiSinhDuThiComponent implements OnInit {
         this.recordsTotal = recordsTotal
         this.listData = data.map((m, index) => {
           const thisinh = m['thisinh'];
-          m['_indexTable'] = index + 1;
+          m['_indexTable'] = this.rows *(page-1) + index + 1;
           m['__order_id_coverted'] = 'VSAT' + m.id;
           m['__thisinh_hoten'] = thisinh ? thisinh['hoten'] : '';
           m['__thisinh_phone'] = thisinh ? thisinh['phone'] : '';
@@ -196,13 +195,13 @@ export class ThiSinhDuThiComponent implements OnInit {
           m['__thisinh_gioitinh'] = thisinh ? thisinh['gioitinh'] : '';
           m['__thisinh_phone'] = thisinh ? thisinh['phone'] : '';
           m['__thisinh_email'] = thisinh ? thisinh['email'] : '';
-          m['giadich'] = m.trangthai_thanhtoan === 1 ? m['transaction_id'] : 'Giao dịch chuyển khoản';
+          m['giadich'] = m.trangthai_thanhtoan === 1 ? m['transaction_id'] : (m.trangthai_thanhtoan === 1 && m['transaction_id'] ? 'CK-TT' : '');
           m['__dotthi_coverted'] = this.dsKehoachthi.find(f => f.id === m.kehoach_id).dotthi;
-          m['__mon_converted'] = m.mon_id ? m.mon_id.map(f => this.dsMon && this.dsMon.find(a => a.id === f) ? this.dsMon.find(a => a.id === f).tenmon : '') : [];
+          m['__monthi_covered'] = this.dsMon ? m.mon_id.map(b => this.dsMon.find(f => f.id == b) ? this.dsMon.find(f => f.id == b) : []) : [];
           m['__status_converted'] = m.trangthai_thanhtoan === 1 ? this.listStyle.find(f => f.value === 1).title : (m.trangthai_thanhtoan === 0 && m.trangthai_chuyenkhoan === 0 ? this.listStyle.find(f => f.value === 0).title : (m.trangthai_thanhtoan === 0 && m.trangthai_chuyenkhoan === 1 ? this.listStyle.find(f => f.value === -1).title : (m.trangthai_thanhtoan === 2 ? this.listStyle.find(f => f.value === 2).title : '')));
           return m;
         })
-        console.log(data)
+
         this.notifi.isProcessing(false);
         this.isLoading = false;
       }, error: () => {
@@ -215,7 +214,7 @@ export class ThiSinhDuThiComponent implements OnInit {
   }
 
   loadDropdow(event) {
-    console.log(event);
+
     this.kehoach_id = event;
     this.page = 1;
     this.loadData(this.page, this.kehoach_id, this.search);
@@ -247,11 +246,11 @@ export class ThiSinhDuThiComponent implements OnInit {
 
     if (viTri === -1) {
       var phanTuSau = text;
-      this.search = phanTuSau;
+      this.search = phanTuSau.trim();
 
     } else {
       var phanTuSau = text.slice(viTri + 4);
-      this.search = phanTuSau;
+      this.search = phanTuSau.trim();
 
     }
 
@@ -277,7 +276,7 @@ export class ThiSinhDuThiComponent implements OnInit {
     if (this.dataSelct.length > 0) {
       const select_ids = this.dataSelct.map(m => m.id);
       const select_leght = this.dataSelct.length;
-      const button = await this.notifi.confirmRounded('<p class="text-danger">Xác nhận</p>', 'Cập nhật trạng thái thanh toán của ' + select_leght + ' thí sinh.', [BUTTON_YES, BUTTON_NO]);
+      const button = await this.notifi.confirmRounded('Xác nhận thanh toán thành công với ' + select_leght + ' thí sinh.','XÁC NHẬN',  [BUTTON_YES, BUTTON_NO]);
       if (button.name === BUTTON_YES.name) {
         this.notifi.isProcessing(true);
         this.modalService.open(this.templateWaiting, WAITING_POPUP);
@@ -287,12 +286,46 @@ export class ThiSinhDuThiComponent implements OnInit {
             this.loadData(this.page, this.kehoach_id, this.search);
             this.notifi.toastSuccess('Thao tác thành công');
             this.notifi.isProcessing(false);
-          }, error: () => {
+            this.dataSelct=[];
 
+          }, error: () => {
+            this.notifi.isProcessing(false);
             this.notifi.toastError('Thao tác không thành công');
+            this.dataSelct=[];
+
           }
         })
 
+      }
+      // this.modalService.open(this.templateWaiting, WAITING_POPUP);
+      // this.modalService.dismissAll();
+    } else {
+      this.notifi.toastWarning('Vui lòng chọn thi sinh');
+    }
+  }
+  async btnDelete_ids(){
+    if (this.dataSelct.length > 0) {
+      console.log(this.dataSelct);
+      const select_ids = this.dataSelct.map(m => m.id);
+      const select_leght = this.dataSelct.length;
+      const button = await this.notifi.confirmRounded('Xác nhận xóa đăng ký thi  ' + select_leght + ' thí sinh ?','XÁC NHẬN', [BUTTON_YES, BUTTON_NO]);
+      if (button.name === BUTTON_YES.name) {
+        this.notifi.isProcessing(true);
+        this.modalService.open(this.templateWaiting, WAITING_POPUP);
+
+        select_ids.forEach((f,index)=>{
+          setTimeout(()=>{
+            this.ordersService.delete(f).subscribe({
+              next:()=>{
+                this.listData= this.listData.filter(a=>a.id !==f);
+              },error:()=>{
+                this.notifi.toastError('Thao tác không thành công');
+              }
+            })
+          },(index+1)*200);
+        });
+        this.modalService.dismissAll();
+        this.dataSelct=[];
       }
       // this.modalService.open(this.templateWaiting, WAITING_POPUP);
       // this.modalService.dismissAll();
@@ -312,7 +345,7 @@ export class ThiSinhDuThiComponent implements OnInit {
             const thisinh = m['thisinh'];
             m['__index'] = index + 1;
             m['__maDK'] = "VSAT" + m.id;
-            m['__trangthai_thanhtoan'] = m.trangthai_thanhtoan === 1 ? 'Đăng ký thành công' : (m.trangthai_thanhtoan === 0 && m.trangthai_chuyenkhoan === 0 ? 'Chưa thanh toán' : (m.trangthai_thanhtoan === 0 && m.trangthai_chuyenkhoan === 1 ? 'Đã thanh toán,đang xử lý' : ''));
+            m['__trangthai_thanhtoan'] = m.trangthai_thanhtoan === 1 ? 'Đăng ký thành công' : (m.trangthai_thanhtoan === 0 && m.trangthai_chuyenkhoan === 0 ? 'Chưa thanh toán' : (m.trangthai_thanhtoan === 0 && m.trangthai_chuyenkhoan === 1 ? 'Đã thanh toán,đang xử lý' : (m.trangthai_thanhtoan === 2 ? 'Giao dịch đang sử lý' : '')));
             m['__hoten'] = thisinh ? thisinh['hoten'] : '';
             m['__ngaysinh'] = thisinh ? thisinh['ngaysinh'] : '';
             m['__gioitinh'] = thisinh && thisinh['gioitinh'] === 'nam' ? 'Nam' : "Nữ";
@@ -361,6 +394,12 @@ export class ThiSinhDuThiComponent implements OnInit {
       this.notifi.toastError('Vui lòng chọn đợt thi');
     }
   }
-
+  selectDataByCheckbox(event){
+    if (event.checked === true){
+      this.dataSelct = this.listData.filter(f=>f.trangthai_thanhtoan !== 1);
+    }else {
+      this.dataSelct = [];
+    }
+  }
 
 }

@@ -42,4 +42,9 @@ export interface ThiSinhInfo {
   diem12ky2: string;
   status: 0 | 1;// khoá
   camket: 0 | 1;
+  quoctich:0 | 1;//0: viet nam , 1 nuoc ngoai
+  doituong:string;
+  ketqua_xetdaihoc:0 | 1;
+  chuongtrinhhoc:0 | 1;
+  trangthaitotnghiep:0|1;
 }

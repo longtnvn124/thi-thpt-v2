@@ -1064,7 +1064,7 @@ p .ql-align-center {
 }
 
 .btn-avata {
-  width: 100%;
+  height: 100%;
   border: 2px dashed #ccc;
 }
 
@@ -1097,9 +1097,9 @@ p .ql-align-center {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  font-size: 14px;
+  font-size: 13px;
   padding:  3px 6px;
-  border-radius: 10px;
+  border-radius: 32px;
 
 }
 
@@ -1206,4 +1206,37 @@ p .ql-align-center {
 }
 .ovic-ui-table.site-thpt .p-datatable-tbody > tr > td {
   padding: 5px;
+}
+
+.mon-thi{
+  padding:3px 6px;
+  border-radius:2px;
+}
+.mon-thi.mon-TH{
+  background: #fd5e5f;
+  color:#fff;
+}
+.mon-thi.mon-VL{
+  background: #40a9fb;
+  color:#fff;
+}
+.mon-thi.mon-HH{
+  background: #8159ed;
+  color:#fff;
+}
+.mon-thi.mon-SH{
+  background: #31c3af;
+  color:#fff;
+}
+.mon-thi.mon-LS{
+  background: #f9c532;
+  color:#fff;
+}
+.mon-thi.mon-DL{
+  background: #ff7700;
+  color:#fff;
+}
+.mon-thi.mon-TA{
+  background: #89cc4b;
+  color:#fff;
 }

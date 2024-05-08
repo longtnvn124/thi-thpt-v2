@@ -13,6 +13,7 @@ import {TYPE_FILE_IMAGE} from "@shared/utils/syscat";
   styleUrls: ['./ovic-avata-type-thpt.component.css']
 })
 export class OvicAvataTypeThptComponent implements OnInit {
+  @Input() site:boolean = false;
   @Input() disabled:boolean = false;
   @Input() formField: AbstractControl;
   @Input() multiple = true;

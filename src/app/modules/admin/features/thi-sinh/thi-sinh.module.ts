@@ -19,6 +19,7 @@ import {CheckboxModule} from "primeng/checkbox";
 import {TooltipModule} from "primeng/tooltip";
 import {DialogModule} from "primeng/dialog";
 import {TabViewModule} from "primeng/tabview";
+import {RadioButtonModule} from "primeng/radiobutton";
 
 
 @NgModule({
@@ -27,23 +28,24 @@ import {TabViewModule} from "primeng/tabview";
     ThongTinThiSinhComponent,
     TraCuuKetQuaComponent
   ],
-  imports: [
-    CommonModule,
-    ThiSinhRoutingModule,
-    SharedModule,
-    ReactiveFormsModule,
-    DropdownModule,
-    InputMaskModule,
-    RippleModule,
-    ButtonModule,
-    MultiSelectModule,
-    TableModule,
-    InputTextModule,
-    PaginatorModule,
-    CheckboxModule,
-    TooltipModule,
-    DialogModule,
-    TabViewModule
-  ]
+    imports: [
+        CommonModule,
+        ThiSinhRoutingModule,
+        SharedModule,
+        ReactiveFormsModule,
+        DropdownModule,
+        InputMaskModule,
+        RippleModule,
+        ButtonModule,
+        MultiSelectModule,
+        TableModule,
+        InputTextModule,
+        PaginatorModule,
+        CheckboxModule,
+        TooltipModule,
+        DialogModule,
+        TabViewModule,
+        RadioButtonModule
+    ]
 })
 export class ThiSinhModule { }

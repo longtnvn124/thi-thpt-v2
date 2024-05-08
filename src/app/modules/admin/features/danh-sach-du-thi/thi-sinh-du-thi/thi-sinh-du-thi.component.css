@@ -8,3 +8,40 @@
 .monthi_item:nth-child(even){
   background: #fbafaf;
 }
+.btn-menu-material{
+  background: #fff;
+  border: none;
+  width: 100%;
+  text-align: start;
+  font-size: 15px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding:6px 10px;
+  cursor: pointer;
+}
+.btn-menu-material i{
+  font-size:1.2rem;
+}
+.btn-menu-material.excel:hover{
+  background: #6aba4a !important;
+  color:#fff;
+}
+.btn-menu-material.acsses:hover{
+  background: #5387e5  !important;
+  color:#fff;
+}
+.btn-menu-material.delete:hover{
+  background: tomato !important;
+  color:#fff;
+}
+
+.tt-hover:hover{
+  color: #1231c9;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  border-bottom: 1px solid #1231c9;
+}

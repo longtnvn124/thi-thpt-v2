@@ -8,6 +8,7 @@ import {LePhiThiComponent} from "@modules/admin/features/danh-muc/le-phi-thi/le-
 import {
   KhaiBaoPhongThiComponent
 } from "@modules/admin/features/danh-muc/khai-bao-phong-thi/khai-bao-phong-thi.component";
+import {DoiTuongUuTienComponent} from "@modules/admin/features/danh-muc/doi-tuong-uu-tien/doi-tuong-uu-tien.component";
 
 
 const routes: Routes = [
@@ -30,6 +31,11 @@ const routes: Routes = [
     path: 'truong-hoc',
     component: TruongHocComponent,
     data: {state: 'danh-muc--truong-hoc'}
+  },
+  {
+    path: 'doi-tuong',
+    component: DoiTuongUuTienComponent,
+    data: {state: 'danh-muc--doi-tuong'}
   },
   {
     path: 'le-phi-thi',
