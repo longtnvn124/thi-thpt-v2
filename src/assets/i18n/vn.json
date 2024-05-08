@@ -2,9 +2,9 @@
   "route"                : {
     "dashboard"                    : "Bảng điều khiển",
     "he-thong"                     : "Hệ thống",
-    "he-thong/thong-tin-tai-khoan" : "Thông tin tài khoản",
+    "he-thong/thong-tin-tai-khoan" : "Tài khoản của bạn",
     "he-thong/quan-ly-tai-khoan"   : "Quản lý tài khoản",
-    "he-thong/thong-tin-he-thong"  : "Thông tin hệ thống",
+    "he-thong/thong-tin-he-thong"  : "Cấu hình",
     "message"                      : "Tin nhắn",
     "message/notifications"        : "Thông báo",
     "message/chat"                 : "Trò chuyện"

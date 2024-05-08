@@ -30,6 +30,16 @@ export class ThongTinThiSinhComponent implements OnInit, OnChanges {
     // if (this.thiSinh_id) {
     //   this.loadData(this.thiSinh_id);
     // }
+    if (this.thiSinh_id) {
+
+      this.locationService.listProvinces().subscribe({
+        next: (data) => {
+          this.provinceOptions = data;
+          this.loadData(this.thiSinh_id);
+        }
+      })
+
+    }
   }
   ngOnChanges(changes: SimpleChanges) {
     if (this.thiSinh_id) {
@@ -46,10 +56,6 @@ export class ThongTinThiSinhComponent implements OnInit, OnChanges {
 
   loadInit() {
     // this.loadData()
-  }
-
-  getDataCitis() {
-
   }
 
   userInfo: ThiSinhInfo;

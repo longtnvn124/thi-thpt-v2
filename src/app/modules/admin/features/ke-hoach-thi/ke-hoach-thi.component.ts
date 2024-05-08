@@ -54,7 +54,18 @@ export class KeHoachThiComponent implements OnInit {
       field: ['soluong_toida'],
       innerData: true,
       header: 'Số lượng đăng ký tối đa/ mỗi môn thi',
-      sortable: false
+      sortable: false,
+      rowClass: 'text-right text-center',
+      headClass: 'text-center',
+    },
+    {
+      fieldType: 'normal',
+      field: ['ngaythi'],
+      innerData: true,
+      header: 'Ngày thi',
+      sortable: false,
+      rowClass: 'ovic-w-200px text-center',
+      headClass: 'ovic-w-200px text-center',
     },
     {
       fieldType: 'normal',
@@ -154,6 +165,7 @@ export class KeHoachThiComponent implements OnInit {
       ngaybatdau:['',Validators.required],
       ngayketthuc:['',Validators.required],
       mota:[''],
+      ngaythi:['',Validators.required],
       status: 1,
     });
   }
@@ -246,6 +258,7 @@ export class KeHoachThiComponent implements OnInit {
           status: 1,
           ngaybatdau: '',
           ngayketthuc: '',
+          ngaythi:''
 
         });
         this.formActive = this.listForm[FormType.ADDITION];
@@ -264,6 +277,7 @@ export class KeHoachThiComponent implements OnInit {
           soluong_toida:object1.soluong_toida,
           mota:object1.mota,
           status:object1.status,
+          ngaythi:object1.ngaythi,
           ngaybatdau: object1.ngaybatdau ? new Date(object1.ngaybatdau) : null,
           ngayketthuc:object1.ngayketthuc ? new Date(object1.ngayketthuc) : null,
         })

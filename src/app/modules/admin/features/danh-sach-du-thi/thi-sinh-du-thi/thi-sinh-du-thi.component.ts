@@ -23,10 +23,6 @@ export class ThiSinhDuThiComponent implements OnInit {
   @ViewChild('formregister', {static: true}) formregister: TemplateRef<any>;
   @ViewChild('templateWaiting') templateWaiting: ElementRef;
   @ViewChild(Paginator) paginator: Paginator;
-  @HostListener('window:resize', ['$event']) onResize(event: Event): void {
-    this.isSmallScreen = window.innerWidth >1550;
-  }
-  isSmallScreen:boolean = window.innerWidth >1600;
 
   isLoading: boolean = true;
   loadInitFail: boolean = false;
@@ -130,13 +126,14 @@ export class ThiSinhDuThiComponent implements OnInit {
   private inputChanged: Subject<string> = new Subject<string>();
 
   listStyle = [
-    {value: 1, title: '<div class="thanh-toan true text-center"><div></div><label>Đăng ký thành công</label></div>',},
-    {value: 0, title: '<div class="thanh-toan false text-center"><div></div><label>Chưa thanh toán</label></div>',},
+    {value: 1, title: `<div class="thanh-toan true text-center" [pTooltip]="Đăng ký thành công" [tooltipPosition]="left" ><div></div><i class="pi pi-check-circle"></i></div>`},
+    {value: 0, title: `<div class="thanh-toan false text-center"><div></div><i class="pi pi-exclamation-triangle" [pTooltip]="'Chưa thanh toán'" [tooltipPosition]="'left'"  ></i></div>`},
     {
-      value: -1,
-      title: '<div class="thanh-toan check text-center"><div></div><label>Đã thanh toán, chờ duyệt</label></div>',
+      value: -1, title: `<div class="thanh-toan check text-center"><div></div><i class="pi pi-history" [pTooltip]="'Đã thanh toán, chờ duyệt'" [tooltipPosition]="'left'" ></i></div>`,
     },
-    {value: 2, title: '<div class="thanh-toan check text-center"><div></div><label>Giao dịch đang xử lý</label></div>',}
+    {
+      value: 2, title: `<div class="thanh-toan check text-center"><div></div><label>Đang thực hiện thanh toán</label></div>`,
+    }
   ]
 
   constructor(
@@ -177,6 +174,7 @@ export class ThiSinhDuThiComponent implements OnInit {
   }
 
   loadData(page: number, kehoach_id?: number, search?: string) {
+    this.selectDataByCheckbox({checker:false});
     this.isLoading = true;
     const limit = this.themeSettingsService.settings.rows;
     this.index = (page * limit) - limit + 1;
@@ -198,10 +196,10 @@ export class ThiSinhDuThiComponent implements OnInit {
           m['giadich'] = m.trangthai_thanhtoan === 1 ? m['transaction_id'] : (m.trangthai_thanhtoan === 1 && m['transaction_id'] ? 'CK-TT' : '');
           m['__dotthi_coverted'] = this.dsKehoachthi.find(f => f.id === m.kehoach_id).dotthi;
           m['__monthi_covered'] = this.dsMon ? m.mon_id.map(b => this.dsMon.find(f => f.id == b) ? this.dsMon.find(f => f.id == b) : []) : [];
-          m['__status_converted'] = m.trangthai_thanhtoan === 1 ? this.listStyle.find(f => f.value === 1).title : (m.trangthai_thanhtoan === 0 && m.trangthai_chuyenkhoan === 0 ? this.listStyle.find(f => f.value === 0).title : (m.trangthai_thanhtoan === 0 && m.trangthai_chuyenkhoan === 1 ? this.listStyle.find(f => f.value === -1).title : (m.trangthai_thanhtoan === 2 ? this.listStyle.find(f => f.value === 2).title : '')));
+          m['__status_converted'] = m.trangthai_thanhtoan === 1 ? 1 : (m.trangthai_thanhtoan === 0 && m.trangthai_chuyenkhoan === 0 ? 0 : (m.trangthai_thanhtoan === 0 && m.trangthai_chuyenkhoan === 1 ? -1 : (m.trangthai_thanhtoan === 2 ? 2 : null)));
+          m['__time_thanhtoan'] = m['thoigian_thanhtoan'] ? this.formatSQLDateTime( new Date(m['thoigian_thanhtoan'])): '';
           return m;
         })
-
         this.notifi.isProcessing(false);
         this.isLoading = false;
       }, error: () => {
@@ -221,11 +219,11 @@ export class ThiSinhDuThiComponent implements OnInit {
   }
 
   closeForm() {
-    this.loadInit();
     this.notifi.closeSideNavigationMenu(this.menuName);
   }
 
   onSearch(text: string) {
+    // this.dataSelct = [];
     this.search = text;
     this.paginator.changePage(1);
     this.page = 1;
@@ -234,6 +232,7 @@ export class ThiSinhDuThiComponent implements OnInit {
 
   paginate({page}: NgPaginateEvent) {
     this.page = page + 1;
+    this.dataSelct = [];
     this.loadData(this.page);
   }
 
@@ -305,7 +304,7 @@ export class ThiSinhDuThiComponent implements OnInit {
   }
   async btnDelete_ids(){
     if (this.dataSelct.length > 0) {
-      console.log(this.dataSelct);
+
       const select_ids = this.dataSelct.map(m => m.id);
       const select_leght = this.dataSelct.length;
       const button = await this.notifi.confirmRounded('Xác nhận xóa đăng ký thi  ' + select_leght + ' thí sinh ?','XÁC NHẬN', [BUTTON_YES, BUTTON_NO]);
@@ -318,8 +317,11 @@ export class ThiSinhDuThiComponent implements OnInit {
             this.ordersService.delete(f).subscribe({
               next:()=>{
                 this.listData= this.listData.filter(a=>a.id !==f);
+                this.notifi.isProcessing(false);
               },error:()=>{
                 this.notifi.toastError('Thao tác không thành công');
+                this.notifi.isProcessing(false);
+
               }
             })
           },(index+1)*200);
@@ -400,6 +402,17 @@ export class ThiSinhDuThiComponent implements OnInit {
     }else {
       this.dataSelct = [];
     }
+  }
+
+  formatSQLDateTime(date: Date): string {
+    const y = date.getFullYear().toString();
+    const m = (date.getMonth() + 1).toString().padStart(2, '0');
+    const d = date.getDate().toString().padStart(2, '0');
+    const h = date.getHours().toString().padStart(2, '0');
+    const min = date.getMinutes().toString().padStart(2, '0');
+    const sec = '00';
+    //'YYYY-MM-DD hh:mm:ss' type of sql DATETIME format
+    return `${d}-${m}-${y} ${h}:${min}`;
   }
 
 }

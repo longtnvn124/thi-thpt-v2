@@ -6,8 +6,8 @@ import {AuthService} from '@core/services/auth.service';
 import {HelperService} from '@core/services/helper.service';
 import {NotificationService, SideNavigationMenu} from '@core/services/notification.service';
 import {delay, filter, switchMap, tap} from 'rxjs/operators';
-import {APP_CONFIGS, HIDDEN_MENUS} from '@env';
-import {debounceTime, of, Subscription} from 'rxjs';
+import {APP_CONFIGS, getRoute, HIDDEN_MENUS} from '@env';
+import {debounceTime, firstValueFrom, of, Subscription} from 'rxjs';
 import {Ucase} from '@core/models/ucase';
 import {UnsubscribeOnDestroy} from '@core/utils/decorator';
 import {ThemeSettingsService} from '@core/services/theme-settings.service';
@@ -54,6 +54,7 @@ import {
   rotateSides,
   slide
 } from '@shared/animations/router-animations';
+import {BUTTON_NO, BUTTON_YES} from "@core/models/buttons";
 
 @Component({
   selector: 'app-dashboard',
@@ -207,6 +208,7 @@ export class DashboardComponent implements OnInit {
       (settings) => {
         const lang = APP_CONFIGS.multiLanguage ? settings : null;
         this.verticalMenu = this.useCase2ToMenuItem(this.auth.useCases, lang);
+        this.verticalMenu.push({label: 'Đăng xuất', icon: 'fa fa-sign-out', command: (event?: any) => this.btnLogOut()});
       }
     );
     this.subscriptions.add(observerChangeLanguage);
@@ -321,4 +323,19 @@ export class DashboardComponent implements OnInit {
       this.showRoutingProgressBar = false;
     }, 100);
   }
+
+  async btnLogOut(){
+    const headText = this.auth.userLanguage.translations.dashboard.confirm_logout;
+    const question = this.auth.userLanguage.translations.dashboard.confirm_logout_mess;
+    const confirm  = await this.notificationService.confirmRounded( `<p class="text-danger">${ question }</p>` , headText , [ BUTTON_NO , BUTTON_YES ] );
+    if ( confirm && confirm.name && confirm.name === BUTTON_YES.name ) {
+      await this.signOut();
+    }
+  }
+  async signOut() {
+    this.notificationService.isProcessing( true );
+    await this.auth.logout();
+    this.router.navigate( [ 'login' ] ).then( () => this.notificationService.isProcessing( false ) , () => this.notificationService.isProcessing( false ) );
+  }
+
 }

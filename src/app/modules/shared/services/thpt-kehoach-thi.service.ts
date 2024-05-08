@@ -14,6 +14,7 @@ export interface KeHoachThi {
   ngayketthuc:string;
   mota: string;
   status: 1 | 0;
+  ngaythi:string;
 }
 @Injectable({
   providedIn: 'root'

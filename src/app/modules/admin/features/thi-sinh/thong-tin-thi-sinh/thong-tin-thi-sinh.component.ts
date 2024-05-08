@@ -179,7 +179,7 @@ export class ThongTinThiSinhComponent implements OnInit {
             thuongtru_diachi: data.thuongtru_diachi,
             nguoinhan_hoten: data.nguoinhan_hoten,
             nguoinhan_phone: data.nguoinhan_phone,
-            nguoinhan_diachi: data.nguoinhan_diachi['fullAddress'], //{"fullAddress":"Xã An Phú, Huyện Củ Chi, Thành phố Hồ Chí Minh",
+            nguoinhan_diachi: data.nguoinhan_diachi, //{"fullAddress":"Xã An Phú, Huyện Củ Chi, Thành phố Hồ Chí Minh",
             khuvuc: data.khuvuc,
             namtotnghiep_thpt: data.namtotnghiep_thpt,
             lop10_thanhpho: data.lop10_thanhpho,

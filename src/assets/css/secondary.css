@@ -1098,9 +1098,10 @@ p .ql-align-center {
   justify-content: center;
   align-items: center;
   font-size: 13px;
-  padding:  3px 6px;
-  border-radius: 32px;
-
+  padding: 3px;
+  /*border-radius: 32px;*/
+  width: 30px;
+  height: 30px;
 }
 
 .thanh-toan.true {
@@ -1118,13 +1119,17 @@ p .ql-align-center {
   text-align:center;
 }
 .thanh-toan.wait {
-  color: #6080e3;
-  background: #57b0f6;
+  color: #2145b5;
+  background: #addbff;
   text-align:center;
 }
 
 .thanh-toan i {
-  font-size: 3rem;
+  font-size: 1.2rem;
+  display: flex;
+  justify-content:center;
+  align-items:center;
+  height:100%;
 }
 
 .thanh-toan label {
@@ -1211,6 +1216,7 @@ p .ql-align-center {
 .mon-thi{
   padding:3px 6px;
   border-radius:2px;
+  font-size:13px
 }
 .mon-thi.mon-TH{
   background: #fd5e5f;
@@ -1239,4 +1245,8 @@ p .ql-align-center {
 .mon-thi.mon-TA{
   background: #89cc4b;
   color:#fff;
+}
+.duthi_panigator .p-paginator{
+  border:1px solid #ccc;
+  border-radius:0 0 5px 5px;
 }

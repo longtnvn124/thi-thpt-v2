@@ -84,6 +84,7 @@
 .mon-thi{
   padding:3px 6px;
   border-radius:2px;
+  font-size:13px;
 }
 .mon-thi.mon-TH{
   background: #fd5e5f;

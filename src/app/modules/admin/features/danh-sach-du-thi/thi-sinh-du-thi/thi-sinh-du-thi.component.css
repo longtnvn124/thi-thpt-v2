@@ -45,3 +45,16 @@
   font-weight: 500;
   border-bottom: 1px solid #1231c9;
 }
+
+.ovic-wrap-table-rps{
+  width:100%;
+  display: block;
+  overflow-x: auto;
+}
+
+.ovic-wrap-table-rps__inner{
+  display: block;
+  width: 100%;
+  min-width: 1400px;
+}
+
