@@ -77,9 +77,7 @@ export class ThisinhInfoService {
   }
 
   delete(id: number): Observable<any> {
-    const is_deleted = 1;
-    const deleted_by = this.auth.user.id;
-    return this.update(id, { is_deleted, deleted_by });
+    return this.http.delete<Dto>(''.concat(this.api, id.toString(10)));
   }
 
 

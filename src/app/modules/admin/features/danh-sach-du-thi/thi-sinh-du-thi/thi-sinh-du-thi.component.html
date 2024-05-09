@@ -80,13 +80,13 @@
               <td class="text-center">
 
                 <ng-container [ngSwitch]="item['__status_converted']">
-                  <div *ngSwitchCase="0" class="thanh-toan check text-center" pTooltip="Giao dịch đang xử lý" tooltipPosition="right">
+                  <div *ngSwitchCase="2" class="thanh-toan check text-center" pTooltip="Giao dịch đang xử lý" tooltipPosition="right">
                     <i class="pi pi-history" ></i></div>
                   <div *ngSwitchCase="1" class="thanh-toan true text-center" pTooltip="Đăng ký thành công" tooltipPosition="right">
                     <i class="pi pi-check-circle"></i></div>
-                  <div *ngSwitchCase="2" class="thanh-toan wait text-center" pTooltip="Đã chuyển khoản, chờ duyệt" tooltipPosition="right">
+                  <div *ngSwitchCase="-1" class="thanh-toan wait text-center" pTooltip="Đã chuyển khoản, chờ duyệt" tooltipPosition="right">
                     <i class="pi pi-file-edit"></i></div>
-                  <div *ngSwitchDefault class="thanh-toan false text-center" pTooltip="Chưa thanh toán" tooltipPosition="right">
+                  <div *ngSwitchCase="0" class="thanh-toan false text-center" pTooltip="Chưa thanh toán" tooltipPosition="right">
                     <i class="pi pi-exclamation-triangle" ></i>
                   </div>
                 </ng-container>

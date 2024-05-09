@@ -114,3 +114,35 @@
   background: #89cc4b;
   color:#fff;
 }
+/*---------------------------------------*/
+/*.thanh-toan-check {*/
+/*  display: flex;*/
+/*  flex-direction: column;*/
+/*  justify-content: center;*/
+/*  align-items: center;*/
+/*  font-size: 13px;*/
+/*  padding: 3px;*/
+/*  border-radius: 32px;*/
+/*  !*width: 30px;*!*/
+/*  !*height: 30px;*!*/
+/*}*/
+
+/*.thanh-toan-check.true {*/
+/*  color: #0B9419;*/
+/*  background: #daebd8;*/
+/*}*/
+
+/*.thanh-toan-check.false {*/
+/*  color: red;*/
+/*  background: #ebc0c0;*/
+/*}*/
+/*.thanh-toan-check.check {*/
+/*  color: #ffffff;*/
+/*  background: #ffa500;*/
+/*  text-align:center;*/
+/*}*/
+/*.thanh-toan-check.wait {*/
+/*  color: #2145b5;*/
+/*  background: #addbff;*/
+/*  text-align:center;*/
+/*}*/

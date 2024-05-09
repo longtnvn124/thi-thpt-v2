@@ -44,16 +44,16 @@ export class ThiSinhDangKyComponent implements OnInit {
   dataOrders: OrdersTHPT[];
   listStyle = [
     {
-      value: 1, title: '<div class="thanh-toan true text-center"><div></div><label>Đăng ký thành công</label></div>',
+      value: 1, title: '<div class="thanh-toan-check true text-center"><div></div><label>Đăng ký thành công</label></div>',
     },
     {
-      value: 0, title: '<div class="thanh-toan false text-center"><div></div><label>Chưa thanh toán</label></div>',
+      value: 0, title: '<div class="thanh-toan-check false text-center"><div></div><label>Chưa thanh toán</label></div>',
     },
     {
-      value: -1, title: '<div class="thanh-toan check text-center"><div></div><label>Đã thanh toán, chờ duyệt</label></div>',
+      value: -1, title: '<div class="thanh-toan-check check text-center"><div></div><label>Đã thanh toán, chờ duyệt</label></div>',
     },
     {
-      value: 2, title: '<div class="thanh-toan check text-center"><div></div><label>Đang thực hiện thanh toán</label></div>',
+      value: 2, title: '<div class="thanh-toan-check check text-center"><div></div><label>Đang thực hiện thanh toán</label></div>',
     }
   ]
 

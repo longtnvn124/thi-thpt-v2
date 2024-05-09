@@ -1,0 +1,92 @@
+.btnSelect{
+  width: 32px;
+  height: 32px;
+}
+.checkPhieunhan {
+  display: flex;
+  justify-content: center;
+  margin-top: 11px;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid #ccc;
+
+}
+
+@media(max-width :1024px) {
+  .mar-14px {
+    margin-top: 20px;
+  }
+}
+
+.checkCamket{
+  display:flex;
+  padding: 20px 0 0 0;
+  gap: 10px;
+  justify-content: center;
+  /*align-items: flex-end;*/
+  font-size: 15px;
+}
+
+.radio-ctn{
+  /*padding: 10px;*/
+  border-radius: 6px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  margin: 10px 0;
+}
+.radio-ctn >div {
+  /*width:calc(100% - 10px);*/
+  padding:10px;
+}
+.btn-remove-checkbox{
+  display: flex;
+  align-items: center;
+  background: tomato;
+  color: #fff;
+  padding: 4px;
+  border-radius: 4px;
+  margin-right: 10px;
+}
+
+.btn-menu-material{
+  background: #fff;
+  border: none;
+  width: 100%;
+  text-align: start;
+  font-size: 15px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding:6px 10px;
+  cursor: pointer;
+}
+.btn-menu-material i{
+  font-size:1.2rem;
+}
+.btn-menu-material.excel:hover{
+  background: #6aba4a !important;
+  color:#fff;
+}
+.btn-menu-material.acsses:hover{
+  background: #5387e5  !important;
+  color:#fff;
+}
+.btn-menu-material.delete:hover{
+  background: tomato !important;
+  color:#fff;
+}
+.ovic-wrap-table-rps{
+  width:100%;
+  display: block;
+  overflow-x: auto;
+}
+
+.ovic-wrap-table-rps__inner{
+  display: block;
+  width: 100%;
+  min-width: 1400px;
+}
+
+
