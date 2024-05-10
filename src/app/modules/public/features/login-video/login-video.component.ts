@@ -194,8 +194,7 @@ export class LoginVideoComponent implements OnInit, AfterViewInit, OnDestroy {
 		// 	this.title.setTitle( 'Đăng nhập tài khoản' );
 		// 	this.loading = false;
 		// }
-    console.log(this.auth.user['verified']);
-    if (this.auth.user['verified'] === 1){
+    if (this.auth.user['verified'] && this.auth.user['verified'] === 1){
       if (this.auth.isLoggedIn()) {
       	const roles = this.auth.roles;
       	const checkThisinh = roles.length === 1 && roles.find(f => f.id === 87);

@@ -13,3 +13,7 @@
 .icon-check-pass{
   color: #33bd1c;
 }
+.error-password-checker {
+  font-size: 13px;
+  color: tomato;
+}

@@ -60,9 +60,8 @@ export class AddThiSinhComponent implements OnInit {
     this.hoiDongThiSinhService.getDataByHoiDongId(page, this.hoidong_id).subscribe({
       next: ({ recordsTotal, data }) => {
         this.recordsTotal = recordsTotal;
-        let index = 1
-        this.listData = data.map(m => {
-          m['_stt'] = index++;
+        this.listData = data.map((m,index) => {
+          m['_stt'] = this.rows *(page-1) + index +1;
           const thisinh = m['thisinh'];
           m['_hoten'] = thisinh ? thisinh['hoten'] : '';
           m['_phone'] = thisinh ? thisinh['phone'] : '';

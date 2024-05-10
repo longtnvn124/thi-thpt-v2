@@ -1,4 +1,4 @@
-import { observable } from 'rxjs';
+import {debounceTime, observable, Subject} from 'rxjs';
 import { ThptOrdersService } from '@shared/services/thpt-orders.service';
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
@@ -25,9 +25,11 @@ export class OvicPickerCandidationComponent implements OnInit {
   isLoading: boolean = false;
   loadFail: boolean = false;
 
+  search:string = '';
   recordsTotal: number;
-  rows: number = this.themeSettingsService.settings.rows;;
+  rows: number = this.themeSettingsService.settings.rows;
   data: OrdersTHPT[] = [];
+  private inputChanged: Subject<string> = new Subject<string>();
 
   constructor(
     private fb: FormBuilder,
@@ -41,6 +43,9 @@ export class OvicPickerCandidationComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.inputChanged.pipe(debounceTime(1000)).subscribe((item: string) => {
+      this.searchContentByInput(item);
+    });
     this.loadData();
   }
 
@@ -87,4 +92,20 @@ export class OvicPickerCandidationComponent implements OnInit {
     const thisinh_ids = this._OrderUsers.map(m => m.thisinh_id);
     this.activeModal.close(thisinh_ids);
   }
+
+  searchContentByInput(text: string) {
+    this.page = 1;
+
+    var viTri = text.indexOf("vsat");
+
+
+
+    this.loadData();
+  }
+
+  onInputChange(event: string) {
+
+    this.inputChanged.next(event);
+  }
+
 }

@@ -1,21 +1,43 @@
 import {Component, OnInit, ViewChild, ElementRef} from '@angular/core';
-import {AbstractControl, FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators} from '@angular/forms';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {RoleService} from '@core/services/role.service';
 import {UserService} from '@core/services/user.service';
 import {NotificationService} from '@core/services/notification.service';
 import {AuthService} from '@core/services/auth.service';
 import {DEFAULT_MODAL_OPTIONS} from '@shared/utils/syscat';
-import {debounceTime, firstValueFrom, forkJoin, Observable, of, Subject, Subscription, switchMap} from 'rxjs';
+import {debounceTime,Subject, Subscription} from 'rxjs';
 import {User} from '@core/models/user';
-import {Role} from '@core/models/role';
-import {OvicRightContextMenu} from '@shared/models/ovic-right-context-menu';
 import {ProfileService} from '@core/services/profile.service';
 import {UnsubscribeOnDestroy} from '@core/utils/decorator';
-import {OvicTableStructure} from '@shared/models/ovic-models';
+import {NgPaginateEvent, OvicTableStructure} from '@shared/models/ovic-models';
 import {OvicButton} from '@core/models/buttons';
 import {SimpleRole} from "@core/models/auth";
+import {ThemeSettingsService} from "@core/services/theme-settings.service";
+import {PhoneNumberValidator} from "@core/utils/validators";
+import {Paginator} from "primeng/paginator";
+import {DmMon} from "@shared/models/danh-muc";
 
+
+export function customInputValidator(): ValidatorFn {
+  return (control: AbstractControl): { [key: string]: any } | null => {
+    const inputValue: string = control.value;
+    const errors: { [key: string]: any } = {};
+    if (!/[A-Za-z]/.test(inputValue) || !/\d/.test(inputValue)) {
+      errors['noAlphaNumeric'] = true;
+    }
+    if (inputValue.length < 8) {
+      errors['minLength'] = true;
+    }
+    if (!/[^A-Za-z0-9]/.test(inputValue)) {
+      errors['noSpecialCharacter'] = true;
+    }
+    if (!/[A-Z]/.test(inputValue)) {
+      errors['noUpperCase'] = true;
+    }
+    return Object.keys(errors).length !== 0 ? errors : null;
+  };
+}
 @Component({
   selector: 'app-quan-ly-tai-khoan',
   templateUrl: './quan-ly-tai-khoan.component.html',
@@ -24,7 +46,7 @@ import {SimpleRole} from "@core/models/auth";
 
 @UnsubscribeOnDestroy()
 export class QuanLyTaiKhoanComponent implements OnInit {
-
+  @ViewChild(Paginator) paginator: Paginator;
   @ViewChild('tplCreateAccount') tplCreateAccount: ElementRef;
 
   formSave: FormGroup;
@@ -36,9 +58,13 @@ export class QuanLyTaiKhoanComponent implements OnInit {
   editUserId: number;
 
   dsNhomQuyen: SimpleRole[] = [];
+  dataRoles : SimpleRole[];
 
   data: User[] = [];
-
+  page:number=1;
+  recordTotal:number=0;
+  rows= this.themeSettingsService.settings.rows;
+  search:string = '';
   cols: OvicTableStructure[] = [
     {
       fieldType: 'media',
@@ -53,18 +79,18 @@ export class QuanLyTaiKhoanComponent implements OnInit {
     {
       fieldType: 'normal',
       field: ['username'],
-      header: 'Tên tài khoản',
+      header: 'Số CCCD',
       sortable: true,
       headClass: 'ovic-w-180px text-center',
-      rowClass: 'ovic-w-180px text-center'
+      rowClass: 'ovic-w-180px '
     },
     {
       fieldType: 'normal',
       field: ['display_name'],
-      header: 'Tên hiển thị',
+      header: 'Họ và tên',
       sortable: false,
       headClass: 'ovic-w-180px text-center',
-      rowClass: 'ovic-w-180px text-center'
+      rowClass: 'ovic-w-180px text-left'
 
     },
     {
@@ -121,6 +147,7 @@ export class QuanLyTaiKhoanComponent implements OnInit {
       ]
     }
   ];
+  role_ids_select :number[] = [];
 
   headButtons = [
     {
@@ -142,31 +169,16 @@ export class QuanLyTaiKhoanComponent implements OnInit {
   ];
 
   canEdit: boolean;
-
   canAdd: boolean;
-
   canDelete: boolean;
-
   isAdmin: boolean;
-
   changPassState: boolean;
-
   defaultPass: string;
-
-  highestRoleIdUser: any;
-
   schoolName = '';
-
   userDonviId: number;
-
   subscriptions = new Subscription();
-
-
   currentRoute = 'he-thong/quan-ly-tai-khoan';
-
-
   private _reloadData$ = new Subject<any>();
-
   constructor(
     private notificationService: NotificationService,
     private roleService: RoleService,
@@ -174,18 +186,21 @@ export class QuanLyTaiKhoanComponent implements OnInit {
     private fb: FormBuilder,
     private modalService: NgbModal,
     private profileService: ProfileService,
-    private auth: AuthService
+    private auth: AuthService,
+    private themeSettingsService: ThemeSettingsService,
+
   ) {
     this.formSave = this.fb.group({
       display_name: ['', Validators.required],
       // username     : [ '' , [ Validators.required , Validators.pattern( '^(?=.{3,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$' ) ] ] ,
-      username: ['', [Validators.required, Validators.pattern('^\\S*$')]],
-      phone: ['', Validators.required],
+      username: ['', [Validators.required, PhoneNumberValidator]],
+      phone: ['', [Validators.required,PhoneNumberValidator]],
       email: ['', [Validators.required, Validators.pattern('[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,}$')]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
+      password: ['', [Validators.required, Validators.minLength(6),customInputValidator()]],
       donvi_id: [''],
       role_ids: [[], Validators.required],
-      status: [1, Validators.required]
+      status: [1, Validators.required],
+      verified:[1]
     });
     this.data = [];
     this.isUpdateForm = false;
@@ -203,8 +218,24 @@ export class QuanLyTaiKhoanComponent implements OnInit {
     this.isAdmin = this.auth.userHasRole('admin_thithpt');
     this.userDonviId = this.auth.user.donvi_id;
     this.f['donvi_id'].setValue(this.userDonviId);
+    this.roleService.getRoles('id,description,name,ordering,title').subscribe({
+      next:(data)=>{
+        this.dsNhomQuyen = data;
+        this.dataRoles = [].concat(data, this.auth.roles).map(m=>{
+          m['__roles_ids_covert'] = m.id.toString();
+          return m;
+        });
+        if(this.dataRoles){
+          this.loadData()
 
-    this.loadData()
+        }
+        this.notificationService.isProcessing(false);
+
+      },error:(e)=>{
+        this.notificationService.isProcessing(false);
+        this.notificationService.toastError('Load dữ liệu không thành công');
+      }
+    })
 
   }
 
@@ -212,30 +243,28 @@ export class QuanLyTaiKhoanComponent implements OnInit {
   loadData() {
     this.notificationService.isProcessing(true)
     const userCanLoad: boolean = this.canEdit || this.canAdd || this.canDelete;
-    const loader$: Observable<User[]> = userCanLoad ? this.userService.listUsers(this.userDonviId) : of([this.auth.user]);
-
-    loader$.subscribe({
-      next: (users) => {
-
-        const roles: SimpleRole[] = this.auth.roles;
-        users.map(u => {
+    this.userService.getListUser(this.themeSettingsService.settings.rows, this.page, this.search).subscribe({
+      next: ({recordsTotal,data}) => {
+        this.recordTotal =recordsTotal;
+        this.data = data.map(u => {
           const uRoles = [];
           // const uRoles = roles;
           if (u.role_ids && u.role_ids.length) {
             u.role_ids.forEach(r => {
 
-              const index = r ? roles.findIndex(i => i.id === parseInt(r, 10)) : -1;
+
+              const index = r ? this.dataRoles.findIndex(i => i.id === parseInt(r, 10)) : -1;
               if (index !== -1) {
-                uRoles.push('<span class="--user-role-label --role-' + roles[index].name + '">' + roles[index].title + '</span>');
+                uRoles.push('<span class="--user-role-label --role-' + this.dataRoles[index].name + '">' + this.dataRoles[index].title + '</span>');
               }
             }, []);
           }
           u.avatar = u.avatar ? u.avatar : 'assets/images/a_none.jpg';
-          u['u_role'] = uRoles.join(', ');
+          u['u_role'] = uRoles.join(' ');
           return u;
         });
 
-        this.data = users.filter(f => f.id !== this.auth.user.id);
+
 
         this.notificationService.isProcessing(false);
 
@@ -314,6 +343,8 @@ export class QuanLyTaiKhoanComponent implements OnInit {
       this.callActionForm(this.tplCreateAccount);
       this.defaultPass = user.password;
     }
+    this.role_ids_select = user.role_ids.map(m=>parseInt(m));
+
   }
 
   switchEvent(id:number) {
@@ -333,6 +364,7 @@ export class QuanLyTaiKhoanComponent implements OnInit {
   }
 
   async creatUser(frmTemplate) {
+    this.role_ids_select = [];
     this.changPassState = true;
     this.isUpdateForm = false;
     this.formTitle = 'Tạo tài khoản';
@@ -344,7 +376,8 @@ export class QuanLyTaiKhoanComponent implements OnInit {
       email: '',
       password: '',
       role_ids: '',
-      status: 0,
+      status: 1,
+      verified:1
     });
     this.f['username'].setValue('');
     try {
@@ -374,18 +407,47 @@ export class QuanLyTaiKhoanComponent implements OnInit {
     form.get('donvi_id').setValue(this.userDonviId);
     if (form.valid) {
       const data = {...form.value};
-      data.role_ids = data.role_ids.split(',').map(elm => parseInt(elm, 10));
+      data.role_ids = data.role_ids.map(m=>String(m)).split(',').map(elm => parseInt(elm, 10));
       if (data.role_ids.some(r => r === 6)) {
         data.display_name.split(' ');
+        this.notificationService.isProcessing(true);
         this.userService.creatUser(data).subscribe(
           {
-            next: () => this.notificationService.toastSuccess('Thêm mới tài khoản thành công'),
-            error: () => null
+            next: () => {
+
+              this.notificationService.toastSuccess('Thêm mới tài khoản thành công');
+              this.notificationService.isProcessing(false);
+            },
+            error: (e) => {
+              console.log(e)
+              const message = e.error.message;
+              let errorMessage = "";
+              for (let key in message) {
+                if (message[key]) {
+                  errorMessage += message[key] + ", ";
+                }
+              }
+              errorMessage = errorMessage.slice(0, -2);
+              this.notificationService.toastError(errorMessage);
+              this.notificationService.isProcessing(false);
+
+            }
           });
       } else {
         this.userService.creatUser(data).subscribe({
           next: () => this.notificationService.toastSuccess('Thêm mới tài khoản thành công'),
-          error: () => null
+          error: (e) => {
+            console.log(e)
+            const message = e.error.message;
+            let errorMessage = "";
+            for (let key in message) {
+              if (message[key]) {
+                errorMessage += message[key] + ", ";
+              }
+            }
+            errorMessage = errorMessage.slice(0, -2);
+            this.notificationService.toastError(errorMessage);
+          }
         });
       }
     } else {
@@ -408,7 +470,8 @@ export class QuanLyTaiKhoanComponent implements OnInit {
       email: '',
       password: '',
       role_ids: '',
-      status: 0,
+      status: 1,
+      verified: 1,
     });
   }
 
@@ -418,7 +481,9 @@ export class QuanLyTaiKhoanComponent implements OnInit {
       if (!this.changPassState) {
         delete data.password;
       }
-      data.role_ids = data.role_ids.split(',').map(elm => parseInt(elm, 10));
+      console.log(data)
+      // console.log(data.role_ids.split(','));
+      // data.role_ids = data.role_ids.split(',').map(elm => parseInt(elm, 10));
       const currentUser = this.data.find(u => u.id === this.editUserId);
       if (!currentUser) {
         return;
@@ -439,8 +504,8 @@ export class QuanLyTaiKhoanComponent implements OnInit {
   async callActionForm(template): Promise<any> {
     if (this.dsNhomQuyen.length === 0) {
       if (Array.isArray(this.auth.roles) && this.auth.roles.length > 1) {
-        const exceptHightRole = Math.min(...[...this.auth.roles].map(u => u.id));
-        this.dsNhomQuyen = [...this.auth.roles].filter(r => r.id !== exceptHightRole);
+        // const exceptHightRole = Math.min(...[...this.auth.roles].map(u => u.id));
+        // this.dsNhomQuyen = [...this.auth.roles].filter(r => r.id !== exceptHightRole);
       } else {
 
         return Promise.resolve();
@@ -460,9 +525,28 @@ export class QuanLyTaiKhoanComponent implements OnInit {
     // this.passwordSelectItem = !this.passwordSelectItem;
 
     this.changPassState = !this.changPassState;
-
+    console.log(this.changPassState);
+  }
+  btnClose(){
+    this.modalService.dismissAll();
+  }
+  onSearch(text: string) {
+    this.search = text.trim();
+    this.loadData();
+  }
+  paginate({page}: NgPaginateEvent) {
+    this.page = page + 1;
+    this.loadData();
   }
 
+
+  selectMonOfDmMon(item:SimpleRole) {
+    const select = !this.role_ids_select.find(f => f === item.id) ? [].concat(this.role_ids_select, item.id) : this.role_ids_select.filter(f => f !== item.id);
+    this.role_ids_select = select;
+    console.log(this.role_ids_select);
+    this.f['role_ids'].setValue(this.role_ids_select);
+
+  }
 }
 
 

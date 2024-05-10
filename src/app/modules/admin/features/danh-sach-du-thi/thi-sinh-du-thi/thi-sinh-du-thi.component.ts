@@ -199,7 +199,7 @@ export class ThiSinhDuThiComponent implements OnInit {
           m['giadich'] = m.trangthai_thanhtoan === 1 ? m['transaction_id'] : (m.trangthai_thanhtoan === 1 && m['transaction_id'] ? 'CK-TT' : '');
           m['__dotthi_coverted'] = this.dsKehoachthi.find(f => f.id === m.kehoach_id).dotthi;
           m['__monthi_covered'] = this.dsMon ? m.mon_id.map(b => this.dsMon.find(f => f.id == b) ? this.dsMon.find(f => f.id == b) : []) : [];
-          m['__status_converted'] = m.trangthai_thanhtoan === 1 ? 1 : (m.trangthai_thanhtoan === 0 && m.trangthai_chuyenkhoan === 0 ? 0 : (m.trangthai_thanhtoan === 2 ? 2 : (m.trangthai_thanhtoan === 0 && m.trangthai_chuyenkhoan === 1 ? -1 : null)));
+          m['__status_converted'] = m.trangthai_thanhtoan === 1 && m.trangthai_chuyenkhoan === 0 ? 1 : (m.trangthai_thanhtoan === 0 && m.trangthai_chuyenkhoan === 0 ? 0 : (m.trangthai_thanhtoan  === 2 && m.trangthai_chuyenkhoan === 0 ? 2 : (m.trangthai_thanhtoan === 0 && m.trangthai_chuyenkhoan === 1 ? -1 : null)));
           m['__time_thanhtoan'] = m['thoigian_thanhtoan'] ? this.formatSQLDateTime( new Date(m['thoigian_thanhtoan'])): '';
           return m;
         })

@@ -50,10 +50,11 @@
                       <div class="form-row">
                         <label>Chọn môn thi<span class="ovic-mark">*</span></label>
                         <div class="dotthi-container">
-                          <button pButton pRipple *ngFor="let item of dataMonSelect" (click)="selectMonOfDmMon(item)"
-                                  [ngClass]="mon_ids_select.includes(item.id) ? 'p-button-primary' : 'ovic-button-none-selected'"
-                                  [label]="item['__tenmon_coverted']" [icon]="'pi pi-book'"
-                          ></button>
+                            <button pButton pRipple *ngFor="let item of dataMonSelect" (click)="selectMonOfDmMon(item)"
+                                    [ngClass]="mon_ids_select.includes(item.id) ? 'p-button-primary' : 'ovic-button-none-selected'"
+                                    [label]="item['__tenmon_coverted']" [icon]="'pi pi-book'"
+                            ></button>
+
                         </div>
                       </div>
                     </div>
@@ -75,6 +76,7 @@
           <div class="thpt-note">
             <div class="thpt-note-header">Lưu ý:</div>
             <div class="thpt-note-body">
+              <p>- Bạn có thể chọn nhiều môn thi trong một lần đăng ký của từng đợt thi.</p>
               <p>- Lệ phí thi với mỗi môn thi là
                 <strong>{{ (lephithiData ? lephithiData['value'] : 0) | numberToVndCurrencuy }}</strong> / 1 môn.</p>
               <p>- Sau khi thí sinh hoàn tất thao tác đăng ký, cần thực hiện thanh toán lệ phí thi ngay để giữ

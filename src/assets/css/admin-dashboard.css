@@ -835,7 +835,7 @@ body::-webkit-scrollbar-thumb {
   }
 
   .ovic-student-layout__right-header-menu-item + .ovic-student-layout__right-header-menu-item {
-    margin-left: 15px;
+    margin-left: 6px;
   }
 
   .ovic-student-layout__right-header-menu-item.--desktop-ietm {

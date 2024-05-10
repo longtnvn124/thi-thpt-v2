@@ -19,7 +19,7 @@ export const DEFAULT_MODAL_OPTIONS : NgbModalOptions = {
   size        : 'lg' ,
   backdrop    : 'static' ,
   centered    : true ,
-  windowClass : 'ovic-modal-class'
+  windowClass : 'ovic-modal-class max-w-600px'
 };
 
 export const NORMAL_MODAL_OPTIONS : NgbModalOptions = {

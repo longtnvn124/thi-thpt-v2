@@ -39,6 +39,8 @@ export class OvicTableComponent implements OnInit , OnDestroy {
 
 	@Input() rows : number;
 
+  @Input() page :number =1;
+
 	@Input() globalFilterFields;
 
 	@Input() styleClass;

@@ -6,6 +6,7 @@ import { Dto , OvicQueryCondition } from '@core/models/dto';
 import { map } from 'rxjs/operators';
 import { Role } from '@core/models/role';
 import { HttpParamsHeplerService } from '@core/services/http-params-hepler.service';
+import {SimpleRole} from "@core/models/auth";
 
 @Injectable( {
 	providedIn : 'root'
@@ -54,4 +55,17 @@ export class RoleService {
 	// 		return of( [] );
 	// 	}
 	// }
+
+  getRoles(selelct:string): Observable<SimpleRole[]>{
+    const fromObject = {
+      paged: 1,
+      limit: -1,
+      select:selelct
+    };
+    const params = this.appHttpParamsService.paramsConditionBuilder([], new HttpParams({ fromObject }));
+    return this.http.get<Dto>(this.api, { params }).pipe(map(res =>  res.data));
+
+  }
+
+
 }

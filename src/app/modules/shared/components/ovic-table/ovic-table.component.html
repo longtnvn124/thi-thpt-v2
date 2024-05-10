@@ -30,7 +30,7 @@
         <ng-template pTemplate="body" let-data let-i="rowIndex" let-expanded="expanded">
             <tr class="ui-selectable-row" [class.element-selected]="data[dataKey] === activeRow" (click)="rowClickHandle(data[dataKey])" (contextmenu)="openContextMenu($event, data )">
                 <td class="text-center">
-                    <span class="ui-column-title">{{i + index}}</span>
+                    <span class="ui-column-title">{{this.rows *(page-1) + i + index}}</span>
                 </td>
                 <ng-container *ngFor="let col of tblStructure">
 

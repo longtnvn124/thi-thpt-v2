@@ -1,30 +1,36 @@
-import { Injectable } from '@angular/core';
-import { OrdersTHPT } from "@shared/services/thpt-orders.service";
-import { asBlob } from "@shared/vendor/html-docx";
-import { saveAs } from 'file-saver';
+import {Injectable} from '@angular/core';
+import {OrdersTHPT} from "@shared/services/thpt-orders.service";
+import {asBlob} from "@shared/vendor/html-docx";
+import {saveAs} from 'file-saver';
 // import HTMLtoDOCX from 'html-to-docx';
-import { jsPDF } from "jspdf";
+import {jsPDF} from "jspdf";
 
 const filePath = './example.docx';
+
 @Injectable({
   providedIn: 'root'
 })
 export class HtmlToPdfService {
 
-  constructor() { }
+  constructor() {
+  }
 
 
   async expostWordToPDF(item: OrdersTHPT) {
 
     const htmlString = `
-      <div style="width: 100%;">
-        <table style="width: 100%;">
-          <tr>
-            <td style="width:20%;">1</td>
-            <td style="width:80%;">2</td>
-          </tr>
-        </table>
-      </div>
+          <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+</head>
+<body>
+    <p>trần Minh Long đập trai</p>
+</body>
+</html>
+
     `;
 
 

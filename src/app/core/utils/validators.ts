@@ -12,7 +12,8 @@ export const PhoneNumberValidator        = ( control : AbstractControl ) : Valid
 
 export const EmailCheckValidator         = (control : AbstractControl)   : ValidationErrors | null => control.value ?EMAIL_REGEX.test(control.value) ? null : { invalidEmailCheckStructure : true } : null;
 
-export const PASS_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+// export const PASS_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@#$!%*?&]{8,}$/;
+export const PASS_REGEX = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?!.*?[\s])(?=.*?[#?!@$%^&*-]).{8,30}$/;
 
 export const PassCheckValidator = (control : AbstractControl) : ValidationErrors | null => control.value ? PASS_REGEX.test(control.value) ? null :  { invalidEmailCheckStructure : true } : null;
 
