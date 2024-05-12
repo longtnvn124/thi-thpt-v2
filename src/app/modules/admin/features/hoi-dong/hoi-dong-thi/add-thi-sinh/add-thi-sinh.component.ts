@@ -1,135 +1,204 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
-import { ThptHoiDong } from '@modules/shared/services/thpt-hoi-dong.service';
-import { Paginator } from 'primeng/paginator';
-import { EmployeesPickerService } from "@shared/services/employees-picker.service";
-import { ThptOrdersService } from "@shared/services/thpt-orders.service";
-import { ThemeSettingsService } from '@core/services/theme-settings.service';
-import { ThptHoiDongThiSinh } from '@modules/shared/models/thpt-model';
-import { ThptHoidongThisinhService } from '@modules/shared/services/thpt-hoidong-thisinh.service';
-import { NgPaginateEvent } from '@modules/shared/models/ovic-models';
-import { NotificationService } from '@core/services/notification.service';
-import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import { Observable, catchError, concatMap, delay, finalize, forkJoin, of } from 'rxjs';
-import { ThisinhInfoService } from '@modules/shared/services/thisinh-info.service';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  SimpleChanges,
+  ViewChild
+} from '@angular/core';
+import {Paginator} from 'primeng/paginator';
+import {OrdersTHPT, ThptOrdersService} from "@shared/services/thpt-orders.service";
+import {ThemeSettingsService} from '@core/services/theme-settings.service';
+import {ThptHoiDongThiSinh} from '@modules/shared/models/thpt-model';
+import {ThptHoidongThisinhService} from '@modules/shared/services/thpt-hoidong-thisinh.service';
+import {NotificationService} from '@core/services/notification.service';
+import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
+import {BehaviorSubject, concatMap, forkJoin, Observable, of, switchMap} from 'rxjs';
+import {DanhMucMonService} from "@shared/services/danh-muc-mon.service";
+import {DmMon} from "@shared/models/danh-muc";
+import {catchError, delay, finalize} from "rxjs/operators";
 
 @Component({
   selector: 'app-add-thi-sinh',
   templateUrl: './add-thi-sinh.component.html',
   styleUrls: ['./add-thi-sinh.component.css']
 })
-export class AddThiSinhComponent implements OnInit {
+export class AddThiSinhComponent implements OnInit, OnChanges {
+  @Output() onDataChange = new EventEmitter<any>();
+  private dataSelectSubject = new BehaviorSubject<any>({});
+
+
   @ViewChild(Paginator) paginator: Paginator;
   @Input() hoidong_id: number;
   @Input() kehoach_id: number;
   @ViewChild('templateWaiting') templateWaiting: ElementRef;
 
 
-  hoiDongData: ThptHoiDong;
-  TypeChangePage: 0 | 1 | 2 | 3 = 0; // 0: not data room//1:have data room //3:showDataroom
+  isLoading: boolean = false;
+
+  dsMon: DmMon[];
   rows: number = this.themeSettingsService.settings.rows;
   isloading: boolean = true;
   page: number = 1;
-  recordsTotal: number;
-  dataSelct: ThptHoiDongThiSinh[] = [];
+  recordsTotalOrderThpt: number;
+  dataOrderThpt: OrdersTHPT[] = [];
+  dataOrderSelect: OrdersTHPT[] = [];
+  dataThiSinhSelect: ThptHoiDongThiSinh[] = [];
+
   listData: ThptHoiDongThiSinh[];
+
+
   constructor(
-    private pickker: EmployeesPickerService,
     private orderSerivce: ThptOrdersService,
     private themeSettingsService: ThemeSettingsService,
     private hoiDongThiSinhService: ThptHoidongThisinhService,
     private notifi: NotificationService,
+    private danhMucMonService: DanhMucMonService,
+    private modalService: NgbModal,
+  ) {
+    this.dataSelectSubject.subscribe(data => this.emitDataChanges());
 
-    private thisinhInfoService: ThisinhInfoService
+  }
 
-  ) { }
+  ngOnChanges(changes: SimpleChanges): void {
+    if (this.hoidong_id) {
+      this.loadInit();
+    }
+
+  }
 
 
   ngOnInit(): void {
+    this.emitDataChanges()
     if (this.hoidong_id) {
-      this.loadInit();
+      this.danhMucMonService.getDataUnlimit().subscribe({
+        next: (data) => {
+          this.dsMon = data;
+          this.loadInit();
+
+        }
+      })
     }
   }
 
   loadInit() {
-    this.loadData(1);
+
+    this.loadData();
   }
 
-  loadData(page: number) {
-    this.listData = [];
-    this.isloading = true;
-    this.hoiDongThiSinhService.getDataByHoiDongId(page, this.hoidong_id).subscribe({
-      next: ({ recordsTotal, data }) => {
-        this.recordsTotal = recordsTotal;
-        this.listData = data.map((m,index) => {
-          m['_stt'] = this.rows *(page-1) + index +1;
+  loadData() {
+    this.isLoading = true;
+    this.hoiDongThiSinhService.getDataByHoidongIdUnlimit(this.hoidong_id).pipe(switchMap(project => {
+      const ids = project.length > 0 ? project.map(m => m.thisinh_id) : [];
+
+      return forkJoin<[ThptHoiDongThiSinh[], OrdersTHPT[]]>([of(project), this.orderSerivce.getDataBykehoachIdAndStatusUnlimit(this.kehoach_id, ids)]);
+    })).subscribe({
+      next: ([dataThiSinh, orderThpt]) => {
+        this.isLoading = false;
+
+        this.dataOrderThpt = this.ConverDataOrder(orderThpt).map((m, index) => {
           const thisinh = m['thisinh'];
-          m['_hoten'] = thisinh ? thisinh['hoten'] : '';
-          m['_phone'] = thisinh ? thisinh['phone'] : '';
-          m['_email'] = thisinh ? thisinh['email'] : '';
-          m['_ngaysinh'] = thisinh ? thisinh['ngaysinh'] : '';
-          m['_cccd_so'] = thisinh ? thisinh['cccd_so'] : '';
-          m['_gioitinh'] = thisinh && thisinh['gioitinh'] === 'nam' ? 'Nam' : 'Nữ';
+          m['_indexTable'] = index + 1;
+          m['__thisinh_hoten'] = thisinh ? thisinh['hoten'] : '';
+          m['__thisinh_phone'] = thisinh ? thisinh['phone'] : '';
+          m['__thisinh_cccd'] = thisinh ? thisinh['cccd_so'] : '';
+          m['__thisinh_ngaysinh'] = thisinh ? thisinh['ngaysinh'] : '';
+          m['__thisinh_gioitinh'] = thisinh ? thisinh['gioitinh'] : '';
+          m['__thisinh_phone'] = thisinh ? thisinh['phone'] : '';
+          m['__thisinh_email'] = thisinh ? thisinh['email'] : '';
+          m['__monthi_covered'] = this.dsMon ? m.mon_id.map(b => this.dsMon.find(f => f.id == b) ? this.dsMon.find(f => f.id == b) : []) : [];
+          return m;
+        });
+        this.recordsTotalOrderThpt = this.dataOrderThpt.length;
+        this.listData = dataThiSinh.map((m, index) => {
+          const thisinh = m['thisinh'];
+          m['_indexTable'] = index + 1;
+
+          m['__thisinh_hoten'] = thisinh ? thisinh['hoten'] : '';
+          m['__thisinh_phone'] = thisinh ? thisinh['phone'] : '';
+          m['__thisinh_cccd'] = thisinh ? thisinh['cccd_so'] : '';
+          m['__thisinh_ngaysinh'] = thisinh ? thisinh['ngaysinh'] : '';
+          m['__thisinh_gioitinh'] = thisinh ? thisinh['gioitinh'] : '';
+          m['__thisinh_phone'] = thisinh ? thisinh['phone'] : '';
+          m['__thisinh_email'] = thisinh ? thisinh['email'] : '';
+          m['__monthi_covered'] = this.dsMon && m.monthi_ids ? m.monthi_ids.map(b => this.dsMon.find(f => f.id == b) ? this.dsMon.find(f => f.id == b) : []) : [];
+
           return m;
         })
 
-        this.isloading = false;
-      }, error: () => {
-        this.isloading = false;
-        this.notifi.toastError('Mất kết nối với máy chủ');
+        this.notifi.isProcessing(false);
+      },
+      error: () => {
+        this.isLoading = true;
+
+        this.notifi.isProcessing(true);
+        this.notifi.toastError('Load dữ liệu không thành công');
       }
-    });
+    })
   }
 
-  paginate({ page }: NgPaginateEvent) {
-    this.page = page + 1;
-    this.loadData(this.page);
+
+  ConverDataOrder(order: OrdersTHPT[]) {
+    const mergedData = order.reduce((acc, curr) => {
+      const foundIndex = acc.findIndex(item => item.thisinh_id === curr.thisinh_id);
+      if (foundIndex !== -1) {
+        const uniqueMonIds = [...new Set([...acc[foundIndex].mon_id, ...curr.mon_id])];
+        acc[foundIndex].mon_id = uniqueMonIds;
+      } else {
+        acc.push({...curr});
+      }
+      return acc;
+    }, []);
+
+    return mergedData;
   }
 
-  async btnAddNew() {
-    const isSet: Set<number> = this.listData ? this.listData.reduce((conllector, { thisinh_id }) => {
-      conllector.add(thisinh_id);
-      return conllector;
-    }, new Set<number>()) : new Set<number>();
-    try {
-      const result = await this.pickker.pickerUser([], this.kehoach_id);
 
+  selectDataOrder(event) {
+    if (event.checked === true) {
+      this.dataOrderSelect = this.dataOrderThpt;
+    } else {
+      this.dataOrderSelect = [];
+    }
+    this.emitDataChanges()
 
-      if (result && result.length) {
-        const validObjects: Set<number> = result.reduce((collector, item) => {
-          if (!isSet.has(item)) {
-            collector.add(item);
-          }
-          return collector;
-        }, new Set<number>());
-        const thisinh_ids = Array.from(validObjects);
-        if (thisinh_ids && thisinh_ids.length) {
-          this.processItems(thisinh_ids);
+  }
 
-        } else {
-          this.notifi.toastWarning('Thí sinh đã được thêm vào hội đồng');
-        }
+  selectDataThisinh(event) {
+    if (event.checked === true) {
+      this.dataThiSinhSelect = this.listData;
+    } else {
+      this.dataThiSinhSelect = [];
+    }
+    this.emitDataChanges()
+  }
 
-      }
-    } catch (e) {
+  async btnAddHoidong() {
+    if (this.dataOrderSelect.length > 0) {
+      const dataCreate = this.dataOrderSelect.map(m => {
+        return {thisinh_id: m.thisinh_id, monthi_ids: m.mon_id, hoidong_id: this.hoidong_id};
+      })
+
+      this.processItems(dataCreate);
+      this.dataOrderSelect = [];
+    } else {
+
+      this.notifi.toastError('Vui lòng chọn thí sinh đăng ký');
     }
   }
 
-  async processItems(thisinh_ids: number[]) {
+  async processItems(dataCreate: any) {
     const requests$: Observable<any>[] = [];
     this.isloading = true;
-    thisinh_ids.forEach((r, index) => {
-      const newObject = {
-        hoidong_id: this.hoidong_id,
-        thisinh_id: r
-      };
+    dataCreate.forEach((r, index) => {
 
       const request$ =
-        this.hoiDongThiSinhService.create(newObject).pipe(
-          concatMap((id) => {
+        this.hoiDongThiSinhService.create(r).pipe(concatMap((id) => {
             return of(null);
-          }),
-          delay(index * 500),
-          catchError(error => {
+          }), delay(index * 500), catchError(error => {
             console.error(error);
             return of(null);
           })
@@ -140,35 +209,43 @@ export class AddThiSinhComponent implements OnInit {
 
     forkJoin(requests$).pipe(
       finalize(() => {
-        this.loadData(this.page);
+
+        this.loadData();
         this.isloading = false;
+        this.emitDataChanges()
       })
     ).subscribe();
   }
 
+
   async btndelete() {
 
-    if (this.dataSelct && this.dataSelct.length) {
+    if (this.dataThiSinhSelect && this.dataThiSinhSelect.length) {
       const confirm = await this.notifi.confirmDelete();
       if (confirm) {
         try {
           this.startDeletes();
+          this.emitDataChanges()
+
         } catch (error) {
           this.notifi.isProcessing(false);
           this.notifi.toastError('Thao tác không thành công');
         }
       }
+    } else {
+      this.notifi.toastError('Vui lòng chọn thí sinh ');
     }
   }
 
 
   private startDeletes() {
-    if (this.dataSelct.length) {
-      const row: ThptHoiDongThiSinh = this.dataSelct.pop();
+    if (this.dataThiSinhSelect.length) {
+      const row: ThptHoiDongThiSinh = this.dataThiSinhSelect.pop();
       this.hoiDongThiSinhService.delete(row.id).subscribe({
         next: () => {
           this.listData = this.listData.filter(u => row.id !== u.id);
           this.startDeletes();
+          this.dataThiSinhSelect = this.dataThiSinhSelect.filter(f => f.id = row.id);
         },
         error: () => {
           this.listData = this.listData.filter(u => row.id !== u.id);
@@ -179,6 +256,15 @@ export class AddThiSinhComponent implements OnInit {
       this.notifi.isProcessing(false);
       this.loadInit();
     }
+  }
+
+
+  emitDataChanges() {
+    this.onDataChange.emit({orderSelect: this.dataOrderSelect.length, thisinhSelect: this.dataThiSinhSelect.length});
+  }
+
+  btnDataSelect(event){
+    this.emitDataChanges()
   }
 
 }

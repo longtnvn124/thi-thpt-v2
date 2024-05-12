@@ -18,29 +18,33 @@ import { PaginatorModule } from "primeng/paginator";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { AddThiSinhComponent } from './hoi-dong-thi/add-thi-sinh/add-thi-sinh.component';
 import {RadioButtonModule} from "primeng/radiobutton";
+import {CheckboxModule} from "primeng/checkbox";
+import {MatMenuModule} from "@angular/material/menu";
 @NgModule({
     declarations: [
         HoiDongThiComponent,
         PhongThiComponent,
         AddThiSinhComponent
     ],
-    imports: [
-        CommonModule,
-        HoiDongRoutingModule,
-        DropdownModule,
-        ButtonModule,
-        InputTextModule,
-        RippleModule,
-        TableModule,
-        SharedModule,
-        ReactiveFormsModule,
-        MultiSelectModule,
-        TooltipModule,
-        SplitterModule,
-        PaginatorModule,
-        MatProgressBarModule,
-        RadioButtonModule,
+  imports: [
+    CommonModule,
+    HoiDongRoutingModule,
+    DropdownModule,
+    ButtonModule,
+    InputTextModule,
+    RippleModule,
+    TableModule,
+    SharedModule,
+    ReactiveFormsModule,
+    MultiSelectModule,
+    TooltipModule,
+    SplitterModule,
+    PaginatorModule,
+    MatProgressBarModule,
+    RadioButtonModule,
+    CheckboxModule,
+    MatMenuModule,
 
-    ]
+  ]
 })
 export class HoiDongModule { }

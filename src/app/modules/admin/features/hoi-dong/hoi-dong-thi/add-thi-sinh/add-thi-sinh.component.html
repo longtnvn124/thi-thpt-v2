@@ -1,67 +1,160 @@
 <div class="add-container">
-    <div class="add-content ovic-side-navigation-content__body ovic-scroll-style">
-        <div class="container" style="height: calc(100vh - 60px - 60px - 40px);">
-            <p-table [(selection)]="dataSelct" styleClass="p-datatable-gridlines" [value]="listData" [rowHover]="true"
-                [rows]="rows" [showCurrentPageReport]="true" [rowsPerPageOptions]="[10,25,50]" [loading]="isloading">
-                <ng-template pTemplate="header" class="d-bock">
+  <div class="w-100" style="height: 100%;">
+    <p-splitter [style]="{'height': '100%'}" [panelSizes]="[50,50]">
+      <ng-template pTemplate>
+        <div class="row w-100 m-0">
+          <div class="col-12 p-0 ovic-ui-table site-thpt" style="height:calc(100vh - 84px)"
+               [class.ovic-is-loading]="isLoading">
+            <div class="p-datatable-header" style="height:65px; border-bottom:1px solid #CCC;">
+              <h3 class="tbl-title ">Danh sách thí sinh đăng ký</h3>
+              <div class="search-block ui-table-globalfilter-container ">
+
+              </div>
+            </div>
+            <div class="ovic-wrap-table-rps ovic-scroll-style"
+                 style="height:calc(100% - 65px - 60px);background: #dedede;">
+              <!--              <div class="ovic-wrap-table-rps__inner">-->
+              <div class="">
+                <p-table [(selection)]="dataOrderSelect" styleClass="p-datatable-gridlines"
+                         [value]="dataOrderThpt" (onRowSelect)="btnDataSelect($event)" (onRowUnselect)="btnDataSelect($event)"
+                         (onHeaderCheckboxToggle)="selectDataOrder($event)"
+                         [rowHover]="true"
+                         [rows]="rows" [showCurrentPageReport]="true" [rowsPerPageOptions]="[10,25,50]"
+                         [loading]="isLoading">
+                  <ng-template pTemplate="header" class="d-bock">
                     <tr>
-                        <th class="ovic-w-50px">
-                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
-                        </th>
-                        <th class="ovic-w-50px">STT</th>
-                        <th>Họ và tên</th>
-                        <th class="ovic-w-120px text-center">Ngày sinh</th>
-                        <th class="ovic-w-120px text-center">Giới tính</th>
-                        <th class="ovic-w-120px text-center">Số CCCD</th>
-                        <th class="ovic-w-120px text-center">Số điện thoại</th>
-                        <th class="ovic-w-120px text-center">Email</th>
+                      <th class="ovic-w-50px text-center">
+                        <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                      </th>
+                      <th class="ovic-w-40px text-center ">STT</th>
+                      <th class="ovic-w-180px text-center">Họ và tên</th>
+                      <th class="ovic-w-120px text-center">Ngày sinh</th>
+                      <th class="ovic-w-120px text-center">Số điện thoại</th>
+                      <th class="text-center">Môn đăng ký</th>
+
                     </tr>
-                </ng-template>
-                <ng-template pTemplate="body" let-item let-i="rowIndex">
+                  </ng-template>
+
+                  <ng-template pTemplate="body" let-item let-i="rowIndex">
                     <tr>
-                        <td>
-                            <p-tableCheckbox [value]="item"></p-tableCheckbox>
-                        </td>
-                        <td class="text-center">{{item['_stt']}}</td>
-                        <td>{{item['_hoten']}}</td>
-                        <td class="text-center">{{item['_ngaysinh']}}</td>
-                        <td class="text-center">{{item['_gioitinh']}}</td>
-                        <td class="text-right">{{item['_cccd_so']}}</td>
-                        <td class="text-center">{{item['_phone']}}</td>
-                        <td>{{item['_email']}}</td>
+                      <td class="text-center">
+
+                        <p-tableCheckbox [value]="item" ></p-tableCheckbox>
+                      </td>
+
+                      <td class="text-center">{{ item['_indexTable'] }}</td>
+                      <td><span class="tt-hover" > {{ item['__thisinh_hoten'] }}</span></td>
+                      <td class="text-center">{{ item['__thisinh_ngaysinh'] }}</td>
+                      <td class="ovic-w-80px text-right">{{ item['__thisinh_phone'] }}</td>
+                      <td>
+                        <div class="d-flex flex-wrap " style="gap:6px;">
+                          <div *ngFor=" let mon of item['__monthi_covered']"
+                               [ngClass]=" 'mon-thi mon-' + mon['kyhieu'] ">{{ mon['tenmon'] }}
+                          </div>
+                        </div>
+                      </td>
+
                     </tr>
-                </ng-template>
-                <ng-template pTemplate="emptymessage">
+                  </ng-template>
+                  <ng-template pTemplate="emptymessage">
                     <tr>
-                        <td colspan="8">
-                            Không có dữ liệu thí sinh!
-                        </td>
+                      <td colspan="7">
+                        Không có dữ liệu thí sinh!
+                      </td>
                     </tr>
-                </ng-template>
-            </p-table>
-            <p-paginator [showCurrentPageReport]="true" [rows]="rows" [totalRecords]="recordsTotal" [pageLinkSize]="5"
-                (onPageChange)="paginate($event)"></p-paginator>
+                  </ng-template>
+                </p-table>
+              </div>
+            </div>
+            <p-paginator class="duthi_panigator" [showCurrentPageReport]="true" [rows]="rows"
+                         [totalRecords]="recordsTotalOrderThpt" [pageLinkSize]="5"></p-paginator>
+          </div>
         </div>
+      </ng-template>
+      <ng-template pTemplate>
+        <div class="row w-100 m-0">
+          <div class="col-12 p-0 ovic-ui-table site-thpt" style="height:calc(100vh - 84px)"
+               [class.ovic-is-loading]="isLoading">
+            <div class="p-datatable-header" style="height:65px; border-bottom:1px solid #CCC;">
+              <h3 class="tbl-title ">Danh sách thí sinh trong hội đồng</h3>
+              <div class="search-block ui-table-globalfilter-container ">
 
-    </div>
-    <div class="add-footer">
-        <button pButton pRipple class="mx-2 p-button-secondary" icon="pi pi-sync" label="Reload"
-            (click)="loadInit()"></button>
-        <button pButton pRipple class="mx-2 p-button-success" icon="pi pi-plus" label="Thêm mới"
-            (click)="btnAddNew()"></button>
-        <button pButton pRipple class="mx-2 p-button-danger" [disabled]="dataSelct && dataSelct.length ? false:true"
-            icon="pi pi-trash" label="Xóa" (click)="btndelete()"></button>
+              </div>
+            </div>
+            <div class="ovic-wrap-table-rps ovic-scroll-style"
+                 style="height:calc(100% - 65px - 60px);background: #dedede;">
+<!--              <div class="ovic-wrap-table-rps__inner">-->
+              <div class="">
+                <p-table [(selection)]="dataThiSinhSelect" styleClass="p-datatable-gridlines"
+                         (onRowSelect)="btnDataSelect($event)" (onRowUnselect)="btnDataSelect($event)"
+                         (onHeaderCheckboxToggle)="selectDataThisinh($event)"
+                         [value]="listData"
+                         [rowHover]="true"
+                         [rows]="rows" [showCurrentPageReport]="true" [rowsPerPageOptions]="[10,25,50]"
+                         [loading]="isLoading">
+                  <ng-template pTemplate="header" class="d-bock">
+                    <tr>
+                      <th class="ovic-w-50px text-center">
+<!--                        <p-checkbox [binary]="true" (onChange)="selectDataThisinh($event)"></p-checkbox>-->
+                        <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                      </th>
+                      <th class="ovic-w-40px text-center ">STT</th>
+                      <th class="ovic-w-180px text-center">Họ và tên</th>
+                      <th class="ovic-w-120px text-center">Ngày sinh</th>
+                      <th class="ovic-w-120px text-center">Số điện thoại</th>
+                      <th class="text-center">Môn đăng ký</th>
 
-    </div>
+                    </tr>
+                  </ng-template>
+
+                  <ng-template pTemplate="body" let-item let-i="rowIndex">
+                    <tr>
+                      <td class="text-center">
+                        <p-tableCheckbox [value]="item"></p-tableCheckbox>
+<!--                        <p-checkbox [value]="item" (click)="btnCheckbox('thisinh', $event)"></p-checkbox>-->
+                      </td>
+
+                      <td class="text-center">{{ item['_indexTable'] }}</td>
+                      <td><span class="tt-hover" > {{ item['__thisinh_hoten'] }}</span></td>
+                      <td class="text-center">{{ item['__thisinh_ngaysinh'] }}</td>
+                      <td class="ovic-w-80px text-right">{{ item['__thisinh_phone'] }}</td>
+                      <td>
+                        <div class="d-flex flex-wrap " style="gap:6px;">
+                          <div *ngFor=" let mon of item['__monthi_covered']"
+                               [ngClass]=" 'mon-thi mon-' + mon['kyhieu'] ">{{ mon['tenmon'] }}
+                          </div>
+                        </div>
+                      </td>
+
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="emptymessage">
+                    <tr>
+                      <td colspan="7">
+                        Không có dữ liệu thí sinh!
+                      </td>
+                    </tr>
+                  </ng-template>
+                </p-table>
+              </div>
+            </div>
+            <p-paginator class="duthi_panigator" [showCurrentPageReport]="true" [rows]="rows"
+                         [totalRecords]="recordsTotalOrderThpt" [pageLinkSize]="5"></p-paginator>
+          </div>
+        </div>
+      </ng-template>
+
+    </p-splitter>
+  </div>
 
 </div>
 
 
 <ng-template #templateWaiting let-c="close" let-d="dismiss">
-    <div class="waiting-container">
-        <label>Vui lòng chờ...</label>
-        <div class="waiting-content">
-            <mat-progress-bar mode="buffer"></mat-progress-bar>
-        </div>
+  <div class="waiting-container">
+    <label>Vui lòng chờ...</label>
+    <div class="waiting-content">
+      <mat-progress-bar mode="buffer"></mat-progress-bar>
     </div>
+  </div>
 </ng-template>

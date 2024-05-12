@@ -6,6 +6,7 @@ import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/fo
 import { ThptHoiDong, ThptHoiDongService } from '@modules/shared/services/thpt-hoi-dong.service';
 import { FormType, OvicForm } from '@modules/shared/models/ovic-models';
 import { Observable, Subject, Subscription, debounceTime, filter } from 'rxjs';
+import {AddThiSinhComponent} from "@modules/admin/features/hoi-dong/hoi-dong-thi/add-thi-sinh/add-thi-sinh.component";
 
 interface FormHoiDong extends OvicForm {
   object: ThptHoiDong;
@@ -20,6 +21,9 @@ export class HoiDongThiComponent implements OnInit {
   @ViewChild('fromUpdate', { static: true }) template: TemplateRef<any>;
   @ViewChild('examinationRoom', { static: true }) examinationRoom: TemplateRef<any>;
   @ViewChild('addThiSinh', { static: true }) addThiSinh: TemplateRef<any>;
+  @ViewChild(AddThiSinhComponent) addThisinhComponent: AddThiSinhComponent;
+
+
   statusList = [
     {
       value: 1,
@@ -277,4 +281,21 @@ export class HoiDongThiComponent implements OnInit {
     });
   }
 
+  btnCreateThisinhInHoiDOng(){
+    this.addThisinhComponent.btnAddHoidong();
+  }
+  btnDeleteThiSinhInHoiDong(){
+    this.addThisinhComponent.btndelete();
+  }
+  btnReloadData(){
+    this.addThisinhComponent.loadData();
+  }
+
+  thiSinhSelectTotal:number= 0;
+  orderSelectTotal:number= 0;
+
+  onDataChange(event){
+    this.thiSinhSelectTotal=event.thisinhSelect;
+    this.orderSelectTotal=event.orderSelect;
+  }
 }

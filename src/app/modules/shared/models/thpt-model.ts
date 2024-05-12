@@ -18,7 +18,5 @@ export interface ThptHoiDongThiSinh {
   id?: number;
   hoidong_id: number;
   thisinh_id: number;
-  phongthi_id?: number;
   monthi_ids?: number[];
-  sobaodanh?: string;
 }

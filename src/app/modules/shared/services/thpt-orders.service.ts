@@ -282,4 +282,32 @@ export class ThptOrdersService {
     const params: HttpParams = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }).set('with', 'thisinh'));
     return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data));
   }
+
+  getDataBykehoachIdAndStatusUnlimit(kehoach_id:number, unIds ?: number[]):Observable<OrdersTHPT[]>{
+    const conditions: OvicConditionParam[] = [
+      {
+        conditionName: 'kehoach_id',
+        condition: OvicQueryCondition.equal,
+        value: kehoach_id.toString(),
+      },
+      {
+        conditionName: 'status',
+        condition: OvicQueryCondition.equal,
+        value:'1',
+      },
+
+    ];
+    const fromObject = {
+      paged: 1,
+      limit: -1,
+      orderby: 'id',
+      order: "ASC",// dieemr giarm dần,
+      exclude:unIds.join(','),
+      exclude_by:"thisinh_id"
+
+
+    }
+    const params: HttpParams = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }).set('with', 'thisinh'));
+    return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data));
+  }
 }

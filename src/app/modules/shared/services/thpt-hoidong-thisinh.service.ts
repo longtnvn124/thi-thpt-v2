@@ -157,7 +157,6 @@ export class ThptHoidongThisinhService {
         condition: OvicQueryCondition.equal,
         value: hoidong_id.toString(),
       },
-
     ];
 
     const fromObject = {
