@@ -7,7 +7,7 @@
           <div class="ovic-vertical__inputs ovic-vertical__inputs--layout-2">
             <div class="d-flex" style="gap:10px;">
               <div class="">
-                <p-dropdown [options]="dsKehoachthi" placeholder="Chọn đợt thi" optionValue="id" optionLabel="dotthi"
+                <p-dropdown [options]="dsKehoachthi" placeholder="Chọn đợt thi" optionValue="id" optionLabel="dotthi" [showClear]="true"
                             (onChange)="loadDropdow($event.value)">
 
                 </p-dropdown>

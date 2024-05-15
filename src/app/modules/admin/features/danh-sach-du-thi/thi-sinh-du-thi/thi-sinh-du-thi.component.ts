@@ -1,5 +1,5 @@
 import {KeHoachThi, ThptKehoachThiService} from '@shared/services/thpt-kehoach-thi.service';
-import {Component, ElementRef, HostListener, OnInit, TemplateRef, ViewChild} from '@angular/core';
+import {Component, ElementRef, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {OrdersTHPT, ThptOrdersService} from "@shared/services/thpt-orders.service";
 import {NotificationService} from "@core/services/notification.service";
 import {DanhMucMonService} from "@shared/services/danh-muc-mon.service";
@@ -7,7 +7,7 @@ import {Subscription, forkJoin, filter, Subject, debounceTime} from "rxjs";
 import {DmMon,} from "@shared/models/danh-muc";
 import {Paginator} from 'primeng/paginator';
 import {NgPaginateEvent, OvicTableStructure} from "@shared/models/ovic-models";
-import {BUTTON_NO, BUTTON_YES, OvicButton} from "@core/models/buttons";
+import {BUTTON_NO, BUTTON_YES} from "@core/models/buttons";
 import {ThemeSettingsService} from "@core/services/theme-settings.service";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {WAITING_POPUP} from "@shared/utils/syscat";
@@ -196,7 +196,7 @@ export class ThiSinhDuThiComponent implements OnInit {
           m['__thisinh_gioitinh'] = thisinh ? thisinh['gioitinh'] : '';
           m['__thisinh_phone'] = thisinh ? thisinh['phone'] : '';
           m['__thisinh_email'] = thisinh ? thisinh['email'] : '';
-          m['giadich'] = m.trangthai_thanhtoan === 1 ? m['transaction_id'] : (m.trangthai_thanhtoan === 1 && m['transaction_id'] ? 'CK-TT' : '');
+          m['giadich'] = m.trangthai_thanhtoan === 1 && m.trangthai_chuyenkhoan === 0 ? m['transaction_id'] : (m.trangthai_thanhtoan === 1 && m.trangthai_chuyenkhoan === 1 ? 'CK-TT' : '');
           m['__dotthi_coverted'] = this.dsKehoachthi.find(f => f.id === m.kehoach_id).dotthi;
           m['__monthi_covered'] = this.dsMon ? m.mon_id.map(b => this.dsMon.find(f => f.id == b) ? this.dsMon.find(f => f.id == b) : []) : [];
           m['__status_converted'] = m.trangthai_thanhtoan === 1 ? 1 : (m.trangthai_thanhtoan === 0 && m.trangthai_chuyenkhoan === 0 ? 0 : (m.trangthai_thanhtoan  === 2 && m.trangthai_chuyenkhoan === 0 ? 2 : (m.trangthai_thanhtoan === 0 && m.trangthai_chuyenkhoan === 1 ? -1 : null)));
@@ -236,7 +236,7 @@ export class ThiSinhDuThiComponent implements OnInit {
   paginate({page}: NgPaginateEvent) {
     this.page = page + 1;
     this.dataSelct = [];
-    this.loadData(this.page);
+    this.loadData(this.page,this.kehoach_id, this.search);
   }
 
   thisinh_id: number;

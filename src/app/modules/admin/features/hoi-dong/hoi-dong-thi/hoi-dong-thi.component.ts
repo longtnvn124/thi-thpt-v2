@@ -77,8 +77,8 @@ export class HoiDongThiComponent implements OnInit {
 
     this.formSave = this.fb.group({
       kehoach_id: [null, Validators.required],
-      ten_hoidong: [null, Validators.required],
-      mota: [null,],
+      ten_hoidong: ['', Validators.required],
+      mota: [null],
       status: [1, Validators.required],
     })
   }
@@ -101,6 +101,7 @@ export class HoiDongThiComponent implements OnInit {
     this.kehoachThiService.getDataUnlimit().subscribe({
       next: (data) => {
         this.dataKeHoach = data;
+
         this.getDataHoiDong();
         this.notifi.isProcessing(false);
         this.isLoading = false;
@@ -128,14 +129,12 @@ export class HoiDongThiComponent implements OnInit {
       next: (data) => {
         let i = 1;
         this.listData = data.map(m => {
-
           m['__indexTable'] = i++;
-          m['__kehoach_coverted'] = this.dataKeHoach.find(f => f.id = m.id) ? this.dataKeHoach.find(f => f.id = m.id).dotthi : '';
+          m['__kehoach_coverted'] = this.dataKeHoach && this.dataKeHoach.find(f => f.id === m.kehoach_id) ? this.dataKeHoach.find(f => f.id === m.kehoach_id).dotthi : '';
           const sIndex = this.statusList.findIndex(i => i.value === m.status);
           m['__status_converted'] = sIndex !== -1 ? this.statusList[sIndex].color : '';
           return m;
         })
-
         this.isLoading = false;
         this.notifi.isProcessing(false);
       },
@@ -154,7 +153,7 @@ export class HoiDongThiComponent implements OnInit {
         this.needUpdate = true;
         if (type === FormType.ADDITION) {
           this.formSave.reset({
-            Kehoach_id: null,
+            kehoach_id: null,
             ten_hoidong: '',
             mota: '',
             status: 1
@@ -182,21 +181,21 @@ export class HoiDongThiComponent implements OnInit {
   btnAddNew(type: 'add' | 'update', item?: ThptHoiDong) {
     if (type === 'add') {
       this.btn_checkAdd = "Lưu lại";
+      this.formActive = this.listForm[FormType.ADDITION];
+      this.preSetupForm(this.menuName);
       this.formSave.reset({
-        Kehoach_id: null,
+        kehoach_id: null,
         ten_hoidong: '',
         mota: '',
         status: 1
       });
       // this.characterAvatar = ''
-      this.formActive = this.listForm[FormType.ADDITION];
-      this.preSetupForm(this.menuName);
     }
     else if (type === 'update') {
       this.btn_checkAdd = "Cập nhật"
       const object1 = this.listData.find(u => u.id === item.id);
       this.formSave.reset({
-        Kehoach_id: object1.kehoach_id,
+        kehoach_id: object1.kehoach_id,
         ten_hoidong: object1.ten_hoidong,
         mota: object1.mota,
         status: object1.status

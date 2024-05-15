@@ -20,6 +20,7 @@ import {BehaviorSubject, concatMap, forkJoin, Observable, of, switchMap} from 'r
 import {DanhMucMonService} from "@shared/services/danh-muc-mon.service";
 import {DmMon} from "@shared/models/danh-muc";
 import {catchError, delay, finalize} from "rxjs/operators";
+import {WAITING_POPUP} from "@shared/utils/syscat";
 
 @Component({
   selector: 'app-add-thi-sinh',
@@ -35,8 +36,6 @@ export class AddThiSinhComponent implements OnInit, OnChanges {
   @Input() hoidong_id: number;
   @Input() kehoach_id: number;
   @ViewChild('templateWaiting') templateWaiting: ElementRef;
-
-
   isLoading: boolean = false;
 
   dsMon: DmMon[];
@@ -193,6 +192,7 @@ export class AddThiSinhComponent implements OnInit, OnChanges {
   async processItems(dataCreate: any) {
     const requests$: Observable<any>[] = [];
     this.isloading = true;
+    this.modalService.open(this.templateWaiting, WAITING_POPUP);
     dataCreate.forEach((r, index) => {
 
       const request$ =
@@ -209,7 +209,7 @@ export class AddThiSinhComponent implements OnInit, OnChanges {
 
     forkJoin(requests$).pipe(
       finalize(() => {
-
+        this.modalService.dismissAll();
         this.loadData();
         this.isloading = false;
         this.emitDataChanges()
@@ -224,6 +224,7 @@ export class AddThiSinhComponent implements OnInit, OnChanges {
       const confirm = await this.notifi.confirmDelete();
       if (confirm) {
         try {
+          this.modalService.open(this.templateWaiting, WAITING_POPUP);
           this.startDeletes();
           this.emitDataChanges()
 
@@ -245,7 +246,7 @@ export class AddThiSinhComponent implements OnInit, OnChanges {
         next: () => {
           this.listData = this.listData.filter(u => row.id !== u.id);
           this.startDeletes();
-          this.dataThiSinhSelect = this.dataThiSinhSelect.filter(f => f.id = row.id);
+          this.dataThiSinhSelect = this.dataThiSinhSelect.filter(f => f.id !== row.id);
         },
         error: () => {
           this.listData = this.listData.filter(u => row.id !== u.id);
@@ -255,6 +256,8 @@ export class AddThiSinhComponent implements OnInit, OnChanges {
     } else {
       this.notifi.isProcessing(false);
       this.loadInit();
+      this.modalService.dismissAll();
+
     }
   }
 

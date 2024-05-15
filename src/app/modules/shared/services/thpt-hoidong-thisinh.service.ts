@@ -79,13 +79,8 @@ export class ThptHoidongThisinhService {
     })));
   }
 
-  getDataUnlimit(): Observable<KeHoachThi[]> {
+  getDataUnlimit(): Observable<ThptHoiDongThiSinh[]> {
     const conditions: OvicConditionParam[] = [
-      {
-        conditionName: 'status',
-        condition: OvicQueryCondition.equal,
-        value: '1',
-      },
     ];
 
     const fromObject = {
@@ -190,6 +185,23 @@ export class ThptHoidongThisinhService {
     };
     const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }).set('with', 'thisinh,orders'));
     return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data));
+  }
+
+  getDataByHoiDongIdNotPage(hoidong_id: number): Observable<ThptHoiDongThiSinh[]> {
+    const conditions: OvicConditionParam[] = [
+      {
+        conditionName: 'hoidong_id',
+        condition: OvicQueryCondition.equal,
+        value: hoidong_id.toString(),
+      },
+    ];
+
+    const fromObject = {
+      paged: 1,
+      limit: -1,
+    };
+    const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }).set('with', 'thisinh'));
+    return this.http.get<Dto>(this.api, { params }).pipe(map(res =>  res.data));
   }
 
 }

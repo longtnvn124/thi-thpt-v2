@@ -1,136 +1,160 @@
-<p-splitter [panelSizes]="[20,80]" [style]="{'height': 'calc(100vh - 60px - 20px)'}">
-  <ng-template pTemplate>
 
-    <div class="phongthi-container">
-      <div class="phongthi-head"> Cài đặt</div>
-      <div class="phongthi-body">
-        <form [formGroup]="formSave" autocomplete="off">
-          <div class="ovic-vertical__inputs ovic-vertical__inputs--layout-2">
-            <div class="row">
-              <div class="col-12">
-                <div class="form-row">
-                  <label>Ca thi</label>
-                  <input type="text" formControlName="ten_cathi" placeholder="Nhập Ca thi ... ">
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col">
-                <div class="form-row">
-                  <label>Tiền tố số báo danh</label>
-                  <input type="text" formControlName="tiento" placeholder="Vd:TN,VN,...">
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-12">
-                <div class="form-row">
-                  <label>Môn thi</label>
-                  <p-multiSelect class="phongthi-drd" [style]="{'width':'100%','height':'43px'}"
-                    placeholder="Chọn môn cần tạo phòng" [options]="dmMon" optionValue="id" optionLabel="tenmon"
-                    formControlName="monthi"></p-multiSelect>
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-12">
-                <div class="form-row">
-                  <label>Sắp xếp thí sinh trên phòng thi</label>
-                  <div class="formCheckRadius ">
-                    <div *ngFor="let item of radioButton" class="field-checkbox">
-                      <p-radioButton [inputId]="item.id" [value]="item.value"
-                        formControlName="type_sapxep"></p-radioButton>
-                      <span class="ml-2">{{item.label}}</span>
+<ng-container [ngSwitch]="switchPage" >
+  <ng-container *ngSwitchCase="'CATHI'" >
+    <p-splitter [panelSizes]="[25,75]" [style]="{'height': 'calc(100vh - 60px - 20px)'}">
+      <ng-template pTemplate>
+        <div class="w-100 h-100">
+          <div class="" style="height:60px;">
+            <div class="phongthi-head"> Tạo Ca thi</div>
+          </div>
+          <div class="ovic-scroll-style overflow-y-auto overflow-x-hidden" style="height:calc(100% - 60px - 60px);">
+            <form [formGroup]="formCathi" autocomplete="off">
+              <div class="ovic-vertical__inputs ovic-vertical__inputs--layout-2">
+                <div class="row">
+                  <div class="col-12">
+                    <div class="form-row">
+                      <label>Ca thi <span class="ovic-mark">*</span></label>
+                      <input type="text" formControlName="cathi" placeholder="Vd: Ca 1  ... ">
                     </div>
-
                   </div>
                 </div>
-              </div>
-            </div>
-          </div>
-        </form>
-      </div>
-      <div class="phongthi-footer">
-        <button class="p-button-success" pButton pRipple icon="pi pi-check" label="Rà xoát thí sinh"
-          (click)="selectThisinhWithMonthi()"></button>
-        <button class="p-button-secondary" pButton pRipple icon="pi pi-sync " label="Reset form"></button>
-      </div>
-    </div>
-  </ng-template>
-  <ng-template pTemplate>
-    <ng-container [ngSwitch]="TypeChangePage">
-      <ng-container *ngSwitchCase="'-1'">
-        <div class="w-100 h-100 d-flex justify-content-center align-items-center flex-column gap-1">
-          <div>
-            <i class="pi pi-spin pi-spinner"></i>
-          </div>
-          <div>Đang load dữ liệu vui lòng chờ</div>
-        </div>
-      </ng-container>
-      <ng-container *ngSwitchCase="'0'">
-        <div class="w-100 h-100 d-flex flex-column justify-content-center align-items-center gap-1"
-          style="font-size: 16px;">
-
-          <div>Chưa có phòng thi </div>
-          <div>Vui lòng tạo phòng thi!</div>
-        </div>
-      </ng-container>
-
-      <ng-container *ngSwitchCase="'1'">
-        <!-- <div class="w-100 h-100 d-flex flex-column justify-content-center align-items-center gap-1"
-          style="font-size: 16px;">
-          <div>có phòng thi </div>
-        </div> -->
-
-        <div class="hoidong__body-section">
-          <ul class="hoidong__list-data">
-            <li *ngFor="let item of hoiDongPhongThi">
-              <div class="hoidong-item_class">
-                <div class="hoidong-item__thumbnail">
-
+                <div class="row">
+                  <div class="col-12">
+                    <div class="form-row">
+                      <label>Ngày thi <span class="ovic-mark">*</span></label>
+                      <p-calendar placeholder="chọn..." class="w-100" dateFormat="dd/mm/yy"
+                                  formControlName="ngaythi"
+                                  [showTime]="false" [showIcon]="true" [showSeconds]="false"></p-calendar>
+                    </div>
+                  </div>
                 </div>
-                <div class="hoidong-item__detail">
-                  <div class="hoidong-item__detail-body">
-                    <div class="hoidong-item__wrap-class-name" [innerHTML]="item['ten_phongthi']"></div>
-                    <div class="hoidong-item__class-resource">
-                      <ul class="hoidong-item__list-resource">
-                        <li class="hoidong-item-class__elm-resource">
-                          <i class="pi pi-code"></i>Mã phòng thi:
-                          <span>{{item.ma_phongthi}}</span>
-
-                        </li>
-                      </ul>
+                <div class="row">
+                  <div class="col-12">
+                    <div class="form-row">
+                      <label>Mô tả</label>
+                      <textarea formControlName="mota" placeholder="Mô tả..." autocomplete="off" id="mota" cols="30"
+                                rows="5"></textarea>
                     </div>
                   </div>
                 </div>
               </div>
+            </form>
 
-            </li>
-          </ul>
+          </div>
+          <div class="cathi-footer">
+            <button pRipple pButton class="p-button-secondary" icon="pi pi-sign-out" label="Quay lại" disabled></button>
+            <button pRipple pButton class="p-button-success" [icon]="typeAdd ==='ADD' ? 'pi pi-plus':'pi pi-file-edit' " [label]="typeAdd ==='ADD' ? 'Thêm mới':'Cập nhật'" (click)="submitFormCathi()"></button>
+            <button pRipple pButton class="p-button-warning" icon="pi pi-refresh" label="Reset Form" (click)="resetFormCathi()"></button>
+          </div>
         </div>
-        <!-- <div class="hoidong-container" style="padding: 60px 0 0 0;">
-          <div class="hoidong-item" *ngFor="let item of hoiDongPhongThi">
-            <div class="hoidong-item__image">
-              <i class="pi pi-verified" style="font-size: 4rem;"></i>
-            </div>
-            <div class="hoidong-item__content">
-              <div class="hoidong-item__content-header">{{item.ten_phongthi}}</div>
-              <div class="hoidong-item__content-element">
-                <div class="hoidong-item__content-element__title">Mã Phòng thi:</div>
-                <div> {{item.ma_phongthi}}</div>
+      </ng-template>
+      <ng-template pTemplate>
+        <div class="container pt-2 ">
+          <div class="row w-100 m-0">
+            <div class="col-12 p-0 ovic-ui-table site-thpt"
+                 [class.ovic-is-loading]="isLoading">
+              <div class="p-datatable-header" style="height:65px; border-bottom:1px solid #CCC;">
+                <h3 class="tbl-title ">Danh sách ca thi</h3>
+                <div class="search-block ui-table-globalfilter-container ">
+
+                </div>
               </div>
-              <div class="hoidong-item__content-element">
-                <div class="hoidong-item__content-element__title">Số lượng thí sinh:</div>
-                <div> {{item.sothisinh}}</div>
+              <div class="ovic-wrap-table-rps ovic-scroll-style"
+                   style="height:calc(100% - 65px - 60px);background: #dedede;">
+                <!--              <div class="ovic-wrap-table-rps__inner">-->
+                <div class="">
+                  <p-table  styleClass="p-datatable-gridlines" [value]="dataCaThi" [rowHover]="true"
+                            [showCurrentPageReport]="true" [rowsPerPageOptions]="[10,25,50]" [loading]="isLoading">
+                    <ng-template pTemplate="header" class="d-bock">
+                      <tr>
+
+                        <th class="ovic-w-40px text-center ">STT</th>
+                        <th class=" text-center">Ca thi</th>
+                        <th class="ovic-w-230px text-center">Ngày thi</th>
+                        <th class="ovic-w-100px text-center">Thao tác</th>
+
+                      </tr>
+                    </ng-template>
+
+                    <ng-template pTemplate="body" let-item let-i="rowIndex">
+                      <tr>
+
+                        <td class="text-center">{{ item['_indexTable'] }}</td>
+
+                        <td class="text-left" [innerHTML]="item['__cathiCoverted'] |ovicSafeHtml"></td>
+                        <td class="text-center" [innerHTML]="item['__ngaythi_coverted'] |ovicSafeHtml"></td>
+                        <td>
+                          <div class="d-flex justify-content-center align-items-center " style="gap:10px;">
+                            <button pButton pRipple pTooltip="Phòng thi" icon="pi pi-calendar-plus" class="p-button-secondary"  (click)="btnViewSitePhongthi(item)"></button>
+                            <button pButton pRipple pTooltip="Cập nhật" icon="pi pi-file-edit" class="p-button-warning"  (click)="btnUpDataCathi(item)"></button>
+                            <button pButton pRipple pTooltip="Xóa" icon="pi pi-trash" class="p-button-danger"  (click)="btnDeleteCathi(item)"></button>
+                          </div>
+                        </td>
+
+                      </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                      <tr>
+                        <td colspan="7">
+                          Không có dữ liệu !
+                        </td>
+                      </tr>
+                    </ng-template>
+                  </p-table>
+                </div>
               </div>
             </div>
           </div>
-        </div> -->
+        </div>
+      </ng-template>
+    </p-splitter>
+  </ng-container>
+  <ng-container *ngSwitchCase="'PHONGTHI'" >
+    <p-splitter [panelSizes]="[25,75]" [style]="{'height': 'calc(100vh - 60px - 20px)'}">
+      <ng-template pTemplate>
+        <div class="w-100 h-100">
+          <div class="" style="height:60px;">
+            <div class="phongthi-head"> Tạo Phòng thi</div>
+          </div>
+          <div class="ovic-scroll-style overflow-y-auto overflow-x-hidden" style="height:calc(100% - 60px - 60px);">
+            <form [formGroup]="formPhongthi" autocomplete="off">
+              <div class="ovic-vertical__inputs ovic-vertical__inputs--layout-2">
+                <div class="row">
+                  <div class="col-12">
+                    <div class="form-row">
+                      <label>Sắp xếp thí sinh trên phòng thi</label>
+                      <div class="formCheckRadius ">
+                        <div *ngFor="let item of radioButton" class="field-checkbox">
+                          <p-radioButton [inputId]="item.id" [value]="item.value"
+                                         formControlName="type_sapxep"></p-radioButton>
+                          <span class="ml-2">{{item.label}}</span>
+                        </div>
 
-      </ng-container>
-    </ng-container>
-  </ng-template>
-</p-splitter>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <ovic-input-monthi [formField]="f['monthi']" ></ovic-input-monthi>
+              </div>
+            </form>
+<!--            <ovic-input-monthi [formField]="f['monthi']" [room]=" " ></ovic-input-monthi>-->
+          </div>
+          <div class="cathi-footer">
+            <button pRipple pButton class="p-button-secondary" icon="pi pi-sign-out" label="Quay lại" (click)="btnReturnCathi()"></button>
+            <button pRipple pButton class="p-button-success" [icon]="typeAdd ==='ADD' ? 'pi pi-plus':'pi pi-file-edit' " [label]="'Thêm mới'" (click)="submitFormPhongthi()"></button>
+            <button pRipple pButton class="p-button-warning" icon="pi pi-refresh" label="Reset Form" (click)="resetFormPhongthi()"></button>
+          </div>
+        </div>
+      </ng-template>
+      <ng-template pTemplate>
+
+      </ng-template>
+    </p-splitter>
+  </ng-container>
+</ng-container>
+
+
+
 
 
 

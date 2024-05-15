@@ -130,6 +130,8 @@ import { OvicAvataTypeThptComponent } from "@shared/components/ovic-avata-type-t
 import { OvicCountdownComponent } from "@shared/components/ovic-countdown/ovic-countdown.component";
 import { OvicPickerCandidationComponent } from './components/ovic-picker-candidation/ovic-picker-candidation.component';
 import { NumberToVndCurrencuyPipe } from './pipes/number-to-vnd-currencuy.pipe';
+import { OvicInputMonthiComponent } from './components/ovic-input-monthi/ovic-input-monthi.component';
+import {CheckboxModule} from "primeng/checkbox";
 
 @NgModule({
   declarations: [
@@ -218,6 +220,7 @@ import { NumberToVndCurrencuyPipe } from './pipes/number-to-vnd-currencuy.pipe';
     OvicAvataTypeThptComponent,
     OvicPickerCandidationComponent,
     NumberToVndCurrencuyPipe,
+    OvicInputMonthiComponent,
 
   ],
   imports: [
@@ -249,6 +252,7 @@ import { NumberToVndCurrencuyPipe } from './pipes/number-to-vnd-currencuy.pipe';
     DialogModule,
     NgxMapboxGLModule,
     OvicCountdownComponent,
+    CheckboxModule,
     // Quill.forRoot({
     //   modules:{
     //     imageResize: {
@@ -343,7 +347,8 @@ import { NumberToVndCurrencuyPipe } from './pipes/number-to-vnd-currencuy.pipe';
     OvicResizeDropdowDirective,
     OvicAvataTypeThptComponent,
     OvicCountdownComponent,
-    NumberToVndCurrencuyPipe
+    NumberToVndCurrencuyPipe,
+    OvicInputMonthiComponent
   ]
 })
 export class SharedModule {

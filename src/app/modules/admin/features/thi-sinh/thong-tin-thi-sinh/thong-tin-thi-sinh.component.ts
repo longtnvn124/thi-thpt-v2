@@ -185,7 +185,7 @@ export class ThongTinThiSinhComponent implements OnInit {
             lop10_thanhpho: data.lop10_thanhpho,
             lop11_thanhpho: data.lop11_thanhpho,
             lop12_thanhpho: data.lop12_thanhpho,
-            lop10_truong: data.lop11_truong,
+            lop10_truong: data.lop10_truong,
             lop11_truong: data.lop11_truong,
             lop12_truong: data.lop12_truong,
             diem10ky1: data.diem10ky1,

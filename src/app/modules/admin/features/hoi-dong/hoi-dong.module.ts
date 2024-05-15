@@ -20,31 +20,33 @@ import { AddThiSinhComponent } from './hoi-dong-thi/add-thi-sinh/add-thi-sinh.co
 import {RadioButtonModule} from "primeng/radiobutton";
 import {CheckboxModule} from "primeng/checkbox";
 import {MatMenuModule} from "@angular/material/menu";
+import {CalendarModule} from "primeng/calendar";
 @NgModule({
     declarations: [
         HoiDongThiComponent,
         PhongThiComponent,
         AddThiSinhComponent
     ],
-  imports: [
-    CommonModule,
-    HoiDongRoutingModule,
-    DropdownModule,
-    ButtonModule,
-    InputTextModule,
-    RippleModule,
-    TableModule,
-    SharedModule,
-    ReactiveFormsModule,
-    MultiSelectModule,
-    TooltipModule,
-    SplitterModule,
-    PaginatorModule,
-    MatProgressBarModule,
-    RadioButtonModule,
-    CheckboxModule,
-    MatMenuModule,
+    imports: [
+        CommonModule,
+        HoiDongRoutingModule,
+        DropdownModule,
+        ButtonModule,
+        InputTextModule,
+        RippleModule,
+        TableModule,
+        SharedModule,
+        ReactiveFormsModule,
+        MultiSelectModule,
+        TooltipModule,
+        SplitterModule,
+        PaginatorModule,
+        MatProgressBarModule,
+        RadioButtonModule,
+        CheckboxModule,
+        MatMenuModule,
+        CalendarModule,
 
-  ]
+    ]
 })
 export class HoiDongModule { }

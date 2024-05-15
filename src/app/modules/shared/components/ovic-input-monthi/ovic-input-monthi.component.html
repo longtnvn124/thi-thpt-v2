@@ -1,0 +1,48 @@
+<div class="answer-option-group">
+
+  <ng-container *ngFor="let option of options; index as i">
+
+    <div class=" row">
+      <div class="col-12">
+        <div class="form-row">
+          <label>Môn thi {{i+1}} </label>
+          <div class="d-flex flex-row w-100"
+               style="gap:10px ;border: 1px solid #ccc; border-radius: 4px;padding:10px;">
+           <div style="flex: 1 1 auto;display: flex;flex-direction: column;gap: 8px;">
+             <p-dropdown [options]="DmMonThi" optionLabel="tenmon" optionValue="id" placeholder="Chọn môn thi..."
+                         [(ngModel)]="option.mon_id"></p-dropdown>
+             <p-calendar [showClear]="true" inputId="buttonbar" [timeOnly]="true" [showIcon]="true" [showSeconds]="false"
+                         placeholder="Chọn thời gian thi..." [(ngModel)]="option.timeStart"></p-calendar>
+           </div>
+            <button pButton pRipple icon="pi pi-times"
+                    class="answer-option-group__answer__button p-button-outlined  p-button-danger h-100"
+                    (click)="deleteItem(option.id)"></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!--    <div class="answer-option-group__answer">-->
+    <!--      <button pButton pRipple [icon]="correctAnswer.includes(option.id) ? 'pi pi-check-circle' : 'pi pi-times-circle'"-->
+    <!--              [ngClass]=" correctAnswer.includes(option.id) ? 'p-button-success' : 'p-button-danger'"-->
+    <!--              class="answer-option-group__answer__button p-button-text"-->
+    <!--              (click)="selectItem(option.id)"></button>-->
+    <!--      <div class="answer-option-group__answer__form-row form-row">-->
+    <!--        <label>Câu trả lời {{1 + i}}</label>-->
+
+    <!--        <input *ngIf="option.type_input === 0" type="text" placeholder="...." [(ngModel)]="option.value" autocomplete="off">-->
+    <!--        <button *ngIf="option.type_input === 1" pRipple class="btn w-100 btn-ctm" (click)="btnUploadFile(option.id)">-->
+    <!--          <img *ngIf="option['_url_file']; else showIcon" [src]="option['_url_file']" alt="">-->
+    <!--          <ng-template #showIcon>-->
+    <!--            <i class="pi pi-images "></i>-->
+    <!--          </ng-template>-->
+    <!--        </button>-->
+    <!--      </div>-->
+
+    <!--      <button pButton pRipple class="answer-option-group__answer__button p-button-text" [icon]="option.type_input === 0 ? 'pi pi-image': ' pi pi-user-edit'" (click)="btnSwitch(option.id, option.type_input)" ></button>-->
+
+  </ng-container>
+
+  <button pRipple pButton class="w-100 my-3" icon="pi pi-plus" label="Thêm môn thi"
+          (click)="addMoreAnswer()"></button>
+</div>
