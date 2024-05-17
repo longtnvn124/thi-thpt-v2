@@ -291,7 +291,7 @@ export class ThptOrdersService {
         value: kehoach_id.toString(),
       },
       {
-        conditionName: 'status',
+        conditionName: 'trangthai_thanhtoan',
         condition: OvicQueryCondition.equal,
         value:'1',
       },

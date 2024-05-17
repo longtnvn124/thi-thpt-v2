@@ -198,7 +198,7 @@ export class AddThiSinhComponent implements OnInit, OnChanges {
       const request$ =
         this.hoiDongThiSinhService.create(r).pipe(concatMap((id) => {
             return of(null);
-          }), delay(index * 500), catchError(error => {
+          }), delay(index * 150), catchError(error => {
             console.error(error);
             return of(null);
           })
@@ -219,7 +219,6 @@ export class AddThiSinhComponent implements OnInit, OnChanges {
 
 
   async btndelete() {
-
     if (this.dataThiSinhSelect && this.dataThiSinhSelect.length) {
       const confirm = await this.notifi.confirmDelete();
       if (confirm) {
@@ -227,7 +226,6 @@ export class AddThiSinhComponent implements OnInit, OnChanges {
           this.modalService.open(this.templateWaiting, WAITING_POPUP);
           this.startDeletes();
           this.emitDataChanges()
-
         } catch (error) {
           this.notifi.isProcessing(false);
           this.notifi.toastError('Thao tác không thành công');

@@ -10,7 +10,7 @@ import { getRoute } from 'src/environments/environment';
 export interface ThptHoiDong {
   id: number;
   kehoach_id: number;
-  ten_hoidong: number;
+  ten_hoidong: string;
   mota: string;
   status: 0 | 1;
 }

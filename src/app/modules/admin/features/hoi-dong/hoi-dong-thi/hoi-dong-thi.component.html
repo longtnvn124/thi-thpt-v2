@@ -13,7 +13,7 @@
               <div class="d-flex">
                 <div>
                   <p-dropdown [options]="dataKeHoach" optionLabel="dotthi" optionValue="id"
-                              placeholder="Chọn đợt thi"
+                              placeholder="Chọn đợt thi" [showClear]="true"
                               (onChange)="changeSelectData($event.value)"></p-dropdown>
                 </div>
                 <div class="search-block__elm ml-2">
@@ -62,19 +62,21 @@
             <td class="ovic-w-150px">
               <div class="d-block --fs-14" [innerHTML]="item['__status_converted'] | htmlDecode"></div>
             </td>
-            <td class="ovic-w-200px text-center">
+            <td class="ovic-w-250px text-center">
               <div>
                 <button [pTooltip]="'Thêm thí sinh'" [tooltipPosition]="'top'" pButton pRipple
                         icon="pi pi-user-plus" class="mx-1 p-button-secondary"
                         (click)="btnAddThisinh(item)"></button>
                 <button [pTooltip]="'Tạo phòng thi'" [tooltipPosition]="'top'" pButton pRipple
                         icon="pi pi-inbox" class="mx-1 p-button-" (click)="btnViewPhongThi(item)"></button>
+                <button [pTooltip]="'Xuất dữ liệu '" [tooltipPosition]="'top'" pButton pRipple
+                        icon="pi pi-file-excel" class="mx-1 p-button-success"
+                        (click)="btnExportExcel(item)"></button>
                 <button [pTooltip]="'Cập nhật'" [tooltipPosition]="'top'" pButton pRipple
                         icon="pi pi-file-edit" class="mx-1 p-button-warning"
                         (click)="btnAddNew('update' , item)"></button>
                 <button [pTooltip]="'Xoá'" [tooltipPosition]="'top'" pButton pRipple icon="pi pi-trash"
                         class="mx-1 p-button-danger" (click)="btnDelete(item)"></button>
-
               </div>
             </td>
           </tr>

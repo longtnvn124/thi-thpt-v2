@@ -51,7 +51,7 @@ export class OvicInputMonthiComponent implements OnInit {
   DmMonThi: DmMon[] = [];
 
   data: InputMonthiExtend[];
-
+  monselectName:string;
   constructor(
     private fb: FormBuilder,
     private notificationService: NotificationService,
@@ -65,6 +65,7 @@ export class OvicInputMonthiComponent implements OnInit {
     if (this.formField) {
       this.formField.valueChanges.subscribe(options => this.options = options && Array.isArray(options) ? options : []);
       this.options = this.formField.value && Array.isArray(this.formField.value) ? this.formField.value : [];
+      // this.monselectName = this.DmMonThi ?  this.options.map(m=>this.DmMonThi.find(f=>f.id === m.mon_id).tenmon).join(',') : '';
     }
   }
 

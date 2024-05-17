@@ -8,32 +8,16 @@
       <ng-template #tableData>
         <div class="p-datatable-header" style="border-bottom:1px solid #CCC;">
           <h3 class="tbl-title ">Kết quả đăng ký</h3>
-          <!--              <div class="search-block ui-table-globalfilter-container ">-->
-          <!--                <div class="d-flex align-items-center">-->
-          <!--                  <div class="ovic-vertical__inputs ovic-vertical__inputs&#45;&#45;layout-2">-->
-          <!--                    <div class="d-flex">-->
-          <!--                      <div class="search-block__elm ml-2">-->
-          <!--                      <span class="p-input-icon-right">-->
-          <!--                        <i class="pi pi-search"></i>-->
-          <!--                        <input type="text" pInputText style="height:42px" placeholder="Tìm kiếm" (input)="changeInput($event.target['value'])"/>-->
-          <!--                      </span>-->
-          <!--                      </div>-->
-          <!--                    </div>-->
-          <!--                  </div>-->
-          <!--                </div>-->
-          <!--              </div>-->
         </div>
         <p-table [value]="listdata" [showCurrentPageReport]="false" [tableStyle]="{ 'min-width': '100px' }">
           <ng-template pTemplate="header">
             <tr>
               <th class="ovic-w-50px text-center">TT</th>
               <th class="ovic-w-100px text-center">Mã đăng ký</th>
-
               <th class="text-left">Đợt thi</th>
               <th class=" text-left text-center">Môn thi</th>
               <th class="ovic-w-180px text-center">Lệ phí thi</th>
               <th class="ovic-w-110px text-center">Trạng thái</th>
-
             </tr>
           </ng-template>
           <ng-template pTemplate="emptymessage">

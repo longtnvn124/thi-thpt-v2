@@ -448,8 +448,7 @@ export class ThiSinhDangKyComponent implements OnInit {
     <p style="color: #ce3b04;">- Trạng thái thanh toán: Chưa thanh toán.</p>
     <p>- Bạn vui lòng thanh toán lệ phí thi để hoàn tất quá trình đăng ký thi.</p>
 `;
-    const emailsend: OvicEmailObject = {
-      name: "Email thông báo đăng ký thành công ",
+    const emailsend:any = {
       to: this.auth.user.email,
       title: ' Email thông báo đăng ký thành công',
       message: message

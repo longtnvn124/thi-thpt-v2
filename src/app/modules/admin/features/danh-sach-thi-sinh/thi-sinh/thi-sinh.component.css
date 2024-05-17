@@ -73,6 +73,10 @@
   background: #5387e5  !important;
   color:#fff;
 }
+.btn-menu-material.cancel:hover{
+  background: #494949 !important;
+  color:#fff;
+}
 .btn-menu-material.delete:hover{
   background: tomato !important;
   color:#fff;

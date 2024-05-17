@@ -31,6 +31,10 @@
                     <i class="pi pi-check-circle"></i>
                     <span>Xác nhận thanh toán</span>
                   </button>
+                  <button class="btn-menu-material cancel" (click)="BtnHuyChoThanhToan()">
+                    <i class="pi pi-times"></i>
+                    <span>Hủy trạng thái chờ thanh toán</span>
+                  </button>
                   <button class="btn-menu-material delete" (click)="btnDelete_ids()">
                     <i class="pi pi-trash"></i>
                     <span>Xóa đăng ký</span>
@@ -68,7 +72,6 @@
           <ng-template pTemplate="body" let-item let-i="rowIndex">
             <tr>
               <td *ngIf="item.trangthai_thanhtoan !== 1,else haveTT" class="text-center">
-
                 <p-tableCheckbox [value]="item" [disabled]="item.trangthai_thanhtoan ===1"></p-tableCheckbox>
               </td>
               <ng-template #haveTT>
@@ -76,6 +79,9 @@
                   <p-checkbox [disabled]="true"></p-checkbox>
                 </td>
               </ng-template>
+<!--              <td>-->
+<!--                <p-tableCheckbox [value]="item" ></p-tableCheckbox>-->
+<!--              </td>-->
               <td class="text-center">{{ item['_indexTable'] }}</td>
               <td class="text-center">
 
@@ -115,7 +121,7 @@
           </ng-template>
           <ng-template pTemplate="emptymessage">
             <tr>
-              <td colspan="10">
+              <td colspan="12">
                 Không có dữ liệu thí sinh!
               </td>
             </tr>

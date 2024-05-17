@@ -84,7 +84,6 @@ export class ExportThiSinhDuThiService {
 
     worksheet.mergeCells('A1:Q1');
     this.setCellProperties(worksheet.getCell('A1'), 14, { bold: true });
-
     worksheet.mergeCells('A3:A4');
     this.setCellProperties(worksheet.getCell('A3'), 14, { bold: true });
     worksheet.mergeCells('B3:B4');

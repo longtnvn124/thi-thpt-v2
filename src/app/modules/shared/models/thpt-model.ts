@@ -6,12 +6,13 @@ export interface ThptHoiDongPhongThi {
   hoidong_id: number;
   ten_phongthi: string;
   mota: string;
-  sothisinh: number;
   canbo_coithi: string;
   status: 1 | 0;
   thisinh_ids: number[];
   monthi_ids: number[];
   ma_phongthi: string;
+  cathi_id:number;
+  soluong_toida:number;
 }
 
 export interface ThptHoiDongThiSinh {

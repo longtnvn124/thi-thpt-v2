@@ -289,7 +289,6 @@ export class ThiSinhDuThiComponent implements OnInit {
             this.notifi.toastSuccess('Thao tác thành công');
             this.notifi.isProcessing(false);
             this.dataSelct=[];
-
           }, error: () => {
             this.notifi.isProcessing(false);
             this.notifi.toastError('Thao tác không thành công');
@@ -307,7 +306,6 @@ export class ThiSinhDuThiComponent implements OnInit {
   }
   async btnDelete_ids(){
     if (this.dataSelct.length > 0) {
-
       const select_ids = this.dataSelct.map(m => m.id);
       const select_leght = this.dataSelct.length;
       const button = await this.notifi.confirmRounded('Xác nhận xóa đăng ký thi  ' + select_leght + ' thí sinh ?','XÁC NHẬN', [BUTTON_YES, BUTTON_NO]);
@@ -337,6 +335,44 @@ export class ThiSinhDuThiComponent implements OnInit {
     } else {
       this.notifi.toastWarning('Vui lòng chọn thi sinh');
     }
+  }
+
+  async BtnHuyChoThanhToan(){
+    if (this.dataSelct.length > 0) {
+      if(this.dataSelct.filter(f=>f.trangthai_thanhtoan === 2).length>0){
+        const select_ids = this.dataSelct.filter(f=>f.trangthai_thanhtoan === 2).map(m => m.id);
+        const select_leght = this.dataSelct.length;
+
+        const button = await this.notifi.confirmRounded('Hủy trạng thái chờ thanh toán với ' + select_leght + ' thí sinh.','XÁC NHẬN',  [BUTTON_YES, BUTTON_NO]);
+        if (button.name === BUTTON_YES.name) {
+          this.notifi.isProcessing(true);
+          this.modalService.open(this.templateWaiting, WAITING_POPUP);
+
+          select_ids.map(m=>{
+            this.ordersService.update( m,{trangthai_thanhtoan:0} ).subscribe({
+              next:()=>{
+                this.listData.find(f=>f.id = m)['__status_converted'] = 0;
+              },error:( )=>{
+                this.notifi.toastError('Cập nhật trạng thái không thành công');
+              }
+            })
+          })
+
+        }
+        this.notifi.isProcessing(false);
+        this.modalService.open(this.templateWaiting, WAITING_POPUP);
+        this.modalService.dismissAll();
+        setTimeout(()=>this.loadData(this.page, this.kehoach_id, this.search), 2000);
+        this.dataSelct=[];
+      }
+      else{
+        this.notifi.toastWarning('Vui lòng chọn thí sinh có trạng thái đang chờ duyệt');
+        this.dataSelct=[];
+      }
+    }else{
+      this.notifi.toastWarning('Vui lòng chọn thí sinh.');
+    }
+
   }
 
   btnExportExcel() {

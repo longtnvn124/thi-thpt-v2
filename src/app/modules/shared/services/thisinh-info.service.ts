@@ -107,15 +107,21 @@ export class ThisinhInfoService {
         condition: OvicQueryCondition.equal,
         value: id.toString(),
       },
-      {
-        conditionName: 'is_deleted',
-        condition: OvicQueryCondition.equal,
-        value: '0',
-        orWhere: 'and'
-      },
+
     ];
     const params: HttpParams = this.httpParamsHelper.paramsConditionBuilder(conditions);
     return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data));
 
+  }
+  getDataBythisinhIds(thisinhids: number[]):Observable<ThiSinhInfo[]>{
+    const conditions: OvicConditionParam[] = [];
+    const fromObject = {
+      paged: 1,
+      limit: -1,
+      include: thisinhids.join(','),
+      include_by: 'id',
+    }
+    const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }));
+    return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data));
   }
 }
