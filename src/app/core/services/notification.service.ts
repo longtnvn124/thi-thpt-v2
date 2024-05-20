@@ -148,7 +148,7 @@ export class NotificationService {
       text: '',
       process: null
     };
-    setTimeout(() => this.OBSERVE_LOADING_ANIMATION_V2.next(reset), 500);
+    setTimeout(() => this.OBSERVE_LOADING_ANIMATION_V2.next(reset), 120);
   }
 
   private toastMessage(message: ToastMessage) {

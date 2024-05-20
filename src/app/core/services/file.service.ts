@@ -25,7 +25,7 @@ import {Dto} from '@core/models/dto';
 import {saveAs} from 'file-saver';
 import {SAVER, Saver} from '@core/providers/saver.provider';
 import {AuthService} from "@core/services/auth.service";
-import { NotificationService } from './notification.service';
+import {NotificationService} from './notification.service';
 import {HttpParamsHeplerService} from "@core/services/http-params-hepler.service";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 
@@ -168,33 +168,41 @@ export class FileService {
     );
   }
 
-  uploadFileWidthProgress( file : File , state : number = 0 ) : Observable<Upload> {
-    const initialState : Upload = { info : null , state : 'PENDING' , progress : 0 };
-    const calculateState        = ( upload : Upload , event : HttpEvent<unknown> , index : number ) : Upload => {
-      if ( event.type == HttpEventType.UploadProgress ) {
+  uploadFileWidthProgress(file: File, state: number = 0): Observable<Upload> {
+    const initialState: Upload = {info: null, state: 'PENDING', progress: 0};
+    const calculateState = (upload: Upload, event: HttpEvent<unknown>, index: number): Upload => {
+      if (event.type == HttpEventType.UploadProgress) {
         return {
-          info     : null ,
-          state    : 'IN_PROGRESS' ,
-          progress : Math.round( ( 100 / event.total ) * event.loaded )
+          info: null,
+          state: 'IN_PROGRESS',
+          progress: Math.round((100 / event.total) * event.loaded)
         };
-      } else if ( event.type == HttpEventType.Response ) {
+      } else if (event.type == HttpEventType.Response) {
         return {
-          info     : event.body[ 'data' ][ 0 ] ,
-          state    : 'DONE' ,
-          progress : 100
+          info: event.body['data'][0],
+          state: 'DONE',
+          progress: 100
         };
       } else {
         return upload;
       }
     };
-    return this.http.post<HttpEvent<Dto>>( this.media , FileService.packFiles( [file] , state ) , { reportProgress : true , observe : 'events' } ).pipe(
-      scan( calculateState , initialState ) ,
-      distinctUntilChanged( ( a , b ) => a.state === b.state && a.progress === b.progress && a.info === b.info ) ,
-      catchError( () => ( of( { info : null , progress : 0 , state : 'FAILED' } as Upload ) ) )
+    return this.http.post<HttpEvent<Dto>>(this.media, FileService.packFiles([file], state), {
+      reportProgress: true,
+      observe: 'events'
+    }).pipe(
+      scan(calculateState, initialState),
+      distinctUntilChanged((a, b) => a.state === b.state && a.progress === b.progress && a.info === b.info),
+      catchError(() => (of({info: null, progress: 0, state: 'FAILED'} as Upload)))
     );
   }
 
-  updateFileInfo(id: number, info: { title?: string; donvi_id?: number; user_id?: number; shared?: string }): Observable<number> {
+  updateFileInfo(id: number, info: {
+    title?: string;
+    donvi_id?: number;
+    user_id?: number;
+    shared?: string
+  }): Observable<number> {
     return this.http.put<Dto>(''.concat(this.media, id.toString()), info).pipe(map(res => res.data));
   }
 
@@ -478,16 +486,38 @@ export class FileService {
     }
     return result;
   }
- /*****************************************************************************/
-  getPreviewLinkLocalFile( { id } : OvicFile | { id : number } ) : string {
-    const url = new URL( getLinkDownload( id ) );
-    url.searchParams.append( 'token' , localStorage.getItem( ACCESS_TOKEN ) || '' );
+
+  /*****************************************************************************/
+  getPreviewLinkLocalFile({id}: OvicFile | { id: number }): string {
+    const url = new URL(getLinkDownload(id));
+    url.searchParams.append('token', localStorage.getItem(ACCESS_TOKEN) || '');
     return url.toString();
   }
 
-  getPreviewLinkLocalFileNotToken( { id } : OvicFile | { id : number } ) : string {
-    const url = new URL( getLinkDownload( id ) );
+  getPreviewLinkLocalFileNotToken({id}: OvicFile | { id: number }): string {
+    const url = new URL(getLinkDownload(id));
     return url.toString();
   }
 
+
+  base64ToUint8Array(imgBase64String: string) : Promise<string> {
+    console.log(imgBase64String);
+    const match = imgBase64String.match(/^data:image\/(\w+);base64,/);
+    if (!match) {
+      console.log(match);
+      return Promise.resolve(imgBase64String);
+    } else {
+      const imageSuffix = match[1];
+      const base64StringWithoutPrefix = imgBase64String.replace(/^data:image\/\w+;base64,/, '');
+      var binaryString = atob(imgBase64String);
+      var bytes = new Uint8Array(binaryString.length);
+      for (var i = 0; i < binaryString.length; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+      }
+
+      console.log('imageSuffix: ',imageSuffix);
+      const newBlob : Blob = new Blob([bytes], {type: `image/${imageSuffix}`});
+      return this.blobToBase64(newBlob)
+    }
+  }
 }

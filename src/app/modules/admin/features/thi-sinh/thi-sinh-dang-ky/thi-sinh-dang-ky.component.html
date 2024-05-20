@@ -149,7 +149,7 @@
 <!--                                      (click)="btnThanhToan(item)"></button>-->
                               <button pButton pRipple class="p-button-warning" [pTooltip]="'Thanh toán'"
                                       [tooltipPosition]="'top'" icon="pi pi-credit-card"
-                                      (click)="getPayment(item.id)"></button>
+                                      (click)="getPayment(item)"></button>
                               <button pButton pRipple class="p-button-danger ml-1"
                                       [pTooltip]="'Xoá'" [tooltipPosition]="'top'" icon="pi pi-trash"
                                       (click)="deleteRow(item.id)"></button>
@@ -163,13 +163,11 @@
                             </div>
                             <div *ngIf="item.trangthai_thanhtoan === 2">
                               <button pButton pRipple class="p-button-warning" [pTooltip]="'Thanh toán'"
-                                      [tooltipPosition]="'top'" icon="pi pi-credit-card" (click)="getPayment(item.id)"></button>
+                                      [tooltipPosition]="'top'" icon="pi pi-credit-card" (click)="getPayment(item)"></button>
                               <button pButton pRipple class="p-button-danger ml-1"
                                       [pTooltip]="'Xoá'" [tooltipPosition]="'top'" icon="pi pi-trash" (click)="deleteRow(item.id)"
                               ></button>
-
                             </div>
-
                           </ng-template>
                         </div>
                       </td>
@@ -220,7 +218,7 @@
         <!--                  <div style="font-size: 18px; margin-bottom:10px;font-weight:500;">Thanh toán qua Cổng VNPAY</div>-->
         <p style="text-align: center;">Thực hiện thanh toán qua cổng VNPAY, kết quả đăng ký sẽ được ghi nhận ngay sau
           khi thanh toán thành công.</p>
-        <button pRipple pButton label="Thanh toán" (click)="btnGetPay()" class="p-button-success"></button>
+<!--        <button pRipple pButton label="Thanh toán" (click)="btnGetPay()" class="p-button-success"></button>-->
       </div>
     </div>
 

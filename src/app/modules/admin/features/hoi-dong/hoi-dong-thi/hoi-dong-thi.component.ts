@@ -296,7 +296,7 @@ export class HoiDongThiComponent implements OnInit {
       concatMap(cathi => {
         const cathiIds = cathi.map(m => m.id);
         return forkJoin(
-          of(cathi), this.thptHoidongPhongthiService.getDataByHoidongVaCathiId(item.id, cathiIds).pipe(concatMap(prj => {
+          of(cathi), this.thptHoidongPhongthiService.getDataByHoidongVaCathiIds(item.id, cathiIds).pipe(concatMap(prj => {
             const phongthi_ids = prj.map(a => a.id);
               return forkJoin<[ThptHoiDongPhongThi[], ThptPhongThiMonThi[]]>(
                 of(prj),

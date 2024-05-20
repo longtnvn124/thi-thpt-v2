@@ -94,11 +94,16 @@ export class ThptHoiDongService {
 
   getHoidongonly(hoidong_id: number): Observable<ThptHoiDong> {
     const conditions: OvicConditionParam[] = [
+      {
+        conditionName: 'id',
+        condition: OvicQueryCondition.equal,
+        value: hoidong_id.toString(),
+      }
 
     ];
     const fromObject = {
       paged: 1,
-      orderby: 'ten_hoidong',
+      orderby: 'id',
       order: "ASC"
     }
     const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }));

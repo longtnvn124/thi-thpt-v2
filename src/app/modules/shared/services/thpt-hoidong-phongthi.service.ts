@@ -141,7 +141,7 @@ export class ThptHoidongPhongthiService {
     const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }));
     return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data));
   }
-  getDataByHoidongVaCathiId(hoidong_id: number, cathi_ids:number[]):Observable<ThptHoiDongPhongThi[]>{
+  getDataByHoidongVaCathiIds(hoidong_id: number, cathi_ids:number[]):Observable<ThptHoiDongPhongThi[]>{
     const conditions: OvicConditionParam[] = [
       {
         conditionName: 'hoidong_id',
@@ -154,6 +154,27 @@ export class ThptHoidongPhongthiService {
       limit: -1,
       include:cathi_ids.join(','),
       include_by:'cathi_id'
+    }
+    const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }));
+    return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data));
+  }
+  getDataByHoidongVaCathiId(hoidong_id: number, cathi_id:number):Observable<ThptHoiDongPhongThi[]>{
+    const conditions: OvicConditionParam[] = [
+      {
+        conditionName: 'hoidong_id',
+        condition: OvicQueryCondition.equal,
+        value: hoidong_id.toString(),
+      },
+      {
+        conditionName: 'cathi_id',
+        condition: OvicQueryCondition.equal,
+        value: cathi_id.toString(),
+        orWhere:'and'
+      },
+    ]
+    const fromObject = {
+      page: 1,
+      limit: -1,
     }
     const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }));
     return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data));

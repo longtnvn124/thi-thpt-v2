@@ -29,4 +29,5 @@ export class SenderEmailService {
   validateEmail(email: string): boolean {
     return email ? this.isRealEmail.test(email.toLowerCase()) : false;
   }
+
 }

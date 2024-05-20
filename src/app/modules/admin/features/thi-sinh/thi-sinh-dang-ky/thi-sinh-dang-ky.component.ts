@@ -13,9 +13,7 @@ import {Options, ThptOptionsService} from "@shared/services/thpt-options.service
 import {ThptOrderMonhocService} from "@shared/services/thpt-order-monhoc.service";
 import {OrdersTHPT, ThptOrdersService} from "@shared/services/thpt-orders.service";
 import {ActivatedRoute, Router} from "@angular/router";
-import {OvicEmailObject, SenderEmailService} from "@shared/services/sender-email.service";
-import {HtmlToPdfService} from "@shared/services/html-to-pdf.service";
-
+import {SenderEmailService} from "@shared/services/sender-email.service";
 
 export interface SumMonThi {
   tenmon: number,
@@ -58,9 +56,6 @@ export class ThiSinhDangKyComponent implements OnInit {
   ]
 
 
-  noicapdata = [
-    {title: 'Cục quản lý hành chính về TTXH', code: '1'},
-  ]
   hinhthucthiSlect: 0 | 1 | -1 = 0;//0:mon//1:tohopmon
   dataTohopmonslect: DmToHopMon[];
   dataMonslect: DmMon[];
@@ -85,13 +80,11 @@ export class ThiSinhDangKyComponent implements OnInit {
     private router: Router,
     private activeRouter: ActivatedRoute,
     private senderEmailService: SenderEmailService,
-    private htmlToPdfService : HtmlToPdfService
   ) {
     this._user_id = this.auth.user.id;
     this.formSave = this.fb.group({
       user_id: [null],
       kehoach_id: [null, Validators.required],
-      // hinhthucthi:[null,Validators.required], //1:tohopmon,2:mon thi,
       mon_ids: [[], Validators.required],
       tohopmon_ids: [null],
     })
@@ -199,8 +192,7 @@ export class ThiSinhDangKyComponent implements OnInit {
       this.dataTohopmonslect = this.dmToHopMon.filter(f => f.id === id);
     } else {
       const ids = event.map(m => {
-        const check = this.dmMon.find(f => f.id === m);
-        return check;
+        return this.dmMon.find(f => f.id === m);
       })
       this.dataMonslect = ids;
     }
@@ -289,18 +281,23 @@ export class ThiSinhDangKyComponent implements OnInit {
     }
   }
 
-  getPayment(id: number) {
-    const fullUrl: string = `${location.origin}${this.router.serializeUrl(this.router.createUrlTree(['admin/thi-sinh/dang-ky/']))}`;
-    const content = 'VSAT' + id;
-    this.ordersService.getPayment(id, fullUrl,content).subscribe({
-      next: (data) => {
-        window.location.assign(data);
-        this.ngType = 0;
-        this.notifi.isProcessing(false);
-      }, error: () => {
-        this.notifi.isProcessing(false);
-      }
-    })
+  getPayment(item: OrdersTHPT) {
+    const kehoachSelect = this.keHoachThi.find(f=>f.id === item.kehoach_id)
+    if( new Date().getTime()  <= new Date(kehoachSelect.ngayketthuc).getTime() ){
+      const fullUrl: string = `${location.origin}${this.router.serializeUrl(this.router.createUrlTree(['admin/thi-sinh/dang-ky/']))}`;
+      const content = 'VSAT' + item.id;
+      this.ordersService.getPayment(item.id, fullUrl,content).subscribe({
+        next: (data) => {
+          window.location.assign(data);
+          this.ngType = 0;
+          this.notifi.isProcessing(false);
+        }, error: () => {
+          this.notifi.isProcessing(false);
+        }
+      })
+    }else{
+      this.notifi.toastError('Đã hết thời hạn đăng ký môn trong đợt thi này');
+    }
   }
 
   checkCodeParram(text: string) {
@@ -475,7 +472,7 @@ export class ThiSinhDangKyComponent implements OnInit {
   btnGetPay() {
 
     if (this.orderParram !== null) {
-      this.getPayment(this.orderParram.id);
+      this.getPayment(this.orderParram);
     }
   }
 
@@ -502,12 +499,6 @@ export class ThiSinhDangKyComponent implements OnInit {
     } else {
       document.body.classList.remove('no-scroll');
     }
-  }
-
-  btnEpostPDF(item:OrdersTHPT){
-    console.log(item)
-    this.htmlToPdfService.expostWordToPDF(item);
-
   }
 
 }

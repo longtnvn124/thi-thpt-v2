@@ -57,7 +57,6 @@ export class OvicEditorComponent implements OnInit, OnDestroy {
   }
 
   onTextChange(event) {
-    console.log(event.htmlValue);
     // this.formField.setValue(this.helperService.decodeHTML(event.htmlValue));
     this._formControl.setValue(this.helperService.decodeHTML(event.htmlValue));
   }

@@ -8,6 +8,7 @@ import {getRoute} from "@env";
 import {HttpParamsHeplerService} from "@core/services/http-params-hepler.service";
 import {ThemeSettingsService} from "@core/services/theme-settings.service";
 import {AuthService} from "@core/services/auth.service";
+import {ThiSinhInfo} from "@shared/models/thi-sinh";
 
 export interface ThptPhongThiMonThi{
   id?:number;
@@ -16,6 +17,7 @@ export interface ThptPhongThiMonThi{
   monthi_id: number;
   thisinh_ids: number[];
   timeStart: string;
+  thisinh? : ThiSinhInfo[]
 }
 @Injectable({
   providedIn: 'root'
@@ -105,7 +107,6 @@ export class ThptPhongthiMonthiService {
       limit: -1,
       include: ids.join(','),
       include_by:'phongthi_id'
-
     };
     const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }).set('with', 'thisinh'));
     return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data));

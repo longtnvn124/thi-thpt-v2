@@ -70,7 +70,7 @@
                         <th class="ovic-w-40px text-center ">STT</th>
                         <th class=" text-center">Ca thi</th>
                         <th class="ovic-w-230px text-center">Ngày thi</th>
-                        <th class="ovic-w-100px text-center">Thao tác</th>
+                        <th class="ovic-w-150px text-center">Thao tác</th>
                       </tr>
                     </ng-template>
 
@@ -83,11 +83,12 @@
                         <td class="text-center" [innerHTML]="item['__ngaythi_coverted'] |ovicSafeHtml"></td>
                         <td>
                           <div class="d-flex justify-content-center align-items-center " style="gap:10px;">
-                            <button pButton pRipple pTooltip="Phòng thi" icon="pi pi-calendar-plus"
+                            <button pRipple pButton pTooltip="Xuất Album ảnh thí sinh" tooltipPosition="left" icon="pi pi-file-word" (click)="btnExportAlbum(item)"></button>
+                            <button pButton pRipple pTooltip="Phòng thi" tooltipPosition="left"  icon="pi pi-calendar-plus"
                                     class="p-button-secondary" (click)="btnViewSitePhongthi(item)"></button>
-                            <button pButton pRipple pTooltip="Cập nhật" icon="pi pi-file-edit" class="p-button-warning"
+                            <button pButton pRipple pTooltip="Cập nhật" tooltipPosition="left"  icon="pi pi-file-edit" class="p-button-warning"
                                     (click)="btnUpDataCathi(item)"></button>
-                            <button pButton pRipple pTooltip="Xóa" icon="pi pi-trash" class="p-button-danger"
+                            <button pButton pRipple pTooltip="Xóa" tooltipPosition="left"  icon="pi pi-trash" class="p-button-danger"
                                     (click)="btnDeleteCathi(item)"></button>
                           </div>
                         </td>

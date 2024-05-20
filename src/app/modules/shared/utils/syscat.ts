@@ -62,7 +62,7 @@ export const DanToc = [
   { name : 'ede' , label : 'Ê Đê' } ,
   { name : 'bana' , label : 'Ba Na' } ,
   { name : 'xo-dang' , label : 'Xơ Đăng' } ,
-  { name : 'san-chay' , label : 'Sán Chay' } ,
+  { name : 'san-chay' , label : 'Sán Chay(Cao lan - Sán chỉ )' } ,
   { name : 'co-ho' , label : 'Cơ Ho' } ,
   { name : 'hoa' , label : 'Hoa' } ,
   { name : 'cham' , label : 'Chăm' } ,
@@ -103,7 +103,8 @@ export const DanToc = [
   { name : 'pu-peo' , label : 'Pu Péo' } ,
   { name : 'ro-mam' , label : 'Rơ măm' } ,
   { name : 'brau' , label : 'Brâu' } ,
-  { name : 'o-du' , label : 'Ơ Đu' }
+  { name : 'o-du' , label : 'Ơ Đu' },
+  { name : 'khac' , label : 'Khác' }
 ];
 
 export const TonGiaoVietNam = [
