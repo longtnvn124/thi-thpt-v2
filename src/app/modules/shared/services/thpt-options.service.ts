@@ -77,4 +77,7 @@ export class ThptOptionsService {
     return this.http.get<Dto>(this.api, {params}).pipe(map(res => res.data && res.data[0] ? res.data[0] : null));
   }
 
+  g
+
+
 }

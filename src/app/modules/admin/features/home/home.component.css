@@ -97,3 +97,70 @@
   text-align: center;
   transition: background-color .2s,color .2s;
 }
+/*------------------------------------------------------------------------*/
+.apexcharts-canvas {
+  position: relative;
+  user-select: none;
+}
+.bg-light-primary {
+  background: #edf2ff;
+  color: #4680ff;
+}
+.bg-light-warning {
+  background: #fcf3e6;
+  color: #e58a00;
+}
+.bg-light-success {
+  background: #eaf6f2;
+  color: #2ca87f;
+}
+.bg-light-danger  {
+  background: #fce9e9;
+  color: #dc2626;
+}
+
+.bg-light-primary svg .apexcharts-series path {fill: #4680ff;}
+.bg-light-warning svg .apexcharts-series path {fill: #e58a00;}
+.bg-light-success svg .apexcharts-series path {fill: #2ca87f;}
+.bg-light-danger svg  .apexcharts-series path {fill: #dc2626;}
+
+
+.bg-body{
+  background-color: #ededed;
+}
+.btn-link-secondary {
+  background: 0 0;
+  color: #5b6b79;
+  border-color: transparent;
+}
+.dropdown-toggle {
+  white-space: nowrap;
+}
+
+.menubar{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+}
+.avtar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: 600;
+  width: 48px;
+  height: 48px;
+}
+
+.avtar.avtar-s {
+  width: 40px;
+  height: 40px;
+  font-size: 14px;
+  border-radius: 12px;
+}
+
+.border-12px{
+  border-radius:12px;
+}

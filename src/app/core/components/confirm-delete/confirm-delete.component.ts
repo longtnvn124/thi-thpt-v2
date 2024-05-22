@@ -13,7 +13,7 @@ export class ConfirmDeleteComponent implements OnInit {
 	@Input() head = 'Cảnh báo lệnh xóa !';
 
 	@Input() message = '- Bạn đang thực hiện lệnh xóa dữ liệu.\n' +
-					   '  Nếu xóa, dữ liệu sẽ không thể khôi phục được. \n' +
+					   '- Nếu xóa, dữ liệu sẽ không thể khôi phục được. \n' +
 					   '- Bạn có chắc chắn muốn xóa không?';
 
 	ngOnInit() : void {

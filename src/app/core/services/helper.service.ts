@@ -175,7 +175,6 @@ export class HelperService {
   }
 
 
-
   /**
    * convert form Date object to sql DATETIME format
    * @param date : Date
@@ -188,12 +187,26 @@ export class HelperService {
     //'YYYY-MM-DD' type of sql DATETIME format
     return `${y}-${m}-${d}`;
   }
+
   formatSQLToDateDMY(date: Date): string {
     const y = date.getFullYear().toString(10);
     const m = (date.getMonth() + 1).toString().padStart(2, '0');
     const d = date.getDate().toString().padStart(2, '0');
     //'YYYY-MM-DD' type of sql DATETIME format
     return `${d}/${m}/${y}`;
+  }
+
+  sQLDateToDate(str: string): Date {
+    if (!str) {
+      return null;
+    }
+    //'YYYY-MM-DD'
+    const _arr: number[] = str.split('-').map(r => parseInt(r));
+    const _date: Date = new Date();
+    _date.setFullYear(_arr[0]);
+    _date.setMonth(_arr[1]);
+    _date.setDate(_arr[2]);
+    return _date;
   }
 
   strToSQLDate(input: string): string {

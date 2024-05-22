@@ -17,7 +17,7 @@ export class ThptPhongthiThisinhService {
   private readonly api = getRoute('thpt-phongthi-thisinh/');
 
   constructor(
-    private http: HttpClient, 
+    private http: HttpClient,
     private httpParamsHelper: HttpParamsHeplerService,
     private themeSettingsService: ThemeSettingsService,
     private auth: AuthService
@@ -192,4 +192,6 @@ export class ThptPhongthiThisinhService {
     const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }).set('with', 'thisinh,orders'));
     return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data));
   }
+
+
 }

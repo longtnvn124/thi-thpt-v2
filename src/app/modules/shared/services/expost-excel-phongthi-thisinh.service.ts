@@ -12,37 +12,23 @@ const EXCEL_EXTENSION = '.xlsx';
 export class ExpostExcelPhongthiThisinhService {
   constructor() { }
 
-  public exportExcel(
+  exportExcel(
     json: any[],
     headersArray: any[],// column name
     excelFileName: string,
-    reportHeading: string,
-    subHeader?: string
+    sheet2data : any[],
+    sheet2Header:any[],
+
   ): void {
-    console.log(reportHeading);
+
     const header = headersArray;
     const workbook = new Workbook();
     workbook.created = new Date();
     workbook.modified = new Date();
-    json.forEach((f, index) => {
-      const worksheet = workbook.addWorksheet("Phòng " + (index + 1).toString());
-      const phongthi = f;
-      const thisinh = f['_thisinh'];
-      console.log(thisinh);
+
+      const worksheet = workbook.addWorksheet("V-SAT-TNU_SBD" );
 
 
-      worksheet.addRow([]);
-      worksheet.mergeCells('A1:' + this.numToAlpha(header.length - 1) + '1');
-      worksheet.getCell('A1').value = reportHeading;
-      worksheet.getCell('A1').alignment = { horizontal: 'center' };
-      worksheet.getCell('A1').font = { size: 24, bold: true, name: 'Times New Roman' };
-      if (phongthi.ten_phongthi !== '') {
-        worksheet.addRow([]);
-        worksheet.mergeCells('A2:' + this.numToAlpha(header.length - 1) + '2');
-        worksheet.getCell('A2').value = phongthi.ten_phongthi;
-        worksheet.getCell('A2').alignment = { horizontal: 'center' };
-        worksheet.getCell('A2').font = { size: 13, bold: false, name: 'Times New Roman' };
-      }
       worksheet.addRow([]);
       const headerRow = worksheet.addRow(header);
       headerRow.eachCell((cell, index) => {
@@ -68,14 +54,78 @@ export class ExpostExcelPhongthiThisinhService {
         worksheet.getColumn(1).alignment = { horizontal: 'center' };
       });
 
+      const objectColWidth = {
+        1: 6,
+        2: 6,
+        3: 12,
+        4: 24,
+        5: 12,
+        6: 12,
+        7: 16,
+        8: 36,
+        9: 12,
+
+        10: 16,
+        11: 16,
+        12: 16,
+        13: 16,
+        14: 16,
+        15: 16,
+        16: 16,
+
+
+        17: 16,
+        18: 16,
+        19: 77,
+        20: 16,
+        21: 24,
+
+        22: 16,
+        23: 16,
+        24: 77,
+        25: 16,
+        26: 24,
+
+        27: 16,
+        28: 16,
+        29: 77,
+        30: 16,
+        31: 24,
+
+        32: 16,
+        33: 16,
+        34: 77,
+        35: 16,
+        36: 24,
+
+        37: 16,
+        38: 16,
+        39: 77,
+        40: 16,
+        41: 24,
+
+        42: 16,
+        43: 16,
+        44: 77,
+        45: 16,
+        46: 24,
+
+        47: 16,
+        48: 16,
+        49: 77,
+        50: 16,
+        51: 24,
+      };
+
+      this.setColWidth(worksheet, objectColWidth);
       let columnsArray: any[];
-      for (const key in thisinh) {
+      for (const key in json) {
         if (json.hasOwnProperty(key)) {
-          columnsArray = Object.keys(thisinh[key]);
+          columnsArray = Object.keys(json[key]);
         }
       }
 
-      thisinh.forEach((element: any) => {
+      json.forEach((element: any) => {
         const eachRow = [];
         columnsArray.forEach((column) => {
           eachRow.push(element[column]);
@@ -103,7 +153,94 @@ export class ExpostExcelPhongthiThisinhService {
 
       });
 
-    })
+
+    const worksheet2 = workbook.addWorksheet("V-SAT-TNU_ROOM" );
+
+    worksheet2.addRow([]);
+    const headerRow2 = worksheet2.addRow(sheet2Header);
+    headerRow2.eachCell((cell, index) => {
+
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'CCCCCC' },
+        bgColor: { argb: '000000' },
+      };
+      cell.border = {
+        top: { style: 'thin' },
+        left: { style: 'thin' },
+        bottom: { style: 'thin' },
+        right: { style: 'thin' }
+      };
+      cell.font = { size: 13, bold: true, name: 'Times New Roman' };
+      cell.alignment = { horizontal: 'center' };
+
+
+      worksheet2.getColumn(index).width = sheet2Header[index - 1].length < 20 ? 20 : sheet2Header[index - 1].length;
+      worksheet2.getColumn(1).width = 7;
+      worksheet2.getColumn(1).alignment = { horizontal: 'center' };
+    });
+
+    const objectColWidth2 = {
+      1: 14,
+      2: 14,
+      3: 16,
+      4: 16,
+      5: 16,
+      6: 16,
+      7: 16,
+      8: 16,
+      9: 16,
+      10: 24,
+      11: 85,
+
+
+    };
+
+    this.setColWidth(worksheet2, objectColWidth2);
+    let columnsArray2: any[];
+    for (const key in sheet2data) {
+      if (sheet2data.hasOwnProperty(key)) {
+        columnsArray = Object.keys(sheet2data[key]);
+      }
+    }
+
+    sheet2data.forEach((element: any) => {
+      const eachRow = [];
+      columnsArray.forEach((column) => {
+        eachRow.push(element[column]);
+
+      });
+
+      if (element.isDeleted === 'Y') {
+        const deleteRow = worksheet2.addRow(eachRow);
+        deleteRow.eachCell((cell) => {
+          cell.font = { name: 'Times New Roman', family: 4, size: 11, bold: false, strike: true };
+
+        })
+      } else {
+        worksheet2.addRow(eachRow);
+      }
+      //set with column to fit
+      worksheet2.columns.forEach((column, columnIndex) => {
+        let maxLength = 0;
+        column.eachCell({ includeEmpty: true }, (cell) => {
+          const cellLength = cell.value ? cell.value.toString().length : 0;
+          maxLength = cellLength;
+          cell.font = {name: 'Times New Roman', family: 1, size: 14, bold: false};
+          cell.border = {
+            top: {style: 'thin', color: {argb: '333333'}},
+            left: {style: 'thin', color: {argb: '333333'}},
+            bottom: {style: 'thin', color: {argb: '333333'}},
+            right: {style: 'thin', color: {argb: '333333'}}
+          };
+
+        });
+        // worksheet2.getColumn(columnIndex + 1).width = maxLength + 2;
+      });
+
+    });
+
 
     workbook.xlsx.writeBuffer().then((data: ArrayBuffer) => {
       const blob = new Blob([data], { type: EXCEL_TYPE });

@@ -249,15 +249,16 @@ export class QuanLyTaiKhoanComponent implements OnInit {
         this.data = data.map(u => {
           const uRoles = [];
           // const uRoles = roles;
+          console.log(u.role_ids);
           if (u.role_ids && u.role_ids.length) {
             u.role_ids.forEach(r => {
-
-
               const index = r ? this.dataRoles.findIndex(i => i.id === parseInt(r, 10)) : -1;
               if (index !== -1) {
                 uRoles.push('<span class="--user-role-label --role-' + this.dataRoles[index].name + '">' + this.dataRoles[index].title + '</span>');
               }
             }, []);
+          }else{
+            console.log(u);
           }
           u.avatar = u.avatar ? u.avatar : 'assets/images/a_none.jpg';
           u['u_role'] = uRoles.join(' ');

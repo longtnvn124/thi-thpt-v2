@@ -310,4 +310,36 @@ export class ThptOrdersService {
     const params: HttpParams = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }).set('with', 'thisinh'));
     return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data));
   }
+
+  getTotalOrder():Observable<number>{
+    return this.http.get<Dto>(this.api).pipe(map(res => res.recordsFiltered));
+
+  }
+
+  getTotalLephithi():Observable<number>{
+    const conditions: OvicConditionParam[] = [
+      {
+        conditionName: 'trangthai_thanhtoan',
+        condition: OvicQueryCondition.equal,
+        value: '1',
+      }
+    ];
+    const fromObject = {
+      sum:'lephithi'
+    }
+    const params: HttpParams = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }));
+    return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data[0]['sum_lephithi']));
+  }
+  getCountTT():Observable<number>{
+    const conditions: OvicConditionParam[] = [
+      {
+        conditionName: 'trangthai_thanhtoan',
+        condition: OvicQueryCondition.equal,
+        value: '1',
+      }
+    ];
+
+    const params: HttpParams = this.httpParamsHelper.paramsConditionBuilder(conditions, );
+    return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data[0]['sum_lephithi']));
+  }
 }

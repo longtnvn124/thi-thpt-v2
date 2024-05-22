@@ -124,4 +124,8 @@ export class ThisinhInfoService {
     const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }));
     return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data));
   }
+
+  getCountThiSinh():Observable<number>{
+    return this.http.get<Dto>(this.api, ).pipe(map(res => res.recordsFiltered));
+  }
 }

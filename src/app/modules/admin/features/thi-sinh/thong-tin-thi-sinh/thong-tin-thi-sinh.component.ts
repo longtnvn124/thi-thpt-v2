@@ -2,7 +2,15 @@ import {Component, HostListener, OnInit} from '@angular/core';
 
 import {FormType, OvicForm} from '@modules/shared/models/ovic-models';
 import {ThiSinhInfo} from "@shared/models/thi-sinh";
-import {AbstractControl, FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
+import {
+  AbstractControl,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  ValidationErrors,
+  ValidatorFn,
+  Validators
+} from "@angular/forms";
 import {debounceTime, forkJoin, Subject, Subscription} from "rxjs";
 import {DiaDanh} from '@modules/shared/models/location';
 import {AuthService} from '@core/services/auth.service';
@@ -17,7 +25,19 @@ import {DanhMucDoiTuong, DanhMucDoituongUutienService} from "@shared/services/da
 interface FormThisinh extends OvicForm {
   object: ThiSinhInfo;
 }
-
+export function replaceCommaValidator(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    if (control.value == null) {
+      return null;
+    }
+    const value = control.value.toString();
+    const newValue = value.replace(/,/g, '.');
+    if (newValue !== value) {
+      control.setValue(newValue, { emitEvent: false }); // Update value without emitting event
+    }
+    return null; // Always return null since we're just replacing characters
+  };
+}
 @Component({
   selector: 'app-thong-tin-thi-sinh',
   templateUrl: './thong-tin-thi-sinh.component.html',
@@ -103,12 +123,12 @@ export class ThongTinThiSinhComponent implements OnInit {
       lop10_truong: [''],
       lop11_truong: [''],
       lop12_truong: [''],
-      diem10ky1: [null, [NumberLessThanTenValidator]],
-      diem10ky2: [null, [NumberLessThanTenValidator]],
-      diem11ky1: [null, [NumberLessThanTenValidator]],
-      diem11ky2: [null, [NumberLessThanTenValidator]],
-      diem12ky1: [null, [NumberLessThanTenValidator]],
-      diem12ky2: [null, [NumberLessThanTenValidator]],
+      diem10ky1: [null, [NumberLessThanTenValidator,replaceCommaValidator()]],
+      diem10ky2: [null, [NumberLessThanTenValidator,replaceCommaValidator()]],
+      diem11ky1: [null, [NumberLessThanTenValidator,replaceCommaValidator()]],
+      diem11ky2: [null, [NumberLessThanTenValidator,replaceCommaValidator()]],
+      diem12ky1: [null, [NumberLessThanTenValidator,replaceCommaValidator()]],
+      diem12ky2: [null, [NumberLessThanTenValidator,replaceCommaValidator()]],
       status: [0],
       camket: [0, Validators.required],
       quoctich: [null],
@@ -220,6 +240,7 @@ export class ThongTinThiSinhComponent implements OnInit {
 
   private __processFrom({data, object, type}: FormThisinh) {
     this.notifi.isProcessing(true);
+    console.log(data);
     if (type === FormType.ADDITION) {
       this.thisinhInfoService.create(data).subscribe({
         next: () => {
@@ -285,8 +306,7 @@ export class ThongTinThiSinhComponent implements OnInit {
         this.formActive.data = this.formSave.value;
         this.OBSERVE_PROCESS_FORM_DATA.next(this.formActive);
       } else {
-
-        this.notifi.toastError('Vui lòng nhập đủ thông tin');
+        this.notifi.toastError('Vui lòng thêm ảnh');
       }
     } else {
       this.formSave.markAllAsTouched();
@@ -331,8 +351,6 @@ export class ThongTinThiSinhComponent implements OnInit {
   }
 
 
-  checkbox_chuongtrinhhoc: number = null;
-
   checkboxClicked(value:'chuongtrinhhoc' | 'trangthaitotnghiep') {
     if(value === 'chuongtrinhhoc'){
       setTimeout(() => {
@@ -349,8 +367,6 @@ export class ThongTinThiSinhComponent implements OnInit {
     }
 
   }
-
-
 
 }
 

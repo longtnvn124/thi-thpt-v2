@@ -14,6 +14,7 @@ import {ThptOrderMonhocService} from "@shared/services/thpt-order-monhoc.service
 import {OrdersTHPT, ThptOrdersService} from "@shared/services/thpt-orders.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {SenderEmailService} from "@shared/services/sender-email.service";
+import {HelperService} from "@core/services/helper.service";
 
 export interface SumMonThi {
   tenmon: number,
@@ -80,6 +81,7 @@ export class ThiSinhDangKyComponent implements OnInit {
     private router: Router,
     private activeRouter: ActivatedRoute,
     private senderEmailService: SenderEmailService,
+    private helperService:HelperService
   ) {
     this._user_id = this.auth.user.id;
     this.formSave = this.fb.group({
@@ -167,7 +169,8 @@ export class ThiSinhDangKyComponent implements OnInit {
           m['__tentohop_covered'] = mon_ids_covered ? m.tentohop + '(' + mon_ids_covered.join(', ') + ' )' : null;
           return m;
         })
-        this.keHoachThi_dangky = keHoachThi.filter(f=> new Date(f.ngayketthuc).getTime() > new Date().getTime());
+        const curentDate = new Date();
+        this.keHoachThi_dangky = keHoachThi.filter(f=> (this.helperService.formatSQLDate(new Date(f.ngayketthuc))) >= this.helperService.formatSQLDate(curentDate));
         this.keHoachThi = keHoachThi;
         this.lephithiData = options;
         this.lephithiData['_value_coverted'] = options.value.toLocaleString('vi-VN', {style: 'currency', currency: 'VND'});
@@ -283,7 +286,7 @@ export class ThiSinhDangKyComponent implements OnInit {
 
   getPayment(item: OrdersTHPT) {
     const kehoachSelect = this.keHoachThi.find(f=>f.id === item.kehoach_id)
-    if( new Date().getTime()  <= new Date(kehoachSelect.ngayketthuc).getTime() ){
+    if( this.helperService.formatSQLDate(new Date())  <= this.helperService.formatSQLDate(new Date(kehoachSelect.ngayketthuc)) ){
       const fullUrl: string = `${location.origin}${this.router.serializeUrl(this.router.createUrlTree(['admin/thi-sinh/dang-ky/']))}`;
       const content = 'VSAT' + item.id;
       this.ordersService.getPayment(item.id, fullUrl,content).subscribe({

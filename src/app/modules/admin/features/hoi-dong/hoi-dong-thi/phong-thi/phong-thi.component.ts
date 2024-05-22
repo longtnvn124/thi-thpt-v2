@@ -443,7 +443,7 @@ export class PhongThiComponent implements OnInit, OnChanges {
   private createTestRoom(info: TestRoomPreSet): Observable<number[]> {
     const phongsoParam = info.phongso < 10 ? '00' + info.phongso : (info.phongso >= 10 && info.phongso < 100 ? '0' + info.phongso : info.phongso.toString());
     const phongcreate = {
-      ten_phongthi: 'Phòng' + phongsoParam,
+      ten_phongthi: 'Phòng ' + phongsoParam,
       ma_phongthi: 'P' + phongsoParam + '.' + this.hoidong_id + '.' + this.kehoach_id,
       hoidong_id: this.hoidong_id,
       kehoach_id: this.kehoach_id,

@@ -36,6 +36,7 @@ import {EditorModule} from "primeng/editor";
 import {PaginatorModule} from "primeng/paginator";
 import {SplitterModule} from "primeng/splitter";
 import {CalendarModule} from "primeng/calendar";
+import {ChartModule} from "primeng/chart";
 
 
 @NgModule( {
@@ -77,7 +78,8 @@ import {CalendarModule} from "primeng/calendar";
         PaginatorModule,
         ReactiveFormsModule,
         SplitterModule,
-        CalendarModule
+        CalendarModule,
+        ChartModule
     ]
 } )
 export class AdminModule {}

@@ -14,6 +14,10 @@ import {NganHangDeService} from "@shared/services/ngan-hang-de.service";
 import {HttpParams} from "@angular/common/http";
 import {Dto} from "@core/models/dto";
 import {PointsService} from "@shared/services/points.service";
+import {ThisinhInfoService} from "@shared/services/thisinh-info.service";
+import {NotificationService} from "@core/services/notification.service";
+import {ThptOrdersService} from "@shared/services/thpt-orders.service";
+import {ThptHoiDongService} from "@shared/services/thpt-hoi-dong.service";
 
 interface DhtdHtktReportTable {
   loading: boolean;
@@ -56,112 +60,76 @@ export class HomeComponent implements OnInit {
 
   @ViewChild('c1', {static: true}) private c1Component: ChartComponent;
 
-
-  protected bankWidget: HomeWidget = {
-    service: this.nganHangDeService,
-    title: 'Số ngân hàng',
-    styleClass: '',
-    icon: null
-  }
-
-  tblReport: DhtdHtktReportTable = {
-    loading: false,
-    error: false,
-    data: [],
-    mode: 'total',
-    selected: null
+  horizontalOptions = {
+    indexAxis: 'y',
+    plugins: {
+      legend: {
+        labels: {
+          color: '#495057'
+        }
+      }
+    },
+    scales: {
+      x: {
+        ticks: {color: '#495057'},
+        grid: {color: '#ebedef'}
+      },
+      y: {
+        ticks: {
+          color: '#495057'
+        },
+        grid: {
+          color: '#ebedef'
+        }
+      }
+    }
   };
-
-  lastFourYearsAgo: number[];
-
-  c1Options: Partial<ChartOptions>;
-
-  // resistanceAchievementWidgetService : CardWidgetService = { countAllItems : () => of( 0 ) };
-  // achievementWidgetService : CardWidgetService           = { countAllItems : () => forkJoin<[ number , number ]>( [ this.quyetDinhKhenCaNhanService.countAllItems() , this.quyetDinhKhenTapTheService.countAllItems() ] ).pipe( map( ( [ n1 , n2 ] ) => ( n1 + n2 ) ) ) };
-  // nguLieuWidgetService : CardWidgetService               = { countAllItems : () => this.nguLieuDanhSachService.countAllItems() };
-  // suKienWidgetService : CardWidgetService                = { countAllItems : () => this.nguLieuSuKienService.countAllItems() };
-  // pointWidgetService : CardWidgetService                      = { countAllItems : () => this.pointsService.countAllItems() };
-  // nganHangDeWidgetService : CardWidgetService                      = { countAllItems : () => this.nganHangDeService.countAllItems() };
-  // dottiWidgetService : CardWidgetService              = { countAllItems : () => this.dotThiDanhSachService.countAllItems()};
-  index = 13;
 
   constructor(
     private auth: AuthService,
-    private cd: ChangeDetectorRef,
-    private nguLieuDanhSachService: NguLieuDanhSachService,
-    private nguLieuSuKienService: NguLieuSuKienService,
-    private pointsService:PointsService,
-    protected nganHangDeService: NganHangDeService,
-    private dotThiDanhSachService: DotThiDanhSachService,
-
+    private thisinhInfo : ThisinhInfoService,
+    private notificationService:NotificationService,
+    private thptOrderService:ThptOrdersService,
+    private hoidongService:ThptHoiDongService
   ) {
-    const lastYear = new Date().getFullYear();
-    this.lastFourYearsAgo = [lastYear , lastYear + 1 , lastYear + 2, lastYear + 3];
-    this.c1Options = {
-      series: [
-        {
-          name: 'Điểm truy cập',
-          type: 'column',
-          data: [10, 20, 30, 40]
-        },
-        {
-          name: 'Ngân hàng đề',
-          type: 'column',
-          data: [22, 7, 18, 35]
-        },
-        {
-          name: 'Đợt thi',
-          type: 'column',
-          data: [3, 8, 12, 7]
-        },
-      ],
-      chart: {
-        height: 350,
-        type: 'bar',
-        events: {
-          dataPointSelection: (e, c, {
-            dataPointIndex,
-            seriesIndex,
-            w
-          }: { dataPointIndex: number, seriesIndex: number, w: { config: { series: ApexAxisChartSeries, xaxis: { categories: string[] } } } }) => {
-            const year = w.config.xaxis.categories[dataPointIndex].toString();
-            const title = w.config.series[seriesIndex].name;
-            const sum = w.config.series[seriesIndex].data[dataPointIndex] as number;
-            this.loadTable(year, title, sum);
-            this.cd.detectChanges();
-          }
-        }
-      },
-      title: {
-        text: 'My First Angular Chart'
-      },
-      xaxis: {
-        categories: this.lastFourYearsAgo
-      },
-      tooltip: {
-        enabled: true
-      }
-    };
+
   }
 
   ngOnInit(): void {
-    const y = new Date().getFullYear();
-    this.lastFourYearsAgo = [y - 4, y - 3, y - 2, y - 1];
-
+    this.loadInit()
   }
 
-  loadTable(year: string, title: string, sum: number) {
-    this.tblReport.loading = true;
-    this.tblReport.selected = {year, title, sum};
-    timer(1000).subscribe(() => {
-      this.tblReport.loading = false;
-      this.cd.detectChanges();
-    });
+  totalThisinh :number =0;
+  totalOrder: number =0;
+  totalLephithi: number =0;
+  totalHoidong: number =0;
+  totalOrderTT: number = 0;
+  loadInit(){
+    this.notificationService.isProcessing(true);
+
+    forkJoin <[number, number,number,number ,number]>(
+      this.thisinhInfo.getCountThiSinh(),
+      this.thptOrderService.getTotalOrder(),
+      this.thptOrderService.getTotalLephithi(),
+      this.hoidongService.getTotalHoidong(),
+      this.thptOrderService.getCountTT()
+      ).subscribe({
+      next:([totalThiSinh,totalOrder,totalLephithi,totalHoidong,totalOrderTT])=>{
+        this.totalThisinh =totalThiSinh;
+        this.totalOrder =totalOrder;
+        this.totalLephithi =totalLephithi;
+        this.totalHoidong =totalHoidong;
+        this.totalHoidong =totalHoidong;
+        this.totalOrderTT =totalOrderTT;
+        console.log(totalThiSinh)
+        console.log(totalOrder)
+        console.log(totalLephithi)
+        console.log(totalHoidong)
+
+        this.notificationService.isProcessing(false);
+      },error:()=>{
+        this.notificationService.isProcessing(false);
+      }
+    })
   }
-
-  changeTableReportMode() {
-    this.tblReport.mode = this.tblReport.mode === 'total' ? 'percent' : 'total';
-  }
-
-
 }

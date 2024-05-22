@@ -109,4 +109,8 @@ export class ThptHoiDongService {
     const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }));
     return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data[0]));
   }
+
+  getTotalHoidong():Observable<number>{
+    return this.http.get<Dto>(this.api).pipe(map(res => res.recordsFiltered));
+  }
 }

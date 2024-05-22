@@ -11,11 +11,12 @@ import {ThptCathi, ThptHoidongCathiService} from "@shared/services/thpt-hoidong-
 import {ThptHoidongPhongthiService} from "@shared/services/thpt-hoidong-phongthi.service";
 import {ThptPhongThiMonThi, ThptPhongthiMonthiService} from "@shared/services/thpt-phongthi-monthi.service";
 import {map} from "rxjs/operators";
-import {ThptHoiDongPhongThi} from "@shared/models/thpt-model";
+import {ThptHoiDongPhongThi, ThptHoiDongThiSinh} from "@shared/models/thpt-model";
 import {HelperService} from "@core/services/helper.service";
 import {DanhMucMonService} from "@shared/services/danh-muc-mon.service";
 import {DmMon} from "@shared/models/danh-muc";
 import {ExpostExcelPhongthiThisinhService} from "@shared/services/expost-excel-phongthi-thisinh.service";
+import {ThptHoidongThisinhService} from "@shared/services/thpt-hoidong-thisinh.service";
 
 interface FormHoiDong extends OvicForm {
   object: ThptHoiDong;
@@ -80,7 +81,8 @@ export class HoiDongThiComponent implements OnInit {
     private thptPhongthiMonthiService:ThptPhongthiMonthiService,
     private helperService: HelperService,
     private danhMucMonService: DanhMucMonService,
-    private expostExcelPhongthiThisinhService:ExpostExcelPhongthiThisinhService
+    private expostExcelPhongthiThisinhService:ExpostExcelPhongthiThisinhService,
+    private hoiDongThiSinhService: ThptHoidongThisinhService,
 
   ) {
     const observeProcessFormData = this.OBSERVE_PROCESS_FORM_DATA.asObservable().pipe(debounceTime(100)).subscribe(form => this.__processFrom(form));
@@ -290,70 +292,184 @@ export class HoiDongThiComponent implements OnInit {
   }
 
 
+  // btnExportExcel(item: ThptHoiDong){
+  //   this.hoidongSelect = item;
+  //   this.thptHoidongCathiService.getDataUnlimitByhoidongId(item.id).pipe(
+  //     concatMap(cathi => {
+  //       const cathiIds = cathi.map(m => m.id);
+  //       return forkJoin(
+  //         of(cathi), this.thptHoidongPhongthiService.getDataByHoidongVaCathiIds(item.id, cathiIds).pipe(concatMap(prj => {
+  //           const phongthi_ids = prj.map(a => a.id);
+  //             return forkJoin<[ThptHoiDongPhongThi[], ThptPhongThiMonThi[]]>(
+  //               of(prj),
+  //               this.thptPhongthiMonthiService.getDataByphongthiIds(phongthi_ids)
+  //             );
+  //           })));}))
+  //   .subscribe({
+  //     next:(data)=>{
+  //       const dataCathi =data[0] ? data[0] : [];
+  //       const dataPhongthi =data[1][0] ? data[1][0].map(m=>{
+  //         const cathi =  dataCathi.find(f=>f.id === m.cathi_id);
+  //         m['__cathi_Covented'] = cathi ? cathi.cathi: '';
+  //         m['__ngaythi'] = cathi ? this.helperService.formatSQLToDateDMY(new Date(cathi.ngaythi)): '';
+  //         return m;
+  //       }) : [];
+  //       const dataPhongthiMonThi = data[1][1] ? data[1][1].filter(f=>f.thisinh_ids.length !== 0).sort((a, b)=> a.phongthi_id - b.phongthi_id).map(m=>{
+  //
+  //         m['__phongthi'] = dataPhongthi.find(f=>f.id === m.phongthi_id);
+  //         m['__thisinh_sapxep'] = m.thisinh_ids.map(a=> m['thisinh'].find( b=>b.id === a));
+  //         return m;
+  //       }) : [];
+  //       if( dataCathi.length !== 0 && dataPhongthi.length !== 0 && dataPhongthiMonThi.length !== 0 ){
+  //         const dataExxport  : any[] =  [];
+  //         dataPhongthiMonThi.forEach(monthi =>{
+  //           const phongthi = monthi['__phongthi'];
+  //           const thisinhParram = monthi['__thisinh_sapxep'].map((m,index)=>{
+  //             m['__index'] = index +1;
+  //             m['__sbd'] = 'TNU'+ m.id;
+  //             m['__gioitinh'] = m.gioitinh === 'nu' ? 'Nữ': 'Nam';
+  //             return {stt: m['__index'],sbd:m['__sbd'],hoten:m.hoten,ngaysinh:m.ngaysinh,gioitinh: m['__gioitinh'],noisinh:m.noisinh, cccdSo:m.cccd_so,phone:m.phone}
+  //           })
+  //           const item : itemExportExcel = {
+  //             sheet_name: phongthi['__cathi_Covented'] +', '+ phongthi.ten_phongthi +'( '+ this.dmMon.find(f=>f.id === monthi.monthi_id).tenmon + ' )' ,
+  //             header_Cathi: phongthi ? phongthi['__cathi_Covented']: '',
+  //             header_phongthi: phongthi ? phongthi.ten_phongthi : '',
+  //             header_ngaythi: phongthi ? phongthi['__ngaythi'] : '',
+  //             monthi : this.dmMon.find(f=>f.id === monthi.monthi_id).tenmon,
+  //             time_start : monthi.timeStart,
+  //             thisinh :thisinhParram
+  //           }
+  //           dataExxport.push(item);
+  //         })
+  //         console.log(dataExxport);
+  //         this.expostExcelPhongthiThisinhService.exportExcelToHoidong(item.ten_hoidong,this.columns,dataExxport )
+  //       }else{
+  //         this.notifi.toastError('Người dùng chưa tạo phòng thi, vui lòng tạo phòng thi !')
+  //       }
+  //
+  //
+  //       this.isLoading = false;
+  //     },error:()=>{
+  //       this.isLoading = false;
+  //       this.notifi.toastWarning('Load dữ liệu không thành công');
+  //     }
+  //   })
+  // }
   btnExportExcel(item: ThptHoiDong){
-    this.hoidongSelect = item;
-    this.thptHoidongCathiService.getDataUnlimitByhoidongId(item.id).pipe(
-      concatMap(cathi => {
-        const cathiIds = cathi.map(m => m.id);
-        return forkJoin(
-          of(cathi), this.thptHoidongPhongthiService.getDataByHoidongVaCathiIds(item.id, cathiIds).pipe(concatMap(prj => {
-            const phongthi_ids = prj.map(a => a.id);
-              return forkJoin<[ThptHoiDongPhongThi[], ThptPhongThiMonThi[]]>(
-                of(prj),
-                this.thptPhongthiMonthiService.getDataByphongthiIds(phongthi_ids)
-              );
-            })));}))
-    .subscribe({
-      next:(data)=>{
-        const dataCathi =data[0] ? data[0] : [];
-        const dataPhongthi =data[1][0] ? data[1][0].map(m=>{
-          const cathi =  dataCathi.find(f=>f.id === m.cathi_id);
-          m['__cathi_Covented'] = cathi ? cathi.cathi: '';
-          m['__ngaythi'] = cathi ? this.helperService.formatSQLToDateDMY(new Date(cathi.ngaythi)): '';
-          return m;
-        }) : [];
-        const dataPhongthiMonThi = data[1][1] ? data[1][1].filter(f=>f.thisinh_ids.length !== 0).sort((a, b)=> a.phongthi_id - b.phongthi_id).map(m=>{
+    forkJoin(
+      this.hoiDongThiSinhService.getDataByHoiDongIdNotPage(item.id),
+      this.thptHoidongCathiService.getDataUnlimitByhoidongId(item.id).pipe(
+            concatMap(cathi => {
+              const cathiIds = cathi.map(m => m.id);
+              return forkJoin(
+                of(cathi), this.thptHoidongPhongthiService.getDataByHoidongVaCathiIds(item.id, cathiIds).pipe(concatMap(prj => {
+                  const phongthi_ids = prj.map(a => a.id);
+                    return forkJoin<[ThptHoiDongPhongThi[], ThptPhongThiMonThi[]]>(
+                      of(prj),
+                      this.thptPhongthiMonthiService.getDataByphongthiIds(phongthi_ids)
+                    );
+                  })));}))
 
-          m['__phongthi'] = dataPhongthi.find(f=>f.id === m.phongthi_id);
-          m['__thisinh_sapxep'] = m.thisinh_ids.map(a=> m['thisinh'].find( b=>b.id === a));
-          return m;
-        }) : [];
-        if( dataCathi.length !== 0 && dataPhongthi.length !== 0 && dataPhongthiMonThi.length !== 0 ){
-          const dataExxport  : any[] =  [];
-          dataPhongthiMonThi.forEach(monthi =>{
-            const phongthi = monthi['__phongthi'];
-            const thisinhParram = monthi['__thisinh_sapxep'].map((m,index)=>{
-              m['__index'] = index +1;
-              m['__sbd'] = 'TNU'+ m.id;
-              m['__gioitinh'] = m.gioitinh === 'nu' ? 'Nữ': 'Nam';
-              return {stt: m['__index'],sbd:m['__sbd'],hoten:m.hoten,ngaysinh:m.ngaysinh,gioitinh: m['__gioitinh'],noisinh:m.noisinh, cccdSo:m.cccd_so,phone:m.phone}
+    ).subscribe(
+      {
+        next:(data)=>{
+          const dataThisinh = data[0];
+          const dataCathi :ThptCathi[] = data[1][0];
+          const dataPhongthi :ThptHoiDongPhongThi[] = data[1][1][0].map(m=>{
+                    const cathi =  dataCathi.find(f=>f.id === m.cathi_id);
+                    m['__cathi_Covented'] = cathi ? cathi.cathi: '';
+                    m['__ngaythi'] = cathi ? this.helperService.formatSQLToDateDMY(new Date(cathi.ngaythi)): '';
+                    return m;
+                  });
+          const dataMonthi :ThptPhongThiMonThi[] = data[1][1][1].filter(f=>f.thisinh_ids.length !== 0).sort((a, b)=> a.phongthi_id - b.phongthi_id).map(m=>{
+
+            m['__phongthi'] = dataPhongthi.find(f=>f.id === m.phongthi_id);
+            m['__thisinh_sapxep'] = m.thisinh_ids.map(a=> m['thisinh'].find( b=>b.id === a));
+            return m;
+          });
+
+          if(dataThisinh.length >0 && dataCathi.length !== 0 && dataPhongthi.length !== 0 && dataMonthi.length !== 0 ){
+            const thisinhExport : any[] = [];
+
+            dataThisinh.forEach((m,index)=>{
+              const item  = {};
+              const thisinh = m['thisinh'];
+              item['__indexTable'] = index+1;
+              item['__thisinh_id'] = thisinh ? thisinh['id'] :'';
+              item['__madk'] = thisinh ? 'TNU' + thisinh['id'] :'';
+              item['__hoten'] = thisinh ?  thisinh['hoten'] :'';
+              item['__ngaysinh'] = thisinh ?  thisinh['ngaysinh'] :'';
+              item['__gioitinh'] = thisinh && thisinh['gioitinh'] === 'nam' ? 'Nam' :(thisinh && thisinh['gioitinh'] === 'nu' ? 'Nữ' : '') ;
+              item['__cccd'] = thisinh ?  thisinh['cccd_so'] :'';
+              item['__email'] = thisinh ?  thisinh['email'] :'';
+              item['__phone'] = thisinh ?  thisinh['phone'] :'';
+
+              this.dmMon.map(a=>{
+                item['__mon_' + a.kyhieu] = m.monthi_ids.find(f=>f === a.id) ? a.tenmon : '';
+              })
+              this.dmMon.map(a=>{
+                const monthi = dataMonthi.find(f=>f.monthi_id === a.id && f.thisinh_ids.find(b=>b=== thisinh['id']) );
+                const checkphongthi = monthi ? monthi['__phongthi'] : '';
+                item['__sbd_' + a.kyhieu] = monthi ? 'TNU' + thisinh['id'] : '';
+                item['__cathi_' +a.kyhieu    ] = checkphongthi ? checkphongthi['__cathi_Covented']: '';
+                item['__diadiem_' +a.kyhieu  ] = checkphongthi ? 'Trung tâm Khảo thí và Quản lý chất lượng – ĐHTN, Phường Tân Thịnh – Thành phố Thái Nguyên' : '';
+                item['__phongthi_' +a.kyhieu ] = checkphongthi ? checkphongthi.ten_phongthi: '';
+                item['__timeStart_' +a.kyhieu] = checkphongthi ?  monthi.timeStart.replace(':','g') +' ngày ' + checkphongthi['__ngaythi'] : '';
+              })
+
+              thisinhExport.push(item);
             })
-            const item : itemExportExcel = {
-              sheet_name: phongthi['__cathi_Covented'] +', '+ phongthi.ten_phongthi +'( '+ this.dmMon.find(f=>f.id === monthi.monthi_id).tenmon + ' )' ,
-              header_Cathi: phongthi ? phongthi['__cathi_Covented']: '',
-              header_phongthi: phongthi ? phongthi.ten_phongthi : '',
-              header_ngaythi: phongthi ? phongthi['__ngaythi'] : '',
-              monthi : this.dmMon.find(f=>f.id === monthi.monthi_id).tenmon,
-              time_start : monthi.timeStart,
-              thisinh :thisinhParram
-            }
-            dataExxport.push(item);
-          })
-          console.log(dataExxport);
-          this.expostExcelPhongthiThisinhService.exportExcelToHoidong(item.ten_hoidong,this.columns,dataExxport )
-        }else{
-          this.notifi.toastError('Người dùng chưa tạo phòng thi, vui lòng tạo phòng thi !')
+
+            const dataPhongthiExport : any[] = [];
+            this.dmMon.forEach(mon=>{
+              const phongthiMonthi = dataMonthi.filter(f=>f.monthi_id === mon.id)
+
+              if(phongthiMonthi.length >0){
+                phongthiMonthi.forEach(a=>{
+                  const tungmon :any ={};
+                  const phongthi = a['__phongthi'];
+                  tungmon['cathi'] = phongthi ? phongthi['__cathi_Covented'] : '';
+                  tungmon['phong'] = phongthi ? phongthi.ten_phongthi : '';
+                  this.dmMon.forEach(dm=>{
+                    tungmon['__monthi_' + dm.kyhieu] = a.monthi_id ===dm.id ? dm.tenmon:''
+                  } )
+
+                  tungmon['__timeStart'] = phongthi? a.timeStart.replace(':','g') + ' ngày ' + phongthi['__ngaythi'] : '';
+                  tungmon['diadiem'] = phongthi ? 'Trung tâm Khảo thí và Quản lý chất lượng – ĐHTN, Phường Tân Thịnh – Thành phố Thái Nguyên' :'';
+                  dataPhongthiExport.push(tungmon)
+                })
+              }
+            })
+
+            this.expostExcelPhongthiThisinhService.exportExcel(thisinhExport,this.columns,item.ten_hoidong,dataPhongthiExport,this.columnSheet2 );
+          }else{
+            this.notifi.toastError('Người dùng chưa tạo phòng thi, vui lòng tạo phòng thi !')
+          }
+
+        },error:(e)=>{
+          this.notifi.isProcessing(false);
+          this.notifi.toastError('load Dữ liệu không thành công');
         }
-
-
-        this.isLoading = false;
-      },error:()=>{
-        this.isLoading = false;
-        this.notifi.toastWarning('Load dữ liệu không thành công');
       }
-    })
+    )
   }
 
-  columns = ['STT','Số báo danh', 'Họ và tên','Ngày sinh','Giới tính','Nơi sinh','Số căn cước công dân','Số điện thoại'];
+
+  columns = ['STT'
+    ,'ID', 'MADK', 'Họ và tên','Ngày sinh','Giới tính','CCCD/CMND','Email',
+    'Số điện thoại','Đăng ký môn toán','Đăng ký môn Vật lí','Đăng ký môn Hóa học','Đăng ký môn Sinh học',
+    'Đăng ký môn Lịch sử','Đăng ký môn Địa lí','Đăng ký môn Tiếng anh',
+    'SBD Toán','Ca thi Toán','Địa điểm thi Toán', 'Phòng thi Toán','Thời điểm gọi vào Toán',
+    'SBD Vật lí','Ca thi Vật lý','Địa điểm thi Vật lí', 'Phòng thi Vật lí','Thời điểm gọi vào Vật lí',
+    'SBD Hóa học','Ca thi Hóa học','Địa điểm thi Hóa học', 'Phòng thi Hóa học','Thời điểm gọi vào Hóa học',
+    'SBD Sinh học','Ca thi Sinh học','Địa điểm thi Sinh học', 'Phòng thi Sinh học','Thời điểm gọi vào Sinh học',
+    'SBD Lịch sử','Ca thi Lịch sử','Địa điểm thi Lịch sử', 'Phòng thi Lịch sử','Thời điểm gọi vào Lịch sử',
+    'SBD Địa lí','Ca thi Địa lí','Địa điểm thi Địa lí', 'Phòng thi Địa lí','Thời điểm gọi vào Địa lí',
+    'SBD Tiếng anh','Ca thi Tiếng anh','Địa điểm thi Tiếng anh', 'Phòng thi Tiếng anh','Thời điểm gọi vào Tiếng anh',
+  ];
+
+  columnSheet2 = [
+    'Ca','Phòng','Toán'	,'Vật lí','Hóa học',	'Sinh học',	'Lịch sử',	'Địa lí',	'Tiếng Anh',	'Thời điểm gọi thí sinh', 'Địa điểm'
+  ]
 
 }
