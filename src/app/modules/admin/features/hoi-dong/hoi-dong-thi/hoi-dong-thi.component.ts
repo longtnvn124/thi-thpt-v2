@@ -292,69 +292,6 @@ export class HoiDongThiComponent implements OnInit {
   }
 
 
-  // btnExportExcel(item: ThptHoiDong){
-  //   this.hoidongSelect = item;
-  //   this.thptHoidongCathiService.getDataUnlimitByhoidongId(item.id).pipe(
-  //     concatMap(cathi => {
-  //       const cathiIds = cathi.map(m => m.id);
-  //       return forkJoin(
-  //         of(cathi), this.thptHoidongPhongthiService.getDataByHoidongVaCathiIds(item.id, cathiIds).pipe(concatMap(prj => {
-  //           const phongthi_ids = prj.map(a => a.id);
-  //             return forkJoin<[ThptHoiDongPhongThi[], ThptPhongThiMonThi[]]>(
-  //               of(prj),
-  //               this.thptPhongthiMonthiService.getDataByphongthiIds(phongthi_ids)
-  //             );
-  //           })));}))
-  //   .subscribe({
-  //     next:(data)=>{
-  //       const dataCathi =data[0] ? data[0] : [];
-  //       const dataPhongthi =data[1][0] ? data[1][0].map(m=>{
-  //         const cathi =  dataCathi.find(f=>f.id === m.cathi_id);
-  //         m['__cathi_Covented'] = cathi ? cathi.cathi: '';
-  //         m['__ngaythi'] = cathi ? this.helperService.formatSQLToDateDMY(new Date(cathi.ngaythi)): '';
-  //         return m;
-  //       }) : [];
-  //       const dataPhongthiMonThi = data[1][1] ? data[1][1].filter(f=>f.thisinh_ids.length !== 0).sort((a, b)=> a.phongthi_id - b.phongthi_id).map(m=>{
-  //
-  //         m['__phongthi'] = dataPhongthi.find(f=>f.id === m.phongthi_id);
-  //         m['__thisinh_sapxep'] = m.thisinh_ids.map(a=> m['thisinh'].find( b=>b.id === a));
-  //         return m;
-  //       }) : [];
-  //       if( dataCathi.length !== 0 && dataPhongthi.length !== 0 && dataPhongthiMonThi.length !== 0 ){
-  //         const dataExxport  : any[] =  [];
-  //         dataPhongthiMonThi.forEach(monthi =>{
-  //           const phongthi = monthi['__phongthi'];
-  //           const thisinhParram = monthi['__thisinh_sapxep'].map((m,index)=>{
-  //             m['__index'] = index +1;
-  //             m['__sbd'] = 'TNU'+ m.id;
-  //             m['__gioitinh'] = m.gioitinh === 'nu' ? 'Nữ': 'Nam';
-  //             return {stt: m['__index'],sbd:m['__sbd'],hoten:m.hoten,ngaysinh:m.ngaysinh,gioitinh: m['__gioitinh'],noisinh:m.noisinh, cccdSo:m.cccd_so,phone:m.phone}
-  //           })
-  //           const item : itemExportExcel = {
-  //             sheet_name: phongthi['__cathi_Covented'] +', '+ phongthi.ten_phongthi +'( '+ this.dmMon.find(f=>f.id === monthi.monthi_id).tenmon + ' )' ,
-  //             header_Cathi: phongthi ? phongthi['__cathi_Covented']: '',
-  //             header_phongthi: phongthi ? phongthi.ten_phongthi : '',
-  //             header_ngaythi: phongthi ? phongthi['__ngaythi'] : '',
-  //             monthi : this.dmMon.find(f=>f.id === monthi.monthi_id).tenmon,
-  //             time_start : monthi.timeStart,
-  //             thisinh :thisinhParram
-  //           }
-  //           dataExxport.push(item);
-  //         })
-  //         console.log(dataExxport);
-  //         this.expostExcelPhongthiThisinhService.exportExcelToHoidong(item.ten_hoidong,this.columns,dataExxport )
-  //       }else{
-  //         this.notifi.toastError('Người dùng chưa tạo phòng thi, vui lòng tạo phòng thi !')
-  //       }
-  //
-  //
-  //       this.isLoading = false;
-  //     },error:()=>{
-  //       this.isLoading = false;
-  //       this.notifi.toastWarning('Load dữ liệu không thành công');
-  //     }
-  //   })
-  // }
   btnExportExcel(item: ThptHoiDong){
     forkJoin(
       this.hoiDongThiSinhService.getDataByHoiDongIdNotPage(item.id),

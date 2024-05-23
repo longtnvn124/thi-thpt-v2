@@ -15,7 +15,7 @@ export interface OrdersMonhocTHPT {
   thisinh_id: number;
   kehoach_id: number;
   tohop_monhoc: number;
-  tenmon: string;
+  tenmon: number;
   lephithi: number;
 }
 @Injectable({
@@ -84,7 +84,7 @@ export class ThptOrderMonhocService {
     return this.update(id, { is_deleted, deleted_by });
   }
 
-  getDataByKehoachId(kehoach_id: number, tenmon?: string): Observable<OrdersMonhocTHPT[]> {
+  getDataByKehoachIdAndTenMon(kehoach_id: number, tenmon?: string): Observable<OrdersMonhocTHPT[]> {
     const conditions: OvicConditionParam[] = [
       {
         conditionName: 'is_deleted',
@@ -176,6 +176,24 @@ export class ThptOrderMonhocService {
   // https://api-dev.ictu.vn:10091/thithpt/api/thpt-order-monhoc/tenmon
   getDataMonSelect(): Observable<SumMonThi[]>{
       return this.http.get<Dto>(''.concat(this.api, 'tenmon')).pipe(map(res => res['tenmon']));
+  }
+
+  getDataByKehoachId(kehoach_id:number): Observable<OrdersMonhocTHPT[]>{
+    const conditions: OvicConditionParam[] = [
+
+      {
+        conditionName: 'kehoach_id',
+        condition: OvicQueryCondition.equal,
+        value: kehoach_id.toString(),
+
+      }
+    ];
+    const fromObject = {
+      paged: 1,
+      limit: -1,
+    }
+    const params: HttpParams = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }));
+    return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data));
   }
 }
 

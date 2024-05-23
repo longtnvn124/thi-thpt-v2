@@ -215,6 +215,8 @@ export class ThiSinhDangKyComponent implements OnInit {
   }
 
   SaveForm() {
+    this.isLoading=true;
+
     const kehoachid = this.f['kehoach_id'].value;
     if (this.formSave.valid) {
       this.dataMonSelect = []
@@ -249,6 +251,7 @@ export class ThiSinhDangKyComponent implements OnInit {
             tohop_mon_id: this.hinhthucthiSlect === 1 ? this.f['tohopmon_ids'].value : null,
             mon_id: this.hinhthucthiSlect === 0 ? this.f['mon_ids'].value : this.dmToHopMon.find(f => f.id === this.f['tohopmon_ids'].value).mon_ids,
           });
+          this.notifi.isProcessing(true);
           this.ordersService.create(formUp.value).subscribe({
             next: async (id) => {
               const order = {
@@ -266,21 +269,27 @@ export class ThiSinhDangKyComponent implements OnInit {
               this.sendEmail(this.userInfo, order);
               this.loadInit();
               this.resetForm();
-
+              this.isLoading=false;
             },
             error: () => {
+              this.isLoading=false;
               this.notifi.toastError('Thí sinh đăng ký thất bại');
               this.notifi.isProcessing(false);
             }
           })
         } else {
           this.notifi.toastError('Môn bạn chọn đã được đăng ký,vui lòng kiểm tra lại.');
+          this.isLoading=false;
+
         }
       } else {
         this.notifi.toastError('Bạn chưa chọn môn thi');
+        this.isLoading=false;
+
       }
     } else {
       this.notifi.toastError('Vui lòng chọn đủ thông tin');
+      this.isLoading=false;
     }
   }
 
@@ -495,14 +504,7 @@ export class ThiSinhDangKyComponent implements OnInit {
     })
   }
   isScrollEnabled: boolean =false
-  toggleScroll() {
-    this.isScrollEnabled = !this.isScrollEnabled;
-    if (!this.isScrollEnabled) {
-      document.body.classList.add('no-scroll');
-    } else {
-      document.body.classList.remove('no-scroll');
-    }
-  }
+
 
 }
 

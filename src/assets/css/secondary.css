@@ -1284,3 +1284,8 @@ p .ql-align-center {
 .thanh-toan-check label{
   margin:0;
 }
+/*============thpt-chart===================*/
+.thpt-chart > canvas{
+  width:100% !important;
+  height:400px;
+}

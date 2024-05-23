@@ -338,8 +338,23 @@ export class ThptOrdersService {
         value: '1',
       }
     ];
-
     const params: HttpParams = this.httpParamsHelper.paramsConditionBuilder(conditions, );
-    return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data[0]['sum_lephithi']));
+    return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.recordsFiltered));
+  }
+
+  getCountTTbykehoachIds(kehoach_ids:number[]):Observable<OrdersTHPT[]>{
+    const conditions: OvicConditionParam[] = [
+    ];
+    const fromObject = {
+      paged: 1,
+      limit: -1,
+      orderby: 'id',
+      order: "ASC",// dieemr giarm dần,
+      include:kehoach_ids.join(','),
+      include_by:"kehoach_id",
+      select:'id,kehoach_id,trangthai_thanhtoan,mon_id',
+    }
+    const params: HttpParams = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }));
+    return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data));
   }
 }

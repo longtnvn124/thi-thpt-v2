@@ -249,7 +249,6 @@ export class QuanLyTaiKhoanComponent implements OnInit {
         this.data = data.map(u => {
           const uRoles = [];
           // const uRoles = roles;
-          console.log(u.role_ids);
           if (u.role_ids && u.role_ids.length) {
             u.role_ids.forEach(r => {
               const index = r ? this.dataRoles.findIndex(i => i.id === parseInt(r, 10)) : -1;
@@ -258,7 +257,6 @@ export class QuanLyTaiKhoanComponent implements OnInit {
               }
             }, []);
           }else{
-            console.log(u);
           }
           u.avatar = u.avatar ? u.avatar : 'assets/images/a_none.jpg';
           u['u_role'] = uRoles.join(' ');
@@ -327,7 +325,6 @@ export class QuanLyTaiKhoanComponent implements OnInit {
   }
 
   editUser(user) {
-
     if (user) {
       this.f['role_ids'].setValue(user.role_ids);
       this.editUserId = user.id;
@@ -339,13 +336,11 @@ export class QuanLyTaiKhoanComponent implements OnInit {
       this.f['email'].setValue(user.email);
       this.f['password'].setValue(user.password);
       this.f['donvi_id'].setValue(user.donvi_id);
-      this.f['role_ids'].setValue(user.role_ids.toString());
       this.f['status'].setValue(user.status);
       this.callActionForm(this.tplCreateAccount);
       this.defaultPass = user.password;
     }
     this.role_ids_select = user.role_ids.map(m=>parseInt(m));
-
   }
 
   switchEvent(id:number) {
@@ -420,7 +415,7 @@ export class QuanLyTaiKhoanComponent implements OnInit {
               this.notificationService.isProcessing(false);
             },
             error: (e) => {
-              console.log(e)
+
               const message = e.error.message;
               let errorMessage = "";
               for (let key in message) {
@@ -438,7 +433,7 @@ export class QuanLyTaiKhoanComponent implements OnInit {
         this.userService.creatUser(data).subscribe({
           next: () => this.notificationService.toastSuccess('Thêm mới tài khoản thành công'),
           error: (e) => {
-            console.log(e)
+
             const message = e.error.message;
             let errorMessage = "";
             for (let key in message) {
@@ -482,7 +477,6 @@ export class QuanLyTaiKhoanComponent implements OnInit {
       if (!this.changPassState) {
         delete data.password;
       }
-      console.log(data)
       // console.log(data.role_ids.split(','));
       // data.role_ids = data.role_ids.split(',').map(elm => parseInt(elm, 10));
       const currentUser = this.data.find(u => u.id === this.editUserId);
@@ -526,7 +520,6 @@ export class QuanLyTaiKhoanComponent implements OnInit {
     // this.passwordSelectItem = !this.passwordSelectItem;
 
     this.changPassState = !this.changPassState;
-    console.log(this.changPassState);
   }
   btnClose(){
     this.modalService.dismissAll();
@@ -544,7 +537,6 @@ export class QuanLyTaiKhoanComponent implements OnInit {
   selectMonOfDmMon(item:SimpleRole) {
     const select = !this.role_ids_select.find(f => f === item.id) ? [].concat(this.role_ids_select, item.id) : this.role_ids_select.filter(f => f !== item.id);
     this.role_ids_select = select;
-    console.log(this.role_ids_select);
     this.f['role_ids'].setValue(this.role_ids_select);
 
   }
