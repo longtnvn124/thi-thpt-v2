@@ -12,6 +12,8 @@ export interface ThptCathi{
   cathi:string;
   ngaythi:string;
   mota:string;
+  time_start?:string;
+  mon_ids?:number[];
 }
 @Injectable({
   providedIn: 'root'

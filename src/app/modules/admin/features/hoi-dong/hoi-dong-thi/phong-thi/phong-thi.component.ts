@@ -125,18 +125,18 @@ export class PhongThiComponent implements OnInit, OnChanges {
     });
 
     this.formPhongthi = this.fb.group({
-      hoidong_id: [this.hoidong_id ? this.hoidong_id : null, Validators.required],
-      monthi: [null, Validators.required],
-    });
+      hoidong_id:[this.hoidong_id, Validators.required],
+
+    })
+
+
 
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (this.hoidong_id) {
       this.switchPage = 'CATHI';
       this.resetFormCathi();
       this.loadInit();
-    }
   }
 
 
@@ -757,8 +757,6 @@ export class PhongThiComponent implements OnInit, OnChanges {
       }),
     ).subscribe({
       next: ([dataPhongthi, dataMonthi]) => {
-
-
         this.notifi.isProcessing(false);
         dataPhongthi.map(m => {
           m['__ten_cathi'] = cathi.cathi;
@@ -801,7 +799,8 @@ export class PhongThiComponent implements OnInit, OnChanges {
   private loadThiSinhAvatar(info: ThptHoiDongPhongThi[]): Observable<ThptPhongThiMonThi[]> {
     const ids = info.map(m => m.id);
     return this.phongthiMonthiService.getDataByphongthiIds(ids).pipe(switchMap((objects) => {
-      const dsThiSinh: Observable<ThptPhongThiMonThi>[] = objects.filter(o => o.thisinh_ids && o.thisinh_ids.length).reduce((reducer, o) => {
+      const dsThiSinh: Observable<ThptPhongThiMonThi>[] = objects.filter(o =>
+        o.thisinh_ids && o.thisinh_ids.length).reduce((reducer, o) => {
         reducer.push(this.loadThiSinhAvatarProcess(o));
         return reducer;
       }, new Array<Observable<ThptPhongThiMonThi>>())

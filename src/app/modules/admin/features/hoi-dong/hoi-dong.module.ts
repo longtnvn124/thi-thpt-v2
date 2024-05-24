@@ -21,11 +21,13 @@ import {RadioButtonModule} from "primeng/radiobutton";
 import {CheckboxModule} from "primeng/checkbox";
 import {MatMenuModule} from "@angular/material/menu";
 import {CalendarModule} from "primeng/calendar";
+import { PhongThiV2Component } from './hoi-dong-thi/phong-thi-v2/phong-thi-v2.component';
 @NgModule({
     declarations: [
         HoiDongThiComponent,
         PhongThiComponent,
-        AddThiSinhComponent
+        AddThiSinhComponent,
+        PhongThiV2Component
     ],
     imports: [
         CommonModule,

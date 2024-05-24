@@ -67,11 +67,14 @@
                 <button [pTooltip]="'Thêm thí sinh'" [tooltipPosition]="'top'" pButton pRipple
                         icon="pi pi-user-plus" class="mx-1 p-button-secondary"
                         (click)="btnAddThisinh(item)"></button>
-                <button [pTooltip]="'Tạo phòng thi'" [tooltipPosition]="'top'" pButton pRipple
+                <button [pTooltip]="'Tạo ca thi'" [tooltipPosition]="'top'" pButton pRipple
                         icon="pi pi-inbox" class="mx-1 p-button-" (click)="btnViewPhongThi(item)"></button>
                 <button [pTooltip]="'Xuất dữ liệu '" [tooltipPosition]="'top'" pButton pRipple
                         icon="pi pi-file-excel" class="mx-1 p-button-success"
-                        (click)="btnExportExcel(item)"></button>
+                        (click)="btnExportExcelV2(item)"></button>
+<!--<button [pTooltip]="'Xuất dữ liệu '" [tooltipPosition]="'top'" pButton pRipple-->
+<!--                        icon="pi pi-file-excel" class="mx-1 p-button-success"-->
+<!--                        (click)="btnExportExcel(item)"></button>-->
                 <button [pTooltip]="'Cập nhật'" [tooltipPosition]="'top'" pButton pRipple
                         icon="pi pi-file-edit" class="mx-1 p-button-warning"
                         (click)="btnAddNew('update' , item)"></button>
@@ -155,7 +158,8 @@
               class="p-button-rounded p-button-danger p-button-text close ovic-side-navigation-content__head__btn-close"></button>
     </div>
     <div class="ovic-side-navigation-content__body --no-footer ovic-scroll-style ">
-      <app-phong-thi class="w-100" [hoidong_id]="hoidong_id" [kehoach_id]="kehoach_id_param"></app-phong-thi>
+<!--      <app-phong-thi class="w-100" [hoidong_id]="hoidong_id" [kehoach_id]="kehoach_id_param"></app-phong-thi>-->
+      <app-phong-thi-v2 class="w-100" [hoidong_id]="hoidong_id" [kehoach_id]="kehoach_id_param"></app-phong-thi-v2>
     </div>
 
   </div>

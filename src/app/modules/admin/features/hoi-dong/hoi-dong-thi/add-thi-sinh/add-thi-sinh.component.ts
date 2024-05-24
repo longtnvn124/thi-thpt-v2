@@ -194,11 +194,12 @@ export class AddThiSinhComponent implements OnInit, OnChanges {
     this.isloading = true;
     this.modalService.open(this.templateWaiting, WAITING_POPUP);
     dataCreate.forEach((r, index) => {
-
       const request$ =
         this.hoiDongThiSinhService.create(r).pipe(concatMap((id) => {
             return of(null);
-          }), delay(index * 150), catchError(error => {
+          }),
+          delay(index * 150),
+          catchError(error => {
             console.error(error);
             return of(null);
           })

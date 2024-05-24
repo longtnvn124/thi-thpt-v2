@@ -1,10 +1,9 @@
-
-import { NotificationService } from '@core/services/notification.service';
-import { ThptKehoachThiService, KeHoachThi } from './../../../../shared/services/thpt-kehoach-thi.service';
-import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ThptHoiDong, ThptHoiDongService } from '@modules/shared/services/thpt-hoi-dong.service';
-import { FormType, OvicForm } from '@modules/shared/models/ovic-models';
+import {NotificationService} from '@core/services/notification.service';
+import {ThptKehoachThiService, KeHoachThi} from './../../../../shared/services/thpt-kehoach-thi.service';
+import {Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
+import {AbstractControl, FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {ThptHoiDong, ThptHoiDongService} from '@modules/shared/services/thpt-hoi-dong.service';
+import {FormType, OvicForm} from '@modules/shared/models/ovic-models';
 import {Observable, Subject, Subscription, debounceTime, filter, concatMap, forkJoin, of} from 'rxjs';
 import {AddThiSinhComponent} from "@modules/admin/features/hoi-dong/hoi-dong-thi/add-thi-sinh/add-thi-sinh.component";
 import {ThptCathi, ThptHoidongCathiService} from "@shared/services/thpt-hoidong-cathi.service";
@@ -17,18 +16,28 @@ import {DanhMucMonService} from "@shared/services/danh-muc-mon.service";
 import {DmMon} from "@shared/models/danh-muc";
 import {ExpostExcelPhongthiThisinhService} from "@shared/services/expost-excel-phongthi-thisinh.service";
 import {ThptHoidongThisinhService} from "@shared/services/thpt-hoidong-thisinh.service";
+import {error} from "@angular/compiler-cli/src/transformers/util";
 
 interface FormHoiDong extends OvicForm {
   object: ThptHoiDong;
 }
-export interface itemExportExcel{
-  sheet_name      : string;
-  header_Cathi    : string;
-  header_ngaythi  : string;
-  header_phongthi : string;
-  monthi          : string;
-  time_start      : string;
-  thisinh         : {stt:number;sbd:string,hoten:string,ngaysinh:string,gioitinh:string,noisinh:string, cccdSo:number}[];
+
+export interface itemExportExcel {
+  sheet_name: string;
+  header_Cathi: string;
+  header_ngaythi: string;
+  header_phongthi: string;
+  monthi: string;
+  time_start: string;
+  thisinh: {
+    stt: number;
+    sbd: string,
+    hoten: string,
+    ngaysinh: string,
+    gioitinh: string,
+    noisinh: string,
+    cccdSo: number
+  }[];
 
 }
 
@@ -38,9 +47,9 @@ export interface itemExportExcel{
   styleUrls: ['./hoi-dong-thi.component.css']
 })
 export class HoiDongThiComponent implements OnInit {
-  @ViewChild('fromUpdate', { static: true }) template: TemplateRef<any>;
-  @ViewChild('examinationRoom', { static: true }) examinationRoom: TemplateRef<any>;
-  @ViewChild('addThiSinh', { static: true }) addThiSinh: TemplateRef<any>;
+  @ViewChild('fromUpdate', {static: true}) template: TemplateRef<any>;
+  @ViewChild('examinationRoom', {static: true}) examinationRoom: TemplateRef<any>;
+  @ViewChild('addThiSinh', {static: true}) addThiSinh: TemplateRef<any>;
   @ViewChild(AddThiSinhComponent) addThisinhComponent: AddThiSinhComponent;
 
   statusList = [
@@ -48,8 +57,8 @@ export class HoiDongThiComponent implements OnInit {
     {value: 0, label: 'Inactive', color: '<span class="badge badge--size-normal badge-danger w-100">Inactive</span>'}
   ];
   listForm = {
-    [FormType.ADDITION]: { type: FormType.ADDITION, title: 'Thêm mới hội đồng', object: null, data: null },
-    [FormType.UPDATE]: { type: FormType.UPDATE, title: 'Cập nhật hội đồng', object: null, data: null }
+    [FormType.ADDITION]: {type: FormType.ADDITION, title: 'Thêm mới hội đồng', object: null, data: null},
+    [FormType.UPDATE]: {type: FormType.UPDATE, title: 'Cập nhật hội đồng', object: null, data: null}
   };
 
   formActive: FormHoiDong;
@@ -67,23 +76,23 @@ export class HoiDongThiComponent implements OnInit {
   hoidong_id: number;
   listData: ThptHoiDong[];
   kehoach_id_param: number;
-  thiSinhSelectTotal:number= 0;
-  orderSelectTotal:number= 0;
-  dmMon:DmMon[];
-  hoidongSelect:ThptHoiDong;
+  thiSinhSelectTotal: number = 0;
+  orderSelectTotal: number = 0;
+  dmMon: DmMon[];
+  hoidongSelect: ThptHoiDong;
+
   constructor(
     private kehoachThiService: ThptKehoachThiService,
     private hoiDongService: ThptHoiDongService,
     private notifi: NotificationService,
     private fb: FormBuilder,
-    private thptHoidongCathiService :ThptHoidongCathiService,
-    private thptHoidongPhongthiService:ThptHoidongPhongthiService,
-    private thptPhongthiMonthiService:ThptPhongthiMonthiService,
+    private thptHoidongCathiService: ThptHoidongCathiService,
+    private thptHoidongPhongthiService: ThptHoidongPhongthiService,
+    private thptPhongthiMonthiService: ThptPhongthiMonthiService,
     private helperService: HelperService,
     private danhMucMonService: DanhMucMonService,
-    private expostExcelPhongthiThisinhService:ExpostExcelPhongthiThisinhService,
+    private expostExcelPhongthiThisinhService: ExpostExcelPhongthiThisinhService,
     private hoiDongThiSinhService: ThptHoidongThisinhService,
-
   ) {
     const observeProcessFormData = this.OBSERVE_PROCESS_FORM_DATA.asObservable().pipe(debounceTime(100)).subscribe(form => this.__processFrom(form));
     this.subscription.add(observeProcessFormData);
@@ -103,17 +112,20 @@ export class HoiDongThiComponent implements OnInit {
   ngOnInit(): void {
     this.loadInit()
   }
+
   loadInit() {
     this.danhMucMonService.getDataUnlimit().subscribe({
-      next:(data)=>{
+      next: (data) => {
         this.dmMon = data;
       }
     })
     this.loadData();
   }
+
   loadData() {
     this.getDataKeHoach();
   }
+
   getDataKeHoach() {
     this.notifi.isProcessing(true)
     this.isLoading = true;
@@ -130,10 +142,12 @@ export class HoiDongThiComponent implements OnInit {
       }
     })
   }
+
   changeSelectData(event) {
     this._kehoach_id = event;
     this.getDataHoiDong(event);
   }
+
   getDataHoiDong(kehoach_id?: number, search?: string) {
     this.isLoading = true;
     this.notifi.isProcessing(true);
@@ -156,7 +170,8 @@ export class HoiDongThiComponent implements OnInit {
       }
     })
   }
-  private __processFrom({ data, object, type }: FormHoiDong) {
+
+  private __processFrom({data, object, type}: FormHoiDong) {
     this.isLoading = true;
     const observer$: Observable<any> = type === FormType.ADDITION ? this.hoiDongService.create(data) : this.hoiDongService.update(object.id, data);
     observer$.subscribe({
@@ -180,12 +195,15 @@ export class HoiDongThiComponent implements OnInit {
       }
     });
   }
+
   get f(): { [key: string]: AbstractControl<any> } {
     return this.formSave.controls;
   }
+
   changeInput(text) {
 
   }
+
   btnAddNew(type: 'add' | 'update', item?: ThptHoiDong) {
     if (type === 'add') {
       this.btn_checkAdd = "Lưu lại";
@@ -197,8 +215,7 @@ export class HoiDongThiComponent implements OnInit {
         mota: '',
         status: 1
       });
-    }
-    else if (type === 'update') {
+    } else if (type === 'update') {
       this.btn_checkAdd = "Cập nhật"
       const object1 = this.listData.find(u => u.id === item.id);
       this.formSave.reset({
@@ -212,6 +229,7 @@ export class HoiDongThiComponent implements OnInit {
       this.preSetupForm(this.menuName);
     }
   }
+
   private preSetupForm(name: string) {
     this.notifi.isProcessing(false);
     this.notifi.openSideNavigationMenu({
@@ -221,10 +239,12 @@ export class HoiDongThiComponent implements OnInit {
       offsetTop: '0px'
     });
   }
+
   closeForm() {
     this.loadInit();
     this.notifi.closeSideNavigationMenu(this.menuName);
   }
+
   saveForm() {
     const titleInput = this.f['ten_hoidong'].value.trim();
     this.f['ten_hoidong'].setValue(titleInput);
@@ -240,6 +260,7 @@ export class HoiDongThiComponent implements OnInit {
       this.notifi.toastWarning('Vui lòng nhập đủ thông tin');
     }
   }
+
   async btnDelete(item: ThptHoiDong) {
     const confirm = await this.notifi.confirmDelete();
     if (confirm) {
@@ -257,6 +278,7 @@ export class HoiDongThiComponent implements OnInit {
       })
     }
   }
+
   btnViewPhongThi(item: ThptHoiDong) {
     this.notifi.isProcessing(false);
     this.notifi.openSideNavigationMenu({
@@ -267,6 +289,7 @@ export class HoiDongThiComponent implements OnInit {
     this.hoidong_id = item.id;
     this.kehoach_id_param = item.kehoach_id;
   }
+
   btnAddThisinh(item: ThptHoiDong) {
     this.notifi.isProcessing(false);
     this.hoidong_id = item.id;
@@ -277,113 +300,201 @@ export class HoiDongThiComponent implements OnInit {
       offsetTop: '0px'
     });
   }
-  btnCreateThisinhInHoiDOng(){
+
+  btnCreateThisinhInHoiDOng() {
     this.addThisinhComponent.btnAddHoidong();
   }
-  btnDeleteThiSinhInHoiDong(){
+
+  btnDeleteThiSinhInHoiDong() {
     this.addThisinhComponent.btndelete();
   }
-  btnReloadData(){
+
+  btnReloadData() {
     this.addThisinhComponent.loadData();
   }
-  onDataChange(event){
-    this.thiSinhSelectTotal=event.thisinhSelect;
-    this.orderSelectTotal=event.orderSelect;
+
+  onDataChange(event) {
+    this.thiSinhSelectTotal = event.thisinhSelect;
+    this.orderSelectTotal = event.orderSelect;
   }
 
 
-  btnExportExcel(item: ThptHoiDong){
+  btnExportExcelV2(item: ThptHoiDong) {
+    this.notifi.isProcessing(true);
     forkJoin(
       this.hoiDongThiSinhService.getDataByHoiDongIdNotPage(item.id),
       this.thptHoidongCathiService.getDataUnlimitByhoidongId(item.id).pipe(
-            concatMap(cathi => {
-              const cathiIds = cathi.map(m => m.id);
-              return forkJoin(
-                of(cathi), this.thptHoidongPhongthiService.getDataByHoidongVaCathiIds(item.id, cathiIds).pipe(concatMap(prj => {
-                  const phongthi_ids = prj.map(a => a.id);
-                    return forkJoin<[ThptHoiDongPhongThi[], ThptPhongThiMonThi[]]>(
-                      of(prj),
-                      this.thptPhongthiMonthiService.getDataByphongthiIds(phongthi_ids)
-                    );
-                  })));}))
-
+        concatMap(cathi => {
+          const cathiIds = cathi.map(m => m.id);
+          return forkJoin(of(cathi), this.thptHoidongPhongthiService.getDataByHoidongVaCathiIds(item.id, cathiIds));
+        }))
     ).subscribe(
       {
         next:(data)=>{
           const dataThisinh = data[0];
-          const dataCathi :ThptCathi[] = data[1][0];
-          const dataPhongthi :ThptHoiDongPhongThi[] = data[1][1][0].map(m=>{
-                    const cathi =  dataCathi.find(f=>f.id === m.cathi_id);
-                    m['__cathi_Covented'] = cathi ? cathi.cathi: '';
-                    m['__ngaythi'] = cathi ? this.helperService.formatSQLToDateDMY(new Date(cathi.ngaythi)): '';
-                    return m;
-                  });
-          const dataMonthi :ThptPhongThiMonThi[] = data[1][1][1].filter(f=>f.thisinh_ids.length !== 0).sort((a, b)=> a.phongthi_id - b.phongthi_id).map(m=>{
-
-            m['__phongthi'] = dataPhongthi.find(f=>f.id === m.phongthi_id);
-            m['__thisinh_sapxep'] = m.thisinh_ids.map(a=> m['thisinh'].find( b=>b.id === a));
+          const dataCathi: ThptCathi[] = data[1][0];
+          const dataPhongthi: ThptHoiDongPhongThi[] = data[1][1].map(m => {
+            const cathi = dataCathi.find(f => f.id === m.cathi_id);
+            m['__cathi_Covented'] = cathi ? cathi.cathi : '';
+            m['__ngaythi'] = cathi ? this.helperService.formatSQLToDateDMY(new Date(cathi.ngaythi)) : '';
+            m['__time_start'] = cathi ? cathi.time_start : '';
             return m;
           });
 
-          if(dataThisinh.length >0 && dataCathi.length !== 0 && dataPhongthi.length !== 0 && dataMonthi.length !== 0 ){
-            const thisinhExport : any[] = [];
-
+          if(dataThisinh.length>0 && dataCathi.length>0 && dataPhongthi.length  ){
+            const thisinhsExpostExcel = [];
             dataThisinh.forEach((m,index)=>{
-              const item  = {};
-              const thisinh = m['thisinh'];
-              item['__indexTable'] = index+1;
-              item['__thisinh_id'] = thisinh ? thisinh['id'] :'';
-              item['__madk'] = thisinh ? 'TNU' + thisinh['id'] :'';
-              item['__hoten'] = thisinh ?  thisinh['hoten'] :'';
-              item['__ngaysinh'] = thisinh ?  thisinh['ngaysinh'] :'';
-              item['__gioitinh'] = thisinh && thisinh['gioitinh'] === 'nam' ? 'Nam' :(thisinh && thisinh['gioitinh'] === 'nu' ? 'Nữ' : '') ;
-              item['__cccd'] = thisinh ?  thisinh['cccd_so'] :'';
-              item['__email'] = thisinh ?  thisinh['email'] :'';
-              item['__phone'] = thisinh ?  thisinh['phone'] :'';
 
-              this.dmMon.map(a=>{
-                item['__mon_' + a.kyhieu] = m.monthi_ids.find(f=>f === a.id) ? a.tenmon : '';
+              const item = {};
+              const thisinh = m['thisinh'];
+              item['__indexTable'] = index + 1;
+              item['__thisinh_id'] = thisinh ? thisinh['id'] : '';
+              item['__madk'] = thisinh ? 'TNU' + thisinh['id'] : '';
+              item['__hoten'] = thisinh ? thisinh['hoten'] : '';
+              item['__ngaysinh'] = thisinh ? thisinh['ngaysinh'] : '';
+              item['__gioitinh'] = thisinh && thisinh['gioitinh'] === 'nam' ? 'Nam' : (thisinh && thisinh['gioitinh'] === 'nu' ? 'Nữ' : '');
+              item['__cccd'] = thisinh ? thisinh['cccd_so'] : '';
+              item['__email'] = thisinh ? thisinh['email'] : '';
+              item['__phone'] = thisinh ? thisinh['phone'] : '';
+
+              this.dmMon.map(a => {
+                item['__mon_' + a.kyhieu] = m.monthi_ids.find(f => f === a.id) ? a.tenmon : '';
               })
-              this.dmMon.map(a=>{
-                const monthi = dataMonthi.find(f=>f.monthi_id === a.id && f.thisinh_ids.find(b=>b=== thisinh['id']) );
+              this.dmMon.map(a => {
+                const cathiselect = dataCathi.find(f=>f.mon_ids.find(mon=>mon=== a.id));
+                const phongthi = dataPhongthi.find(phongthi => phongthi.thisinh_ids.find(id=>id === m.thisinh_id) && phongthi.cathi_id === cathiselect.id);
+                item['__sbd_' + a.kyhieu]       = m.monthi_ids.find(mon_id => mon_id === a.id)  ? 'TNU' + thisinh['id'] : '';
+                item['__cathi_' + a.kyhieu]     = m.monthi_ids.find(mon_id => mon_id === a.id) && cathiselect ? cathiselect.cathi : '';
+                item['__diadiem_' + a.kyhieu]   = m.monthi_ids.find(mon_id => mon_id === a.id)  ? 'Trung tâm Khảo thí và Quản lý chất lượng – ĐHTN, Phường Tân Thịnh – Thành phố Thái Nguyên' : '';
+                item['__phongthi_' + a.kyhieu]  = m.monthi_ids.find(mon_id => mon_id === a.id) && phongthi ? phongthi.ten_phongthi : '';
+                item['__timeStart_' + a.kyhieu] = m.monthi_ids.find(mon_id => mon_id === a.id) && cathiselect ? cathiselect.time_start.replace(':', 'g') + ' ngày ' + phongthi['__ngaythi'] : '';
+              })
+
+              thisinhsExpostExcel.push(item);
+            })
+
+            const dataPhongthiExport: any[] = [];
+            dataPhongthi.forEach((f,index)=>{
+              const item = {};
+              item["cathi"] = f['__cathi_Covented'];
+              item['phong'] = f.ten_phongthi;
+
+              this.dmMon.forEach(dm=>{
+                const cathiselect = dataCathi.find(ct=>ct.id === f.cathi_id).mon_ids.find(id=> id === dm.id)
+                item['__monthi_' + dm.kyhieu] = cathiselect ? dm.tenmon : '';
+              });
+              item['__timeStart'] = f ? f['__time_start'].replace(':', 'g') + ' ngày ' + f['__ngaythi'] : '';
+              item['diadiem'] = f ? 'Trung tâm Khảo thí và Quản lý chất lượng – ĐHTN, Phường Tân Thịnh – Thành phố Thái Nguyên' : '';
+              dataPhongthiExport.push(item)
+
+            })
+            this.expostExcelPhongthiThisinhService.exportExcel(thisinhsExpostExcel, this.columns, item.ten_hoidong, dataPhongthiExport, this.columnSheet2);
+
+          }else{
+            this.notifi.toastWarning('Vui lòng tạo ca thi và phòng thi trước khi export');
+          }
+
+
+          this.notifi.isProcessing(false);
+        },error:(e)=>{
+          this.notifi.isProcessing(false);
+        }
+      }
+    )
+  }
+
+  btnExportExcel(item: ThptHoiDong) {
+    forkJoin(
+      this.hoiDongThiSinhService.getDataByHoiDongIdNotPage(item.id),
+      this.thptHoidongCathiService.getDataUnlimitByhoidongId(item.id).pipe(
+        concatMap(cathi => {
+          const cathiIds = cathi.map(m => m.id);
+          return forkJoin(
+            of(cathi), this.thptHoidongPhongthiService.getDataByHoidongVaCathiIds(item.id, cathiIds).pipe(concatMap(prj => {
+              const phongthi_ids = prj.map(a => a.id);
+              return forkJoin<[ThptHoiDongPhongThi[], ThptPhongThiMonThi[]]>(
+                of(prj),
+                this.thptPhongthiMonthiService.getDataByphongthiIds(phongthi_ids)
+              );
+            })));
+        }))
+    ).subscribe(
+      {
+        next: (data) => {
+          const dataThisinh = data[0];
+          const dataCathi: ThptCathi[] = data[1][0];
+          const dataPhongthi: ThptHoiDongPhongThi[] = data[1][1][0].map(m => {
+            const cathi = dataCathi.find(f => f.id === m.cathi_id);
+            m['__cathi_Covented'] = cathi ? cathi.cathi : '';
+            m['__ngaythi'] = cathi ? this.helperService.formatSQLToDateDMY(new Date(cathi.ngaythi)) : '';
+            return m;
+          });
+          const dataMonthi: ThptPhongThiMonThi[] = data[1][1][1].filter(f => f.thisinh_ids.length !== 0).sort((a, b) => a.phongthi_id - b.phongthi_id).map(m => {
+
+            m['__phongthi'] = dataPhongthi.find(f => f.id === m.phongthi_id);
+            m['__thisinh_sapxep'] = m.thisinh_ids.map(a => m['thisinh'].find(b => b.id === a));
+            return m;
+          });
+
+          if (dataThisinh.length > 0 && dataCathi.length !== 0 && dataPhongthi.length !== 0 && dataMonthi.length !== 0) {
+            const thisinhExport: any[] = [];
+
+            dataThisinh.forEach((m, index) => {
+              const item = {};
+              const thisinh = m['thisinh'];
+              item['__indexTable'] = index + 1;
+              item['__thisinh_id'] = thisinh ? thisinh['id'] : '';
+              item['__madk'] = thisinh ? 'TNU' + thisinh['id'] : '';
+              item['__hoten'] = thisinh ? thisinh['hoten'] : '';
+              item['__ngaysinh'] = thisinh ? thisinh['ngaysinh'] : '';
+              item['__gioitinh'] = thisinh && thisinh['gioitinh'] === 'nam' ? 'Nam' : (thisinh && thisinh['gioitinh'] === 'nu' ? 'Nữ' : '');
+              item['__cccd'] = thisinh ? thisinh['cccd_so'] : '';
+              item['__email'] = thisinh ? thisinh['email'] : '';
+              item['__phone'] = thisinh ? thisinh['phone'] : '';
+
+              this.dmMon.map(a => {
+                item['__mon_' + a.kyhieu] = m.monthi_ids.find(f => f === a.id) ? a.tenmon : '';
+              })
+              this.dmMon.map(a => {
+                const monthi = dataMonthi.find(f => f.monthi_id === a.id && f.thisinh_ids.find(b => b === thisinh['id']));
                 const checkphongthi = monthi ? monthi['__phongthi'] : '';
                 item['__sbd_' + a.kyhieu] = monthi ? 'TNU' + thisinh['id'] : '';
-                item['__cathi_' +a.kyhieu    ] = checkphongthi ? checkphongthi['__cathi_Covented']: '';
-                item['__diadiem_' +a.kyhieu  ] = checkphongthi ? 'Trung tâm Khảo thí và Quản lý chất lượng – ĐHTN, Phường Tân Thịnh – Thành phố Thái Nguyên' : '';
-                item['__phongthi_' +a.kyhieu ] = checkphongthi ? checkphongthi.ten_phongthi: '';
-                item['__timeStart_' +a.kyhieu] = checkphongthi ?  monthi.timeStart.replace(':','g') +' ngày ' + checkphongthi['__ngaythi'] : '';
+                item['__cathi_' + a.kyhieu] = checkphongthi ? checkphongthi['__cathi_Covented'] : '';
+                item['__diadiem_' + a.kyhieu] = checkphongthi ? 'Trung tâm Khảo thí và Quản lý chất lượng – ĐHTN, Phường Tân Thịnh – Thành phố Thái Nguyên' : '';
+                item['__phongthi_' + a.kyhieu] = checkphongthi ? checkphongthi.ten_phongthi : '';
+                item['__timeStart_' + a.kyhieu] = checkphongthi ? monthi.timeStart.replace(':', 'g') + ' ngày ' + checkphongthi['__ngaythi'] : '';
               })
 
               thisinhExport.push(item);
             })
 
-            const dataPhongthiExport : any[] = [];
-            this.dmMon.forEach(mon=>{
-              const phongthiMonthi = dataMonthi.filter(f=>f.monthi_id === mon.id)
+            const dataPhongthiExport: any[] = [];
+            this.dmMon.forEach(mon => {
+              const phongthiMonthi = dataMonthi.filter(f => f.monthi_id === mon.id)
 
-              if(phongthiMonthi.length >0){
-                phongthiMonthi.forEach(a=>{
-                  const tungmon :any ={};
+              if (phongthiMonthi.length > 0) {
+                phongthiMonthi.forEach(a => {
+                  const tungmon: any = {};
                   const phongthi = a['__phongthi'];
                   tungmon['cathi'] = phongthi ? phongthi['__cathi_Covented'] : '';
                   tungmon['phong'] = phongthi ? phongthi.ten_phongthi : '';
-                  this.dmMon.forEach(dm=>{
-                    tungmon['__monthi_' + dm.kyhieu] = a.monthi_id ===dm.id ? dm.tenmon:''
-                  } )
+                  this.dmMon.forEach(dm => {
+                    tungmon['__monthi_' + dm.kyhieu] = a.monthi_id === dm.id ? dm.tenmon : ''
+                  })
 
-                  tungmon['__timeStart'] = phongthi? a.timeStart.replace(':','g') + ' ngày ' + phongthi['__ngaythi'] : '';
-                  tungmon['diadiem'] = phongthi ? 'Trung tâm Khảo thí và Quản lý chất lượng – ĐHTN, Phường Tân Thịnh – Thành phố Thái Nguyên' :'';
+                  tungmon['__timeStart'] = phongthi ? a.timeStart.replace(':', 'g') + ' ngày ' + phongthi['__ngaythi'] : '';
+                  tungmon['diadiem'] = phongthi ? 'Trung tâm Khảo thí và Quản lý chất lượng – ĐHTN, Phường Tân Thịnh – Thành phố Thái Nguyên' : '';
                   dataPhongthiExport.push(tungmon)
                 })
               }
             })
 
-            this.expostExcelPhongthiThisinhService.exportExcel(thisinhExport,this.columns,item.ten_hoidong,dataPhongthiExport,this.columnSheet2 );
-          }else{
+            this.expostExcelPhongthiThisinhService.exportExcel(thisinhExport, this.columns, item.ten_hoidong, dataPhongthiExport, this.columnSheet2);
+          } else {
             this.notifi.toastError('Người dùng chưa tạo phòng thi, vui lòng tạo phòng thi !')
           }
 
-        },error:(e)=>{
+        }, error: (e) => {
           this.notifi.isProcessing(false);
           this.notifi.toastError('load Dữ liệu không thành công');
         }
@@ -393,20 +504,20 @@ export class HoiDongThiComponent implements OnInit {
 
 
   columns = ['STT'
-    ,'ID', 'MADK', 'Họ và tên','Ngày sinh','Giới tính','CCCD/CMND','Email',
-    'Số điện thoại','Đăng ký môn toán','Đăng ký môn Vật lí','Đăng ký môn Hóa học','Đăng ký môn Sinh học',
-    'Đăng ký môn Lịch sử','Đăng ký môn Địa lí','Đăng ký môn Tiếng anh',
-    'SBD Toán','Ca thi Toán','Địa điểm thi Toán', 'Phòng thi Toán','Thời điểm gọi vào Toán',
-    'SBD Vật lí','Ca thi Vật lý','Địa điểm thi Vật lí', 'Phòng thi Vật lí','Thời điểm gọi vào Vật lí',
-    'SBD Hóa học','Ca thi Hóa học','Địa điểm thi Hóa học', 'Phòng thi Hóa học','Thời điểm gọi vào Hóa học',
-    'SBD Sinh học','Ca thi Sinh học','Địa điểm thi Sinh học', 'Phòng thi Sinh học','Thời điểm gọi vào Sinh học',
-    'SBD Lịch sử','Ca thi Lịch sử','Địa điểm thi Lịch sử', 'Phòng thi Lịch sử','Thời điểm gọi vào Lịch sử',
-    'SBD Địa lí','Ca thi Địa lí','Địa điểm thi Địa lí', 'Phòng thi Địa lí','Thời điểm gọi vào Địa lí',
-    'SBD Tiếng anh','Ca thi Tiếng anh','Địa điểm thi Tiếng anh', 'Phòng thi Tiếng anh','Thời điểm gọi vào Tiếng anh',
+    , 'ID', 'MADK', 'Họ và tên', 'Ngày sinh', 'Giới tính', 'CCCD/CMND', 'Email',
+    'Số điện thoại', 'Đăng ký môn toán', 'Đăng ký môn Vật lí', 'Đăng ký môn Hóa học', 'Đăng ký môn Sinh học',
+    'Đăng ký môn Lịch sử', 'Đăng ký môn Địa lí', 'Đăng ký môn Tiếng anh',
+    'SBD Toán', 'Ca thi Toán', 'Địa điểm thi Toán', 'Phòng thi Toán', 'Thời điểm gọi vào Toán',
+    'SBD Vật lí', 'Ca thi Vật lý', 'Địa điểm thi Vật lí', 'Phòng thi Vật lí', 'Thời điểm gọi vào Vật lí',
+    'SBD Hóa học', 'Ca thi Hóa học', 'Địa điểm thi Hóa học', 'Phòng thi Hóa học', 'Thời điểm gọi vào Hóa học',
+    'SBD Sinh học', 'Ca thi Sinh học', 'Địa điểm thi Sinh học', 'Phòng thi Sinh học', 'Thời điểm gọi vào Sinh học',
+    'SBD Lịch sử', 'Ca thi Lịch sử', 'Địa điểm thi Lịch sử', 'Phòng thi Lịch sử', 'Thời điểm gọi vào Lịch sử',
+    'SBD Địa lí', 'Ca thi Địa lí', 'Địa điểm thi Địa lí', 'Phòng thi Địa lí', 'Thời điểm gọi vào Địa lí',
+    'SBD Tiếng anh', 'Ca thi Tiếng anh', 'Địa điểm thi Tiếng anh', 'Phòng thi Tiếng anh', 'Thời điểm gọi vào Tiếng anh',
   ];
 
   columnSheet2 = [
-    'Ca','Phòng','Toán'	,'Vật lí','Hóa học',	'Sinh học',	'Lịch sử',	'Địa lí',	'Tiếng Anh',	'Thời điểm gọi thí sinh', 'Địa điểm'
+    'Ca', 'Phòng', 'Toán', 'Vật lí', 'Hóa học', 'Sinh học', 'Lịch sử', 'Địa lí', 'Tiếng Anh', 'Thời điểm gọi thí sinh', 'Địa điểm'
   ]
 
 }
