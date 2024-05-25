@@ -367,7 +367,7 @@ export class HoiDongThiComponent implements OnInit {
                 item['__cathi_' + a.kyhieu]     = m.monthi_ids.find(mon_id => mon_id === a.id) && cathiselect ? cathiselect.cathi : '';
                 item['__diadiem_' + a.kyhieu]   = m.monthi_ids.find(mon_id => mon_id === a.id)  ? 'Trung tâm Khảo thí và Quản lý chất lượng – ĐHTN, Phường Tân Thịnh – Thành phố Thái Nguyên' : '';
                 item['__phongthi_' + a.kyhieu]  = m.monthi_ids.find(mon_id => mon_id === a.id) && phongthi ? phongthi.ten_phongthi : '';
-                item['__timeStart_' + a.kyhieu] = m.monthi_ids.find(mon_id => mon_id === a.id) && cathiselect ? cathiselect.time_start.replace(':', 'g') + ' ngày ' + phongthi['__ngaythi'] : '';
+                item['__timeStart_' + a.kyhieu] = m.monthi_ids.find(mon_id => mon_id === a.id) && cathiselect && phongthi ? cathiselect.time_start.replace(':', 'g') + ' ngày ' + phongthi['__ngaythi'] : '';
               })
 
               thisinhsExpostExcel.push(item);
