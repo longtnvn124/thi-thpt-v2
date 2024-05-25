@@ -332,12 +332,15 @@ export class HoiDongThiComponent implements OnInit {
       {
         next:(data)=>{
           const dataThisinh = data[0];
-          const dataCathi: ThptCathi[] = data[1][0];
+          const dataCathi: ThptCathi[] = data[1][0].map(m=>{
+              m['__time_start']= m ? (new Date(m.time_start).getHours() + ':' + this.covernumber(new Date(m.time_start).getMinutes())) : '';
+            return m;
+          });
           const dataPhongthi: ThptHoiDongPhongThi[] = data[1][1].map(m => {
             const cathi = dataCathi.find(f => f.id === m.cathi_id);
             m['__cathi_Covented'] = cathi ? cathi.cathi : '';
             m['__ngaythi'] = cathi ? this.helperService.formatSQLToDateDMY(new Date(cathi.ngaythi)) : '';
-            m['__time_start'] = cathi ? cathi.time_start : '';
+            m['__time_start'] = cathi ? (new Date(cathi.time_start).getHours() + ':' + this.covernumber(new Date(cathi.time_start).getMinutes())) : '';
             return m;
           });
 
@@ -362,12 +365,13 @@ export class HoiDongThiComponent implements OnInit {
               })
               this.dmMon.map(a => {
                 const cathiselect = dataCathi.find(f=>f.mon_ids.find(mon=>mon=== a.id));
+                // console.log(cathiselect)
                 const phongthi = dataPhongthi.find(phongthi => phongthi.thisinh_ids.find(id=>id === m.thisinh_id) && phongthi.cathi_id === cathiselect.id);
                 item['__sbd_' + a.kyhieu]       = m.monthi_ids.find(mon_id => mon_id === a.id)  ? 'TNU' + thisinh['id'] : '';
                 item['__cathi_' + a.kyhieu]     = m.monthi_ids.find(mon_id => mon_id === a.id) && cathiselect ? cathiselect.cathi : '';
                 item['__diadiem_' + a.kyhieu]   = m.monthi_ids.find(mon_id => mon_id === a.id)  ? 'Trung tâm Khảo thí và Quản lý chất lượng – ĐHTN, Phường Tân Thịnh – Thành phố Thái Nguyên' : '';
                 item['__phongthi_' + a.kyhieu]  = m.monthi_ids.find(mon_id => mon_id === a.id) && phongthi ? phongthi.ten_phongthi : '';
-                item['__timeStart_' + a.kyhieu] = m.monthi_ids.find(mon_id => mon_id === a.id) && cathiselect && phongthi ? cathiselect.time_start.replace(':', 'g') + ' ngày ' + phongthi['__ngaythi'] : '';
+                item['__timeStart_' + a.kyhieu] = m.monthi_ids.find(mon_id => mon_id === a.id) && cathiselect && phongthi ? cathiselect['__time_start'].replace(':', 'g') + ' ngày ' + phongthi['__ngaythi'] : '';
               })
 
               thisinhsExpostExcel.push(item);
@@ -403,6 +407,10 @@ export class HoiDongThiComponent implements OnInit {
     )
   }
 
+  covernumber(input:number){
+    return input<10 ? '0' + input: input.toString();
+  }
+
   btnExportExcel(item: ThptHoiDong) {
     forkJoin(
       this.hoiDongThiSinhService.getDataByHoiDongIdNotPage(item.id),
@@ -427,6 +435,7 @@ export class HoiDongThiComponent implements OnInit {
             const cathi = dataCathi.find(f => f.id === m.cathi_id);
             m['__cathi_Covented'] = cathi ? cathi.cathi : '';
             m['__ngaythi'] = cathi ? this.helperService.formatSQLToDateDMY(new Date(cathi.ngaythi)) : '';
+            m['__time_start']= cathi ? (new Date(cathi.time_start).getHours() + ':' + this.covernumber(new Date(cathi.time_start).getMinutes())) : '';
             return m;
           });
           const dataMonthi: ThptPhongThiMonThi[] = data[1][1][1].filter(f => f.thisinh_ids.length !== 0).sort((a, b) => a.phongthi_id - b.phongthi_id).map(m => {

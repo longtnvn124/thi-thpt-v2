@@ -113,7 +113,7 @@
 
 
                         <td class="text-center" [innerHTML]="item['__ngaythi_coverted'] |ovicSafeHtml"></td>
-                        <td class="text-center">{{item.time_start}}</td>
+                        <td class="text-center">{{item['__time_start_coverted']}}</td>
                         <td>
                           <div class="d-flex justify-content-center align-items-center " style="gap:10px;">
                             <button pRipple pButton pTooltip="Xuất Album ảnh thí sinh" tooltipPosition="left" icon="pi pi-file-word" (click)="btnExportAlbum(item)"></button>
@@ -213,7 +213,7 @@
                     (click)="btnReturnPhongthi()"></button>
             <div style="font-size: 28px;font-weight: 400;"> Ca thi : <span>{{ caThiSelect.cathi }}</span></div>
             <div style="font-size: 21px;font-weight: 400;padding-top: 10px;"> Ngày thi :
-              <span>{{ caThiSelect['__ngaythi_coverted'] }},giờ thi: {{ caThiSelect.time_start }}</span></div>
+              <span>{{ caThiSelect['__ngaythi_coverted'] }},giờ thi: {{ caThiSelect['__time_start_coverted'] }}</span></div>
             <div style="font-size: 18px;font-weight: 400;padding-top: 6px;padding-bottom: 6px;"> Phòng thi :
               <span>{{ phongthi_select.ten_phongthi }}</span></div>
             <div class="line"></div>

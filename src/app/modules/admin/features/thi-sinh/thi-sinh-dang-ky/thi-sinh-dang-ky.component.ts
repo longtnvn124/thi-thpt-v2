@@ -15,6 +15,7 @@ import {OrdersTHPT, ThptOrdersService} from "@shared/services/thpt-orders.servic
 import {ActivatedRoute, Router} from "@angular/router";
 import {SenderEmailService} from "@shared/services/sender-email.service";
 import {HelperService} from "@core/services/helper.service";
+import {HtmlToPdfService} from "@shared/services/html-to-pdf.service";
 
 export interface SumMonThi {
   tenmon: number,
@@ -81,7 +82,8 @@ export class ThiSinhDangKyComponent implements OnInit {
     private router: Router,
     private activeRouter: ActivatedRoute,
     private senderEmailService: SenderEmailService,
-    private helperService:HelperService
+    private helperService:HelperService,
+    private htmlToPdfService:HtmlToPdfService
   ) {
     this._user_id = this.auth.user.id;
     this.formSave = this.fb.group({
@@ -505,6 +507,10 @@ export class ThiSinhDangKyComponent implements OnInit {
   }
   isScrollEnabled: boolean =false
 
+  btnEpostPDF(item){
+    const textHTml =`<p style="width:100%; font-family: Arial;">Trần Minh Long</p>`;
+    this.htmlToPdfService.textHtmlToWord(textHTml, 'phiếu dự thi');
+  }
 
 }
 

@@ -5,6 +5,7 @@ import {asBlob} from "@shared/vendor/html-docx";
 import {FileService} from "@core/services/file.service";
 import {concatMap, from} from "rxjs";
 import {map} from "rxjs/operators";
+import jsPDF from "jspdf";
 
 const filePath = './example.docx';
 
@@ -135,5 +136,38 @@ export class HtmlToPdfService {
         );
       })
     );
+  }
+
+
+  textHtmlToWord(htmlContent:string, fileName:string) {
+    // var doc = new jsPDF();
+    // const html2= ` let htmlContent =  \`<!DOCTYPE html>
+    //     <html lang="en">
+    //         <head>
+    //           <meta charset="UTF-8">
+    //           <title>Document</title>
+    //         </head>
+    //         <body>
+    //              Trần Minh Long
+    //         </body></html>`
+    const html =`<b style="font-family: "Times New Roman", Times, serif;">long trần </b>`
+
+    var doc = new jsPDF();
+
+    // doc.setFont("Times New Roman", "normal");
+    doc.setFont("times", "normal");
+    doc.setFontSize(14);
+
+    const node : HTMLElement = document.createElement('div');
+
+    node.innerHTML = html;
+
+    doc.html(node, {
+      callback: function (doc) {
+        doc.save();
+      },
+      x: 10,
+      y: 10
+    });
   }
 }

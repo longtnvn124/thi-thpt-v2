@@ -160,6 +160,7 @@ export class PhongThiV2Component implements OnInit, OnChanges {
           m['__ngaythi_coverted'] = this.strToTime(m.ngaythi);
           m['__cathiCoverted'] = `<b>${m.cathi}</b><br>` + m.mota;
           m['__monthi_covered'] = this.dmMon ?  m.mon_ids.map(f=> this.dmMon.find(a=>a.id===f)) : [];
+          m['__time_start_coverted'] =m.time_start? (new Date(m.time_start).getHours() + ':'+ this.covernumber(new Date(m.time_start).getMinutes())): '';
           return m;
         });
         this.isLoading = false;
@@ -181,10 +182,7 @@ export class PhongThiV2Component implements OnInit, OnChanges {
     if (this.formCathi.valid) {
 
       const timetoServer = this.helperService.strToSQLDate(this.formCathi.value.ngaythi);
-      const timetoStart = (new Date(this.formCathi.value.time_start).getHours()).toString() + ':' + (new Date(this.formCathi.value.time_start).getMinutes()).toString() ;
-
       this.formCathi.value.ngaythi = timetoServer;
-      this.formCathi.value.time_start = timetoStart;
       const observer$: Observable<any> = this.typeAdd === 'ADD' ? this.thptHoidongCathiService.create(this.formCathi.value) : this.thptHoidongCathiService.update(this.caThiSelect.id, this.formCathi.value);
       if (this.typeAdd === 'UPDATE') {
         observer$.subscribe({
@@ -617,7 +615,7 @@ export class PhongThiV2Component implements OnInit, OnChanges {
               phongthi['monthi'] = pt['cathi'] && pt['cathi']['mon_ids'].length === 1 ? pt['cathi']['mon_ids'].map(c=>this.dmMon.find(n=>n.id === c).tenmon).join(', ') : thisinh.monthi_ids.filter(mon => mon !== 1).map(c=>this.dmMon.find(n=>n.id === c).tenmon).join(', ');
               phongthi['phong'] = pt.ten_phongthi;
               phongthi['ngaythi'] = pt['cathi'] ? pt['cathi']['__ngaythi_coverted'] :'';
-              phongthi['time_start'] = pt['cathi'] ? pt['cathi']['time_start'].replace(':','g') :'';
+              phongthi['time_start'] = pt['cathi'] ? pt['cathi']['__time_start_coverted'].replace(':','g') :'';
               thisinhparam['phongthi'].push(phongthi);
             })
             thisinhparam['created']  = false;
@@ -665,8 +663,6 @@ export class PhongThiV2Component implements OnInit, OnChanges {
 
         <p>Hội đồng thi: TNU - Hội đồng thi Đại học Thái Nguyên</p>
         <p>Địa chỉ Điểm thi: Trung tâm Khảo thí và Quản lý chất lượng – ĐHTN,  Phường Tân Thịnh – Thành phố Thái Nguyên</p>
-
-
         <p style="font-weight:700;">THÔNG TIN THI SINH:</p>
         <table width="100%" style="border:0;">
             <tr>
@@ -743,6 +739,9 @@ export class PhongThiV2Component implements OnInit, OnChanges {
       this.notifi.disableLoadingAnimationV2();
       return of('complete');
     }
+  }
+  covernumber(input:number){
+    return input<10 ? '0' + input: input.toString();
   }
 
 }
