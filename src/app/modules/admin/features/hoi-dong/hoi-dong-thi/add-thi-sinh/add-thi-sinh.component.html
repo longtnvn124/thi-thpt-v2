@@ -8,6 +8,7 @@
             <div class="p-datatable-header" style="height:65px; border-bottom:1px solid #CCC;">
               <h3 class="tbl-title ">Danh sách thí sinh đăng ký</h3>
               <div class="search-block ui-table-globalfilter-container ">
+                <p-dropdown placeholder="Trạng thái thanh toán..." [options]="trangthai_thanhtoan" optionValue="value" optionLabel="label" [(ngModel)]="type_select"  (onChange)="drdSelectTrangThai($event)"></p-dropdown>
 
               </div>
             </div>
@@ -78,7 +79,6 @@
             <div class="p-datatable-header" style="height:65px; border-bottom:1px solid #CCC;">
               <h3 class="tbl-title ">Danh sách thí sinh trong hội đồng</h3>
               <div class="search-block ui-table-globalfilter-container ">
-
               </div>
             </div>
             <div class="ovic-wrap-table-rps ovic-scroll-style"

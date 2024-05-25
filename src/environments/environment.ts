@@ -10,7 +10,6 @@ const realm = 'thithpt';
 // const host = ['h', 't', 't', 'p', 's', ':', '/', '/', 'a', 'p', 'i', '-', 'd', 'e', 'v', '.', 'i', 'c', 't', 'u', '.', 'v', 'n'];//offlline
 const host = ['h', 't', 't', 'p', 's', ':', '/', '/', 'v', 's', 'a', 't', '.', 't', 'n', 'u', '.', 'e', 'd', 'u', '.', 'v', 'n'];//online
 const port = '8091';//port online
-
 // const port = '10091';
 
 const port_socket = '10092';

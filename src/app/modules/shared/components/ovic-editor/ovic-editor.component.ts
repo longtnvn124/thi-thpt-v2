@@ -19,7 +19,6 @@ export class OvicEditorComponent implements OnInit, OnDestroy {
     this.clearPrevious.next();
     if (formControl) {
       formControl.valueChanges.pipe(takeUntil(this.clearPrevious)).subscribe(value => {
-        console.log(value);
         this.setData(value);
       });
 

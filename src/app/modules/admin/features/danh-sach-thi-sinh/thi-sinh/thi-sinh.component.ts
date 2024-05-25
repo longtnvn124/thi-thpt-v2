@@ -318,7 +318,7 @@ export class ThiSinhComponent implements OnInit {
 
   btnEditAcount(item:ThiSinhInfo){
     this.thissinhSelect = item;
-    console.log(item)
+
     this.notificationService.openSideNavigationMenu({
       name: this.menuName,
       template: this.formAcount,

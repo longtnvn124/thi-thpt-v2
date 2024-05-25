@@ -223,7 +223,7 @@ export class ThongTinThiSinhComponent implements OnInit {
             trangthaitotnghiep: data.trangthaitotnghiep,
           });
           this.userInfo = data;
-          console.log(this.userInfo);
+
         } else {
           this.checkdata = 1;
           this.formActive = this.listForm[FormType.ADDITION];
@@ -240,7 +240,7 @@ export class ThongTinThiSinhComponent implements OnInit {
 
   private __processFrom({data, object, type}: FormThisinh) {
     this.notifi.isProcessing(true);
-    console.log(data);
+
     if (type === FormType.ADDITION) {
       this.thisinhInfoService.create(data).subscribe({
         next: () => {
@@ -299,8 +299,7 @@ export class ThongTinThiSinhComponent implements OnInit {
       const quoctich = this.f['quoctich'].value ? 1 : 0;
       this.f['quoctich'].setValue(quoctich);
 
-      this.f['chuongtrinhhoc']
-      console.log(this.formSave);
+      // console.log(this.formSave);
 
       if (mattruoc && matsau && anh_chandung) {
         this.formActive.data = this.formSave.value;

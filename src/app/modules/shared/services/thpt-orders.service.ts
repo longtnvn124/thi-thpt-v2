@@ -283,20 +283,38 @@ export class ThptOrdersService {
     return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data));
   }
 
-  getDataBykehoachIdAndStatusUnlimit(kehoach_id:number, unIds ?: number[]):Observable<OrdersTHPT[]>{
+  getDataBykehoachIdAndStatusUnlimit(kehoach_id:number, unIds ?: number[], type_thanhtoan?:number):Observable<OrdersTHPT[]>{
     const conditions: OvicConditionParam[] = [
       {
         conditionName: 'kehoach_id',
         condition: OvicQueryCondition.equal,
         value: kehoach_id.toString(),
       },
-      {
+
+
+    ];
+    if(type_thanhtoan ===1){
+      const item:OvicConditionParam = {
         conditionName: 'trangthai_thanhtoan',
         condition: OvicQueryCondition.equal,
         value:'1',
-      },
+        orWhere:"and"
+      }
+      conditions.push(item)
+    }
 
-    ];
+    if(type_thanhtoan ===0){
+      const item1:OvicConditionParam = {
+        conditionName: 'trangthai_thanhtoan',
+        condition: OvicQueryCondition.notEqual,
+        value:'1',
+        orWhere:"and"
+      }
+
+      conditions.push(item1)
+    }
+
+
     const fromObject = {
       paged: 1,
       limit: -1,

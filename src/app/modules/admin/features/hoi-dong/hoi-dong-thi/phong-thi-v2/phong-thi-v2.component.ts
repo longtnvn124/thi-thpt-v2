@@ -177,12 +177,12 @@ export class PhongThiV2Component implements OnInit, OnChanges {
   //   return this.formPhongthi.controls;
   // }
   submitFormCathi() {
-    console.log(this.formCathi.value)
+
     if (this.formCathi.valid) {
 
       const timetoServer = this.helperService.strToSQLDate(this.formCathi.value.ngaythi);
       const timetoStart = (new Date(this.formCathi.value.time_start).getHours()).toString() + ':' + (new Date(this.formCathi.value.time_start).getMinutes()).toString() ;
-      console.log(timetoStart)
+
       this.formCathi.value.ngaythi = timetoServer;
       this.formCathi.value.time_start = timetoStart;
       const observer$: Observable<any> = this.typeAdd === 'ADD' ? this.thptHoidongCathiService.create(this.formCathi.value) : this.thptHoidongCathiService.update(this.caThiSelect.id, this.formCathi.value);
@@ -435,7 +435,7 @@ export class PhongThiV2Component implements OnInit, OnChanges {
     })).subscribe(
       {
         next:(data)=>{
-          console.log(data);
+
           const dataMap = data.map((m)=>{
             m['__ten_cathi'] = cathi.cathi;
             m['__ngaythi'] = this.strToTime(cathi.ngaythi);
@@ -623,8 +623,6 @@ export class PhongThiV2Component implements OnInit, OnChanges {
             thisinhparam['created']  = false;
             thisinhExport.push(thisinhparam);
           })
-          console.log(thisinhExport);
-
 
           this.notifi.isProcessing(true);
           if(this.dataCaThi.length > 0 && dsphongthi.length >0 ){
@@ -716,7 +714,6 @@ export class PhongThiV2Component implements OnInit, OnChanges {
             <th style="border: 1px solid black;border-collapse: collapse;text-align:center;" width="250px"><strong>Thời gian gọi thí sinh vào phòng thi</strong></th>
           </tr>
     `;
-      console.log(item['phongthi']);
       item['phongthi'].forEach((phongthi, index) => {
         message += `
       <tr style="border: 1px solid black;border-collapse: collapse;">
@@ -729,10 +726,10 @@ export class PhongThiV2Component implements OnInit, OnChanges {
         `;
       })
       message += `</table> <p>Thí sinh đến tập trung trước 30 phút để hoàn thành thủ tục vào thi và tiến tiến hành vào thi !</p>`
-      console.log(email)
+
       const emailsend: any = {
         title: 'THÔNG BÁO LỊCH THI V-SAT-TNU',
-        to: 'sparrowjack1812@gmail.com',
+        to: email,
         message: message
       }
       return this.senderEmailService.sendEmail(emailsend).pipe(switchMap(() => {

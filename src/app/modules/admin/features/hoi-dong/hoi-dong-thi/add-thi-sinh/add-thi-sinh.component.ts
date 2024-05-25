@@ -49,7 +49,10 @@ export class AddThiSinhComponent implements OnInit, OnChanges {
 
   listData: ThptHoiDongThiSinh[];
 
-
+  trangthai_thanhtoan = [
+    {label: ' Đã thanh toán ', value:1},
+    {label: ' Chưa thanh toán', value:0},
+  ]
   constructor(
     private orderSerivce: ThptOrdersService,
     private themeSettingsService: ThemeSettingsService,
@@ -93,7 +96,7 @@ export class AddThiSinhComponent implements OnInit, OnChanges {
     this.hoiDongThiSinhService.getDataByHoidongIdUnlimit(this.hoidong_id).pipe(switchMap(project => {
       const ids = project.length > 0 ? project.map(m => m.thisinh_id) : [];
 
-      return forkJoin<[ThptHoiDongThiSinh[], OrdersTHPT[]]>([of(project), this.orderSerivce.getDataBykehoachIdAndStatusUnlimit(this.kehoach_id, ids)]);
+      return forkJoin<[ThptHoiDongThiSinh[], OrdersTHPT[]]>([of(project), this.orderSerivce.getDataBykehoachIdAndStatusUnlimit(this.kehoach_id, ids,this.type_select)]);
     })).subscribe({
       next: ([dataThiSinh, orderThpt]) => {
         this.isLoading = false;
@@ -269,4 +272,10 @@ export class AddThiSinhComponent implements OnInit, OnChanges {
     this.emitDataChanges()
   }
 
+  type_select:number =1 ;
+  drdSelectTrangThai(event){
+    console.log(event);
+    this.type_select = event.value;
+    this.loadData();
+  }
 }

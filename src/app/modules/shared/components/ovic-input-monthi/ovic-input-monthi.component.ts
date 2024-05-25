@@ -92,7 +92,7 @@ export class OvicInputMonthiComponent implements OnInit {
   }
 
   // selelctMon(option, event) {
-  //   console.log(event);
+
   //   this.options.find(f => f.id === option.id).mon_id = event.value;
   //   console.log(this.options);
   // }

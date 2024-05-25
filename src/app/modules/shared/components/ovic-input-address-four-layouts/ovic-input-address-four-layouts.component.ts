@@ -26,7 +26,6 @@ export class OvicInputAddressFourLayoutsComponent implements OnInit, OnChanges {
 
   @Input() set formField(field: AbstractControl) {
 
-    console.log(field)
     this._formField = field;
   }
 
