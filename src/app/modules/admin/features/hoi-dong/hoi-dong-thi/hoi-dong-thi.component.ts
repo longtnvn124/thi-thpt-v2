@@ -17,6 +17,7 @@ import {DmMon} from "@shared/models/danh-muc";
 import {ExpostExcelPhongthiThisinhService} from "@shared/services/expost-excel-phongthi-thisinh.service";
 import {ThptHoidongThisinhService} from "@shared/services/thpt-hoidong-thisinh.service";
 import {error} from "@angular/compiler-cli/src/transformers/util";
+import {DatePipe} from "@angular/common";
 
 interface FormHoiDong extends OvicForm {
   object: ThptHoiDong;
@@ -340,21 +341,21 @@ export class HoiDongThiComponent implements OnInit {
             const cathi = dataCathi.find(f => f.id === m.cathi_id);
             m['__cathi_Covented'] = cathi ? cathi.cathi : '';
             m['__ngaythi'] = cathi ? this.helperService.formatSQLToDateDMY(new Date(cathi.ngaythi)) : '';
-            m['__time_start'] = cathi ? (new Date(cathi.time_start).getHours() + ':' + this.covernumber(new Date(cathi.time_start).getMinutes())) : '';
+            m['__time_start'] = cathi ? (this.covernumber(new Date(cathi.time_start).getHours()) + ':' + this.covernumber(new Date(cathi.time_start).getMinutes())) : '';
             return m;
           });
 
           if(dataThisinh.length>0 && dataCathi.length>0 && dataPhongthi.length  ){
             const thisinhsExpostExcel = [];
             dataThisinh.forEach((m,index)=>{
-
+              const datePipe = new DatePipe('en-US');
               const item = {};
               const thisinh = m['thisinh'];
               item['__indexTable'] = index + 1;
               item['__thisinh_id'] = thisinh ? thisinh['id'] : '';
-              item['__madk'] = thisinh ? 'TNU' + thisinh['id'] : '';
+              item['__madk'] = thisinh ? 'TNU' + this.covertId(thisinh['id']) : '';
               item['__hoten'] = thisinh ? thisinh['hoten'] : '';
-              item['__ngaysinh'] = thisinh ? thisinh['ngaysinh'] : '';
+              item['__ngaysinh'] = thisinh ? this.repplaceNgaysinh(thisinh['ngaysinh'])  : '';
               item['__gioitinh'] = thisinh && thisinh['gioitinh'] === 'nam' ? 'Nam' : (thisinh && thisinh['gioitinh'] === 'nu' ? 'Nữ' : '');
               item['__cccd'] = thisinh ? thisinh['cccd_so'] : '';
               item['__email'] = thisinh ? thisinh['email'] : '';
@@ -367,7 +368,7 @@ export class HoiDongThiComponent implements OnInit {
                 const cathiselect = dataCathi.find(f=>f.mon_ids.find(mon=>mon=== a.id));
                 // console.log(cathiselect)
                 const phongthi = dataPhongthi.find(phongthi => phongthi.thisinh_ids.find(id=>id === m.thisinh_id) && phongthi.cathi_id === cathiselect.id);
-                item['__sbd_' + a.kyhieu]       = m.monthi_ids.find(mon_id => mon_id === a.id)  ? 'TNU' + thisinh['id'] : '';
+                item['__sbd_' + a.kyhieu]       = m.monthi_ids.find(mon_id => mon_id === a.id)  ? 'TNU' + this.covertId(thisinh['id']) : '';
                 item['__cathi_' + a.kyhieu]     = m.monthi_ids.find(mon_id => mon_id === a.id) && cathiselect ? cathiselect.cathi : '';
                 item['__diadiem_' + a.kyhieu]   = m.monthi_ids.find(mon_id => mon_id === a.id)  ? 'Trung tâm Khảo thí và Quản lý chất lượng – ĐHTN, Phường Tân Thịnh – Thành phố Thái Nguyên' : '';
                 item['__phongthi_' + a.kyhieu]  = m.monthi_ids.find(mon_id => mon_id === a.id) && phongthi ? phongthi.ten_phongthi : '';
@@ -529,4 +530,17 @@ export class HoiDongThiComponent implements OnInit {
     'Ca', 'Phòng', 'Toán', 'Vật lí', 'Hóa học', 'Sinh học', 'Lịch sử', 'Địa lí', 'Tiếng Anh', 'Thời điểm gọi thí sinh', 'Địa điểm'
   ]
 
+  covertId(iput:number){
+    return iput<10? '000'+iput: (iput>10 && iput<100 ? '00'+ iput : (iput>100 && iput<1000 ? '0' +iput :iput));
+  }
+  repplaceNgaysinh (text:string){
+    const parts = text.split('/');
+    const day = parts[0];
+    const month = parts[1];
+    const year = parts[2];
+
+    // Chuyển đổi sang định dạng mới
+    const newDateString = `${year}-${month}-${day}`;
+    return newDateString;
+}
 }

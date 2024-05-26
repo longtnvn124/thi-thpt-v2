@@ -12,15 +12,8 @@ export class ExportExcelService {
 
   constructor() { }
 
-  public exportAsExcelFile(
-    reportHeading: string,
-    reportSubHeading: string,
-    headersArray: any[],
-    json: any[],
-    excelFileName: string,
-    sheetName: string
-  ) {
-
+  public exportAsExcelFile(reportHeading: string, reportSubHeading: string, headersArray: any[], json: any[], excelFileName: string, sheetName: string)
+  {
     const header = headersArray;
     const data = json;
     // Create workbook and worksheet
@@ -128,6 +121,9 @@ export class ExportExcelService {
     }
     return alpha;
   }
+
+
+
 
 
 

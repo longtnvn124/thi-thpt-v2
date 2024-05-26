@@ -37,23 +37,27 @@ export class ThiSinhDangKyComponent implements OnInit {
   dmMon: DmMon[];
   dmToHopMon: DmToHopMon[];
   keHoachThi: KeHoachThi[];
-  keHoachThi_dangky:KeHoachThi[];
+  keHoachThi_dangky: KeHoachThi[];
   private _user_id: number;
   formSave: FormGroup;
   totalDangkyMonThi: SumMonThi[];
   dataOrders: OrdersTHPT[];
   listStyle = [
     {
-      value: 1, title: '<div class="thanh-toan-check true text-center"><div></div><label>Đăng ký thành công</label></div>',
+      value: 1,
+      title: '<div class="thanh-toan-check true text-center"><div></div><label>Đăng ký thành công</label></div>',
     },
     {
-      value: 0, title: '<div class="thanh-toan-check false text-center"><div></div><label>Chưa thanh toán</label></div>',
+      value: 0,
+      title: '<div class="thanh-toan-check false text-center"><div></div><label>Chưa thanh toán</label></div>',
     },
     {
-      value: -1, title: '<div class="thanh-toan-check check text-center"><div></div><label>Đã thanh toán, chờ duyệt</label></div>',
+      value: -1,
+      title: '<div class="thanh-toan-check check text-center"><div></div><label>Đã thanh toán, chờ duyệt</label></div>',
     },
     {
-      value: 2, title: '<div class="thanh-toan-check check text-center"><div></div><label>Đang thực hiện thanh toán</label></div>',
+      value: 2,
+      title: '<div class="thanh-toan-check check text-center"><div></div><label>Đang thực hiện thanh toán</label></div>',
     }
   ]
 
@@ -82,8 +86,8 @@ export class ThiSinhDangKyComponent implements OnInit {
     private router: Router,
     private activeRouter: ActivatedRoute,
     private senderEmailService: SenderEmailService,
-    private helperService:HelperService,
-    private htmlToPdfService:HtmlToPdfService
+    private helperService: HelperService,
+    private htmlToPdfService: HtmlToPdfService
   ) {
     this._user_id = this.auth.user.id;
     this.formSave = this.fb.group({
@@ -130,7 +134,7 @@ export class ThiSinhDangKyComponent implements OnInit {
           m['__kehoach_thi'] = this.keHoachThi && this.keHoachThi.find(f => f.id === m.kehoach_id).dotthi ? this.keHoachThi.find(f => f.id === m.kehoach_id).dotthi : '';
           m['__lephithi_covered'] = m.lephithi;
 
-          m['__status_converted'] =m.trangthai_thanhtoan === 1 ? this.listStyle.find(f => f.value === 1).title : (m.trangthai_thanhtoan === 0 && m.trangthai_chuyenkhoan === 0 ? this.listStyle.find(f => f.value === 0).title : (m.trangthai_thanhtoan=== 0 && m.trangthai_chuyenkhoan === 1 ? this.listStyle.find(f => f.value === -1).title :(m.trangthai_thanhtoan=== 2 ? this.listStyle.find(f => f.value === 2).title : '' ) ));
+          m['__status_converted'] = m.trangthai_thanhtoan === 1 ? this.listStyle.find(f => f.value === 1).title : (m.trangthai_thanhtoan === 0 && m.trangthai_chuyenkhoan === 0 ? this.listStyle.find(f => f.value === 0).title : (m.trangthai_thanhtoan === 0 && m.trangthai_chuyenkhoan === 1 ? this.listStyle.find(f => f.value === -1).title : (m.trangthai_thanhtoan === 2 ? this.listStyle.find(f => f.value === 2).title : '')));
           m['__monthi_covered'] = this.dmMon ? m.mon_id.map(b => this.dmMon.find(f => f.id == b) ? this.dmMon.find(f => f.id == b) : []) : [];
           return m;
         });
@@ -172,10 +176,14 @@ export class ThiSinhDangKyComponent implements OnInit {
           return m;
         })
         const curentDate = new Date();
-        this.keHoachThi_dangky = keHoachThi.filter(f=> (this.helperService.formatSQLDate(new Date(f.ngayketthuc))) >= this.helperService.formatSQLDate(curentDate));
+        this.keHoachThi_dangky = keHoachThi.filter(f => (this.helperService.formatSQLDate(new Date(f.ngayketthuc))) >= this.helperService.formatSQLDate(curentDate));
+        console.log(this.keHoachThi_dangky)
         this.keHoachThi = keHoachThi;
         this.lephithiData = options;
-        this.lephithiData['_value_coverted'] = options.value.toLocaleString('vi-VN', {style: 'currency', currency: 'VND'});
+        this.lephithiData['_value_coverted'] = options.value.toLocaleString('vi-VN', {
+          style: 'currency',
+          currency: 'VND'
+        });
         if (this.userInfo) {
           this.getDataOrder();
         }
@@ -217,7 +225,7 @@ export class ThiSinhDangKyComponent implements OnInit {
   }
 
   SaveForm() {
-    this.isLoading=true;
+    this.isLoading = true;
 
     const kehoachid = this.f['kehoach_id'].value;
     if (this.formSave.valid) {
@@ -227,7 +235,7 @@ export class ThiSinhDangKyComponent implements OnInit {
       this.dotthi_id_select = 0;
       const monIds_select = this.hinhthucthiSlect === 0 ? this.f['mon_ids'].value : this.dmToHopMon.find(f => f.id === this.f['tohopmon_ids'].value).mon_ids;
       let listMon_ids: number[] = [];
-      this.dataOrders.filter(f=>f.kehoach_id === kehoach_id).forEach(f => {
+      this.dataOrders.filter(f => f.kehoach_id === kehoach_id).forEach(f => {
         listMon_ids = listMon_ids.concat(f.mon_id);
       });
       listMon_ids = [...new Set(listMon_ids)];
@@ -271,45 +279,51 @@ export class ThiSinhDangKyComponent implements OnInit {
               this.sendEmail(this.userInfo, order);
               this.loadInit();
               this.resetForm();
-              this.isLoading=false;
+              this.isLoading = false;
             },
             error: () => {
-              this.isLoading=false;
+              this.isLoading = false;
               this.notifi.toastError('Thí sinh đăng ký thất bại');
               this.notifi.isProcessing(false);
             }
           })
         } else {
           this.notifi.toastError('Môn bạn chọn đã được đăng ký,vui lòng kiểm tra lại.');
-          this.isLoading=false;
+          this.isLoading = false;
 
         }
       } else {
         this.notifi.toastError('Bạn chưa chọn môn thi');
-        this.isLoading=false;
+        this.isLoading = false;
 
       }
     } else {
       this.notifi.toastError('Vui lòng chọn đủ thông tin');
-      this.isLoading=false;
+      this.isLoading = false;
     }
   }
 
   getPayment(item: OrdersTHPT) {
-    const kehoachSelect = this.keHoachThi.find(f=>f.id === item.kehoach_id)
-    if( this.helperService.formatSQLDate(new Date())  <= this.helperService.formatSQLDate(new Date(kehoachSelect.ngayketthuc)) ){
+    const kehoachSelect = this.keHoachThi.find(f => f.id === item.kehoach_id)
+    this.isLoading = true;
+    if (this.helperService.formatSQLDate(new Date()) <= this.helperService.formatSQLDate(new Date(kehoachSelect.ngayketthuc))) {
       const fullUrl: string = `${location.origin}${this.router.serializeUrl(this.router.createUrlTree(['admin/thi-sinh/dang-ky/']))}`;
       const content = 'VSAT' + item.id;
-      this.ordersService.getPayment(item.id, fullUrl,content).subscribe({
+      this.ordersService.getPayment(item.id, fullUrl, content).subscribe({
         next: (data) => {
           window.location.assign(data);
           this.ngType = 0;
           this.notifi.isProcessing(false);
+          this.isLoading = false;
+          this.isLoading = false;
         }, error: () => {
+          this.isLoading = false;
           this.notifi.isProcessing(false);
         }
       })
-    }else{
+    } else {
+      this.isLoading = false;
+
       this.notifi.toastError('Đã hết thời hạn đăng ký môn trong đợt thi này');
     }
   }
@@ -422,7 +436,7 @@ export class ThiSinhDangKyComponent implements OnInit {
             </tr>
             <tr>
                 <td style="width:100px;">Nơi cấp:</td>
-                <td style="font-weight:600">${user.cccd_noicap ? user.cccd_noicap :'Không xác định'}</td>
+                <td style="font-weight:600">${user.cccd_noicap ? user.cccd_noicap : 'Không xác định'}</td>
             </tr>
         </table>
 
@@ -442,7 +456,10 @@ export class ThiSinhDangKyComponent implements OnInit {
       <tr style="border: 1px solid black;border-collapse: collapse;">
         <td style="border: 1px solid black;border-collapse: collapse; text-align:center;">${index + 1}</td>
         <td style="border: 1px solid black;border-collapse: collapse;">${mon.tenmon}</td>
-        <td style="border: 1px solid black;border-collapse: collapse; text-align:right;">${ parseInt(String(this.lephithiData.value)).toLocaleString('vi-VN', {style: 'currency', currency: 'VND'})}</td>
+        <td style="border: 1px solid black;border-collapse: collapse; text-align:right;">${parseInt(String(this.lephithiData.value)).toLocaleString('vi-VN', {
+          style: 'currency',
+          currency: 'VND'
+        })}</td>
       </tr>
     `;
       }
@@ -459,7 +476,7 @@ export class ThiSinhDangKyComponent implements OnInit {
     <p style="color: #ce3b04;">- Trạng thái thanh toán: Chưa thanh toán.</p>
     <p>- Bạn vui lòng thanh toán lệ phí thi để hoàn tất quá trình đăng ký thi.</p>
 `;
-    const emailsend:any = {
+    const emailsend: any = {
       to: this.auth.user.email,
       title: ' Email thông báo đăng ký thành công',
       message: message
@@ -505,10 +522,11 @@ export class ThiSinhDangKyComponent implements OnInit {
       }
     })
   }
-  isScrollEnabled: boolean =false
 
-  btnEpostPDF(item){
-    const textHTml =`<p style="width:100%; font-family: Arial;">Trần Minh Long</p>`;
+  isScrollEnabled: boolean = false
+
+  btnEpostPDF(item) {
+    const textHTml = `<p style="width:100%; font-family: Arial;">Trần Minh Long</p>`;
     this.htmlToPdfService.textHtmlToWord(textHTml, 'phiếu dự thi');
   }
 

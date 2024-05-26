@@ -125,6 +125,19 @@ export class ThisinhInfoService {
     return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data));
   }
 
+  getDataBythisinhIdsandSelect(thisinhids: number[]):Observable<ThiSinhInfo[]>{
+    const conditions: OvicConditionParam[] = [];
+    const fromObject = {
+      paged: 1,
+      limit: -1,
+      include: thisinhids.join(','),
+      include_by: 'id',
+      select:'id,hoten,ngaysinh,gioitinh,cccd_so'
+    }
+    const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }));
+    return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data));
+  }
+
   getCountThiSinh():Observable<number>{
     return this.http.get<Dto>(this.api, ).pipe(map(res => res.recordsFiltered));
   }

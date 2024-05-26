@@ -6,6 +6,19 @@ import {itemExportExcel} from "@modules/admin/features/hoi-dong/hoi-dong-thi/hoi
 
 const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
 const EXCEL_EXTENSION = '.xlsx';
+
+
+
+export interface PhongthiExportExcel {
+  ten_phongthi: string;
+  cathi_name:string;
+  cathi_ngaythi: string;
+  time_ngaythi: string;
+  monthi: string;
+  thisinh:any[]
+}
+
+
 @Injectable({
   providedIn: 'root'
 })
@@ -155,8 +168,6 @@ export class ExpostExcelPhongthiThisinhService {
 
 
     const worksheet2 = workbook.addWorksheet("V-SAT-TNU_ROOM" );
-
-    worksheet2.addRow([]);
     const headerRow2 = worksheet2.addRow(sheet2Header);
     headerRow2.eachCell((cell, index) => {
 
@@ -266,7 +277,6 @@ export class ExpostExcelPhongthiThisinhService {
 
   public exportExcelToHoidong(ten_hoidong:string, headerArray:string[], dataMap:itemExportExcel[]){
     const workbook = new Workbook();
-
     dataMap.forEach((item)=>{
       const sheetname = item.sheet_name;
       const worksheet = workbook.addWorksheet(sheetname, { pageSetup: { paperSize: 9, orientation: 'portrait' } });
@@ -379,4 +389,172 @@ export class ExpostExcelPhongthiThisinhService {
     });
   }
 
+
+  exportHoidongPhongthi(fileName:string,headerArray:string[],dataMap: PhongthiExportExcel[] ){
+    const workbook = new Workbook();
+    dataMap.forEach((item)=>{
+      const sheetname ='Phòng ' + item.ten_phongthi;
+      const worksheet = workbook.addWorksheet(sheetname, { pageSetup: { paperSize: 9, orientation: 'portrait' } });
+
+      // const header_Cathi = item.;
+      // const header_phongthi = "Phòng : " + item.header_phongthi;
+      // const header_ngaythi = 'Ngày thi: ' + item.header_ngaythi;
+      // const time_start = "Môn thi: " + item.monthi + ', Thời gian Bắt đầu thi: ' + item.time_start;
+
+      worksheet.addRow([]);
+      // worksheet.mergeCells('A1:' + this.numToAlpha(headerArray.length - 1) + '1');
+      worksheet.getCell('C1').alignment = { vertical: 'middle', horizontal: 'center' };
+      worksheet.getCell('C1').value = 'BỘ GIÁO DỤC VÀ ĐÀO TẠO';
+      worksheet.getCell('C1').font = {size: 13, bold: false, name: 'Times New Roman',underline: false};
+      worksheet.getCell('F1').value = 'Ngày thi: ' + item.cathi_ngaythi;
+      worksheet.getCell('F1').font = {size: 13, bold: true, name: 'Times New Roman',underline: false};
+
+      worksheet.addRow([]);
+      worksheet.getCell('C2').alignment = { vertical: 'middle', horizontal: 'center', };
+      worksheet.getCell('C2').value = 'ĐẠI HỌC THÁI NGUYÊN';
+      worksheet.getCell('C2').font = {size: 13, bold: true, name: 'Times New Roman',underline: true};
+      worksheet.getCell('F2').value = 'Ca thi: ' + item.cathi_name;
+      worksheet.getCell('F2').font = {size: 13, bold: true, name: 'Times New Roman',underline: false};
+
+      worksheet.addRow([]);
+      worksheet.getCell('F3').font = {size: 13, bold: true, name: 'Times New Roman',underline: false};
+      worksheet.getCell('F3').value = 'Giờ gọi thí sinh: ' + item.time_ngaythi;
+
+      worksheet.addRow([]);
+      worksheet.getCell('F4').font = {size: 13, bold: true, name: 'Times New Roman',underline: false};
+      worksheet.getCell('F4').value = 'Giờ bắt đầu làm bài: ';
+
+      worksheet.addRow([]);
+      worksheet.getCell('F5').font = {size: 13, bold: true, name: 'Times New Roman',underline: false};
+      worksheet.getCell('F5').value = 'Giờ kết thúc làm bài: ';
+
+      worksheet.addRow([]);
+      worksheet.getCell('F6').font = {size: 13, bold: true, name: 'Times New Roman',underline: false};
+      worksheet.getCell('F6').value = 'Phòng thi:' + item.ten_phongthi;
+
+      worksheet.addRow([]);
+      worksheet.getCell('F7').font = {size: 13, bold: true, name: 'Times New Roman',underline: false};
+      worksheet.getCell('F7').value = 'Môn thi:' + item.monthi;
+
+      worksheet.addRow([]);
+      worksheet.addRow(['DANH SÁCH THÍ SINH DỰ THI']);
+      worksheet.mergeCells('A9:' + this.numToAlpha(headerArray.length - 1) + '9');
+      worksheet.getCell('A9').alignment = { vertical: 'middle', horizontal: 'center' };
+      worksheet.getCell('A9').font = { size: 17, bold: true, name: 'Times New Roman' };
+      worksheet.addRow([]);
+
+      const row = worksheet.addRow(headerArray);
+      row.worksheet.pageSetup.showRowColHeaders = true;
+      row.eachCell((cell, number) => {
+        cell.fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: 'FFFFFF' },
+          bgColor: { argb: 'FFFFFF' },
+        };
+        cell.font = { name: 'Times New Roman', family: 1, size: 12, bold: true };
+        cell.alignment = { vertical: 'middle', horizontal: 'center', shrinkToFit: true, wrapText: true };
+        cell.border = {
+          top: { style: 'thin', color: { argb: '333333' } },
+          left: { style: 'thin', color: { argb: '333333' } },
+          bottom: { style: 'thin', color: { argb: '333333' } },
+          right: { style: 'thin', color: { argb: '333333' } }
+        };
+      });
+
+      const objectColWidth = {
+        1: 6,
+        2: 21,
+        3: 30,
+        4: 16,
+        5: 11,
+        6: 26,
+        7: 20,
+      };
+      this.setColWidth(worksheet, objectColWidth);
+
+      // Get all columns from JSON
+      let columnsArray: any[];
+      for (const key in item.thisinh) {
+        if (item.thisinh.hasOwnProperty(key)) {
+          columnsArray = Object.keys(item.thisinh[key]);
+        }
+      }
+      //Add Data and Conditinal Formatting
+      item.thisinh.forEach((element: any) => {
+        const eachRow = [];
+        columnsArray.forEach((column) => {
+          eachRow.push(element[column]);
+        });
+        const Row = worksheet.addRow(eachRow);
+        Row.eachCell((cell, colNumber) => {
+          cell.font = { name: 'Times New Roman', family: 1, size: 13, bold: false };
+          cell.border = {
+            top: { style: 'thin', color: { argb: '333333' } },
+            left: { style: 'thin', color: { argb: '333333' } },
+            bottom: { style: 'thin', color: { argb: '333333' } },
+            right: { style: 'thin', color: { argb: '333333' } }
+          };
+
+          if (colNumber === 1) { // Assuming colNumber 1 is the first column
+            cell.alignment = { vertical: 'middle', horizontal: 'center' };
+          } else if (colNumber === 2) { // Assuming colNumber 2 is the second column
+            cell.alignment = { vertical: 'middle', horizontal: 'center' };
+          }else if (colNumber === 3) { // Assuming colNumber 2 is the second column
+            cell.alignment = { vertical: 'middle', horizontal: 'left' };
+          }else if (colNumber === 4) { // Assuming colNumber 2 is the second column
+            cell.alignment = { vertical: 'middle', horizontal: 'center' };
+          }else if (colNumber === 5) { // Assuming colNumber 2 is the second column
+            cell.alignment = { vertical: 'middle', horizontal: 'center' };
+          }else if (colNumber === 6) { // Assuming colNumber 2 is the second column
+            cell.alignment = { vertical: 'middle', horizontal: 'right' };
+          }else if (colNumber === 7) { // Assuming colNumber 2 is the second column
+            cell.alignment = { vertical: 'middle', horizontal: 'right' };
+          }
+        })
+      });
+
+      worksheet.addRow([]);
+      worksheet.addRow([]);
+      worksheet.getCell('A' + (12 + item.thisinh.length + 1)).value = 'Tổng số thí sinh:';
+      worksheet.getCell('A' + (12 + item.thisinh.length + 1)).font = {size: 13, bold: false, name: 'Times New Roman',underline: false};
+      worksheet.addRow([]);
+      worksheet.getCell('A' + (12 + item.thisinh.length + 1 + 1)).value = 'Số Thí sinh vắng mặt:';
+      worksheet.getCell('A' + (12 + item.thisinh.length + 1 + 1)).font = {size: 13, bold: false, name: 'Times New Roman',underline: false};
+      worksheet.addRow([]);
+      worksheet.getCell('A' + (12 + item.thisinh.length + 1 + 2)).value = 'Số Thí sinh dự thi:';
+      worksheet.getCell('A' + (12 + item.thisinh.length + 1 +2)).font = {size: 13, bold: false, name: 'Times New Roman',underline: false};
+      worksheet.addRow([]);
+      worksheet.getCell('A' + (12 + item.thisinh.length + 1 +3)).value = 'Số báo danh vắng:';
+      worksheet.getCell('A' + (12 + item.thisinh.length + 1 +3)).font = {size: 13, bold: false, name: 'Times New Roman',underline: false};
+      worksheet.addRow([]);
+      worksheet.addRow([]);
+      worksheet.getCell('B' + (13 + item.thisinh.length + 5)).value = 'Cán bộ coi thi 1:';
+      worksheet.getCell('B' + (13 + item.thisinh.length + 5)).font = {size: 13, bold: true, name: 'Times New Roman',underline: false};
+      worksheet.getCell('B' + (13 + item.thisinh.length + 5)).alignment = { vertical: 'middle', horizontal: 'center' }
+      worksheet.getCell('C' + (13 + item.thisinh.length + 5)).value = 'Cán bộ coi thi 2:';
+      worksheet.getCell('C' + (13 + item.thisinh.length + 5)).font = {size: 13, bold: true, name: 'Times New Roman',underline: false};
+      worksheet.getCell('C' + (13 + item.thisinh.length + 5)).alignment = { vertical: 'middle', horizontal: 'center' }
+      worksheet.getCell('F' + (13 + item.thisinh.length + 5)).value = 'Thái Nguyên, ngày     tháng      năm   ';
+      worksheet.getCell('F' + (13 + item.thisinh.length + 5)).font = {size: 13, bold: false, name: 'Times New Roman',underline: false};
+      worksheet.getCell('F' + (13 + item.thisinh.length + 5)).alignment = { vertical: 'middle', horizontal: 'center' };
+      worksheet.addRow([]);
+      worksheet.getCell('B' + (13 + item.thisinh.length + 6)).value = '(Ký, ghi rõ họ tên)';
+      worksheet.getCell('B' + (13 + item.thisinh.length + 6)).font = {size: 13, bold: false, name: 'Times New Roman',underline: false};
+      worksheet.getCell('B' + (13 + item.thisinh.length + 6)).alignment = { vertical: 'middle', horizontal: 'center' }
+      worksheet.getCell('C' + (13 + item.thisinh.length + 6)).value = '(Ký, ghi rõ họ tên)';
+      worksheet.getCell('C' + (13 + item.thisinh.length + 6)).alignment = { vertical: 'middle', horizontal: 'center' }
+      worksheet.getCell('C' + (13 + item.thisinh.length + 6)).font = {size: 13, bold: false, name: 'Times New Roman',underline: false};
+      worksheet.getCell('F' + (13 + item.thisinh.length + 6)).value = 'CHỦ TỊCH HỘI ĐỒNG';
+      worksheet.getCell('F' + (13 + item.thisinh.length + 6)).font = {size: 13, bold: true, name: 'Times New Roman',underline: false};
+      worksheet.getCell('F' + (13 + item.thisinh.length + 6)).alignment = { vertical: 'middle', horizontal: 'center' }
+    })
+
+
+
+    workbook.xlsx.writeBuffer().then(buffer => {
+      const data: Blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      fs.saveAs(data, 'V-SAT-TNU ('+ fileName +').xlsx' );
+    });
+  }
 }

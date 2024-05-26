@@ -102,7 +102,7 @@
 
                         <td class="text-center">{{ item['_indexTable'] }}</td>
 
-                        <td class="text-left" [innerHTML]="item['__cathiCoverted'] |ovicSafeHtml"></td>
+                        <td class="text-center" [innerHTML]="item['__cathiCoverted'] |ovicSafeHtml"></td>
                         <td>
                           <div class="d-flex flex-wrap " style="gap:6px;">
                             <div *ngFor=" let mon of item['__monthi_covered']"
@@ -116,6 +116,7 @@
                         <td class="text-center">{{item['__time_start_coverted']}}</td>
                         <td>
                           <div class="d-flex justify-content-center align-items-center " style="gap:10px;">
+                            <button pRipple pButton pTooltip="Xuất danh sách phòng thi " class="p-button-success" tooltipPosition="left" icon="pi pi-file-excel" (click)="btnExportExcelRoom(item)"></button>
                             <button pRipple pButton pTooltip="Xuất Album ảnh thí sinh" tooltipPosition="left" icon="pi pi-file-word" (click)="btnExportAlbum(item)"></button>
                             <button pButton pRipple pTooltip="Phòng thi" tooltipPosition="left"  icon="pi pi-calendar-plus"
                                     class="p-button-secondary" (click)="btnViewSitePhongthi(item)"></button>
@@ -148,7 +149,7 @@
   <ng-container *ngSwitchCase="'PHONGTHI'">
     <div class="w-100" style="height:calc(100vh - 60px - 20px)">
       <div class="w-100 p-2 ovic-scroll-style overflow-hidden overflow-y-auto" style="background:#f7f7f7; height:calc(100vh - 90px)">
-        <div>
+        <div class="my-1">
           <button pRipple pButton label="quay lại phòng thi" icon="pi pi-sign-out" (click)="btnReturnCathi()" ></button>
         </div>
 
@@ -160,7 +161,7 @@
             </div>
             <ng-template #tableData>
               <div class="p-datatable-header" style="border-bottom:1px solid #CCC;">
-                <h3 class="tbl-title ">Danh sách phòng thi {{ caThiSelect.cathi }}</h3>
+                <h3 class="tbl-title ">Danh sách phòng thi {{'Ca ' + caThiSelect.cathi }}</h3>
               </div>
               <p-table [value]="dsPhongThi" [loading]="isLoading  " [rowHover]="true"
                        [showCurrentPageReport]="false" [tableStyle]="{ 'min-width': '100px' }">
