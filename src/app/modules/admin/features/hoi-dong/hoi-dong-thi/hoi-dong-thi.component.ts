@@ -334,7 +334,7 @@ export class HoiDongThiComponent implements OnInit {
         next:(data)=>{
           const dataThisinh = data[0];
           const dataCathi: ThptCathi[] = data[1][0].map(m=>{
-              m['__time_start']= m ? (new Date(m.time_start).getHours() + ':' + this.covernumber(new Date(m.time_start).getMinutes())) : '';
+              m['__time_start']= m ? (this.covernumber(new Date(m.time_start).getHours()) + ':' + this.covernumber(new Date(m.time_start).getMinutes())) : '';
             return m;
           });
           const dataPhongthi: ThptHoiDongPhongThi[] = data[1][1].map(m => {
