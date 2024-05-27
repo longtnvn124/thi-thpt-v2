@@ -42,7 +42,7 @@ export class ExpostExcelPhongthiThisinhService {
       const worksheet = workbook.addWorksheet("V-SAT-TNU_SBD" );
 
 
-      worksheet.addRow([]);
+      // worksheet.addRow([]);
       const headerRow = worksheet.addRow(header);
       headerRow.eachCell((cell, index) => {
 

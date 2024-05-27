@@ -7,10 +7,10 @@ export const environment = {
 // run locall
 
 const realm = 'thithpt';
-// const host = ['h', 't', 't', 'p', 's', ':', '/', '/', 'a', 'p', 'i', '-', 'd', 'e', 'v', '.', 'i', 'c', 't', 'u', '.', 'v', 'n'];//offlline
-const host = ['h', 't', 't', 'p', 's', ':', '/', '/', 'v', 's', 'a', 't', '.', 't', 'n', 'u', '.', 'e', 'd', 'u', '.', 'v', 'n'];//online
-const port = '8091';//port online
-// const port = '10091';
+const host = ['h', 't', 't', 'p', 's', ':', '/', '/', 'a', 'p', 'i', '-', 'd', 'e', 'v', '.', 'i', 'c', 't', 'u', '.', 'v', 'n'];//offlline
+// const host = ['h', 't', 't', 'p', 's', ':', '/', '/', 'v', 's', 'a', 't', '.', 't', 'n', 'u', '.', 'e', 'd', 'u', '.', 'v', 'n'];//online
+// const port = '8091';//port online
+const port = '10091';
 
 const port_socket = '10092';
 const ws_url = ['w', 's', 's', ':', '/', '/', 'a', 'p', 'i', '-', 'd', 'e', 'v', '.', 'i', 'c', 't', 'u', '.', 'v', 'n'];
@@ -118,8 +118,8 @@ export const ENCRYPT_KEY = 'thithptW4jM2P5r';
 export const APP_STORES = 'thithpt4QfWtr6Z'; // no clear after logout
 export const SWITCH_DONVI_ID = 'thithptC@gGA506'; // no clear after logout
 
-// export const X_APP_ID = '64c9a192-cc0e-4198-acb8-2188dbb472fa';//dev
-export const X_APP_ID = 'E3FAF94F-60AA-40FD-9FE4-07860B4F9264';// online for dev
+export const X_APP_ID = '64c9a192-cc0e-4198-acb8-2188dbb472fa';//dev
+// export const X_APP_ID = 'E3FAF94F-60AA-40FD-9FE4-07860B4F9264';// online for dev
 
 export const imgFalback = 'assets/images/placeholder.jpg';
 

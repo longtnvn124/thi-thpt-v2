@@ -19,7 +19,7 @@ import {SenderEmailService} from "@shared/services/sender-email.service";
 import {HtmlToPdfService} from "@shared/services/html-to-pdf.service";
 import {FileService} from "@core/services/file.service";
 import {ThptHoiDong, ThptHoiDongService} from "@shared/services/thpt-hoi-dong.service";
-import {forkJoin, from, Observable, of, switchMap} from "rxjs";
+import {filter, forkJoin, from, Observable, of, switchMap} from "rxjs";
 import {WAITING_POPUP} from "@shared/utils/syscat";
 import {catchError, delay, map} from "rxjs/operators";
 import {BUTTON_NO, BUTTON_YES} from "@core/models/buttons";
@@ -320,6 +320,7 @@ export class PhongThiV2Component implements OnInit, OnChanges {
           dsThisinhParram.push(m);
         }
       })
+      console.log(dsThisinhParram);
       const newPhongs = this.setUptestRoom(this.dataPhongThi, dsThisinhParram);
 
       const step: number = 100 / newPhongs.length;
@@ -345,12 +346,8 @@ export class PhongThiV2Component implements OnInit, OnChanges {
         }
       })
     } else {
-      const dsThisinhParram = [];
-      this.dataThisinhInHoidong.forEach(m => {
-        if (m.monthi_ids.find(f => f !== 1) && m.monthi_ids.length > 1) {
-          dsThisinhParram.push(m);
-        }
-      })
+      const dsThisinhParram = this.coverthisinhParramnotMath(this.dataThisinhInHoidong);
+
       const newPhongs = this.setUptestRoom(this.dataPhongThi, dsThisinhParram);
       const step: number = 100 / newPhongs.length;
       const objectCathi = {
@@ -361,7 +358,6 @@ export class PhongThiV2Component implements OnInit, OnChanges {
         time_start: this.formCathi.value.time_start,
         mon_ids: this.dmMon.filter(f => f.id !== 1).map(m => parseInt(String(m.id)))
       }
-
       this.thptHoidongCathiService.create(objectCathi).pipe(switchMap(id => {
         return this.createTestRoomControl(newPhongs, id, step, 0)
       })).subscribe({
@@ -375,8 +371,20 @@ export class PhongThiV2Component implements OnInit, OnChanges {
           this.loadDataCathi();
         }
       })
-
     }
+  }
+
+  coverthisinhParramnotMath( thisinhInHoidong:ThptHoiDongThiSinh[]){
+    const ids:number[] = [];
+    const dsThisinhParram = [];
+    thisinhInHoidong.forEach(m => {
+      if (m.monthi_ids.find(f => f === 1)) {
+        ids.push(m.id);
+        dsThisinhParram.push(m);
+      }
+    })
+    const DsThisinhNotToant = thisinhInHoidong.filter(thiSinh => !ids.includes(thiSinh.id));
+    return [].concat(dsThisinhParram,DsThisinhNotToant);
   }
 
   setUptestRoom(dataphongthi: { phongso: number, soluong }[], dsthisinh: ThptHoiDongThiSinh[]) {
