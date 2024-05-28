@@ -320,7 +320,7 @@ export class PhongThiV2Component implements OnInit, OnChanges {
           dsThisinhParram.push(m);
         }
       })
-      console.log(dsThisinhParram);
+
       const newPhongs = this.setUptestRoom(this.dataPhongThi, dsThisinhParram);
 
       const step: number = 100 / newPhongs.length;
@@ -451,6 +451,7 @@ export class PhongThiV2Component implements OnInit, OnChanges {
           const dataMap = data.map((m) => {
             m['__ten_cathi'] = cathi.cathi;
             m['__ngaythi'] = this.strToTime(cathi.ngaythi);
+            m['hoidong'] = this.hoidong
             return m;
           })
           if (data.length > 0) {
@@ -588,12 +589,13 @@ export class PhongThiV2Component implements OnInit, OnChanges {
   btnReturnPhongthi() {
     this.switchPage = "PHONGTHI"
   }
-
+  sendEmailLoadding:boolean = false;
   async btnSendEmail() {
     const button = await this.notifi.confirmRounded('Gửi email thông báo lịch thi cho thí sinh ', 'XÁC NHẬN', [BUTTON_NO, BUTTON_YES]);
     if (button.name === BUTTON_YES.name) {
       const cathi_ids = this.dataCaThi.map(f => f.id);
-
+      this.notifi.isProcessing(true)
+      this.sendEmailLoadding= true;
       forkJoin<[ThptHoiDongThiSinh[], ThptHoiDongPhongThi[]]>(
         this.hoidongThissinhService.getDataByHoiDongIdNotPage(this.hoidong_id),
         this.hoidongPhongThiService.getDataByHoidongVaCathiIds(this.hoidong_id, cathi_ids)
@@ -622,7 +624,7 @@ export class PhongThiV2Component implements OnInit, OnChanges {
             thisinhparam['cccd_so'] = thisinhInfo ? thisinhInfo['cccd_so'] : '';
             thisinhparam['noisinh'] = thisinhInfo ? thisinhInfo['noisinh'] : '';
 
-            thisinhparam['sobaodanh'] = thisinhInfo ? 'TNU' + this.covertId(thisinhInfo['id']) : '';
+            thisinhparam['sobaodanh'] = thisinhInfo ? this.hoidong.tiento_sobaodanh + this.covertId(thisinhInfo['id']) : '';
 
             thisinhparam['phongthi'] = [];
             // const lichthi = []
@@ -639,7 +641,7 @@ export class PhongThiV2Component implements OnInit, OnChanges {
             thisinhExport.push(thisinhparam);
           })
 
-          this.notifi.isProcessing(true);
+
           if (this.dataCaThi.length > 0 && dsphongthi.length > 0) {
             const step: number = 100 / thisinhExport.length;
             this.notifi.loadingAnimationV2({process: {percent: 0}});
@@ -653,15 +655,19 @@ export class PhongThiV2Component implements OnInit, OnChanges {
                 this.notifi.disableLoadingAnimationV2();
               }
             })
+            this.notifi.isProcessing(false)
+
           } else {
             this.notifi.isProcessing(false);
             this.notifi.toastWarning('Chưa có dữ liệu phòng thi');
           }
-
         }, error: (e) => {
+          this.notifi.isProcessing(false);
           this.notifi.toastError('Load dữ liêu không thành công');
         }
       })
+      this.sendEmailLoadding= false;
+
     }
   }
 
@@ -675,8 +681,16 @@ export class PhongThiV2Component implements OnInit, OnChanges {
 
         <p style="font-size:20px;font-weight: 500"> Xin chào ${item['hoten']} !</p>
 
-        <p>Hội đồng thi: TNU - Hội đồng thi Đại học Thái Nguyên</p>
-        <p>Địa chỉ Điểm thi: Trung tâm Khảo thí và Quản lý chất lượng – ĐHTN,  Phường Tân Thịnh – Thành phố Thái Nguyên</p>
+        <p>Hội đồng thi Đại học Thái Nguyên (V-SAT-TNU) thông báo tới bạn địa điểm và thời gian dự thi cụ thể như sau: </p>
+        <p><strong>Địa điểm thi: </strong></p>
+        <p>- Trung tâm Khảo thí và Quản lý chất lượng – Đại học Thái Nguyên</p>
+        <p>- Địa chỉ:  Phường Tân Thịnh – Thành phố Thái Nguyên. </p>
+        <p>- Google maps: <a href="https://maps.app.goo.gl/y7r7jQTZuTtrNU9w9" target="_blank">https://maps.app.goo.gl/y7r7jQTZuTtrNU9w9</a></p>
+        <p><strong>Thời gian có mặt tại địa điểm thi:</strong></p>
+        <p><u><b><i>- Buổi sáng: </i></b></u></p>
+        <p>+ Thí sinh thi môn Toán: Trước 06:15</p>
+        <p>+ Thí sinh không thi môn Toán: 08:30</p>
+        <p> <u><b><i>- Buổi chiều:</i></b></u> Trước 12 giờ 45 phút</p>
         <p style="font-weight:700;">THÔNG TIN THI SINH:</p>
         <table width="100%" style="border:0;">
             <tr>
@@ -713,10 +727,11 @@ export class PhongThiV2Component implements OnInit, OnChanges {
 
         <p style="font-weight:700;" >LỊCH THI CÁ NHÂN:</p>
 
-        <p><strong>Số báo danh :</strong> ${item.sobaodanh} </p>
+<!--        <p><strong>Số báo danh :</strong> ${item.sobaodanh} </p>-->
         <table style=" border: 1px solid black;border-collapse: collapse;">
           <tr style="border: 1px solid black;border-collapse: collapse;">
             <th style="border: 1px solid black;border-collapse: collapse;text-align:center;" width="50px"><strong>STT</strong></th>
+            <th style="border: 1px solid black;border-collapse: collapse;text-align:center;" width="100px"><strong>Số báo danh </strong></th>
 
             <th style="border: 1px solid black;border-collapse: collapse;text-align:center;" width="100px"><strong>Môn thi</strong></th>
             <th style="border: 1px solid black;border-collapse: collapse;text-align:center;" width="100px"><strong>Phòng Thi</strong></th>
@@ -728,6 +743,7 @@ export class PhongThiV2Component implements OnInit, OnChanges {
         message += `
       <tr style="border: 1px solid black;border-collapse: collapse;">
         <td style="border: 1px solid black;border-collapse: collapse; text-align:center;">${phongthi['index']}</td>
+        <td style="border: 1px solid black;border-collapse: collapse; text-align:center;">${item.sobaodanh}</td>
         <td style="border: 1px solid black;border-collapse: collapse; text-align:left;">${phongthi['monthi']}</td>
         <td style="border: 1px solid black;border-collapse: collapse; text-align:center;">${phongthi['phong']}</td>
         <td style="border: 1px solid black;border-collapse: collapse; text-align:center;">${phongthi['ngaythi']}</td>
@@ -735,7 +751,7 @@ export class PhongThiV2Component implements OnInit, OnChanges {
       </tr>
         `;
       })
-      message += `</table> <p>Thí sinh đến tập trung trước 30 phút để hoàn thành thủ tục vào thi và tiến tiến hành vào thi !</p>`
+      message += `</table> <p>Chúc Bạn thành công.</p>`
 
       const emailsend: any = {
         title: 'THÔNG BÁO LỊCH THI V-SAT-TNU',
@@ -774,7 +790,7 @@ export class PhongThiV2Component implements OnInit, OnChanges {
             const thisinhinfo = room['__thisinh_in_phong'].find(r=>r['id'] === id)? room['__thisinh_in_phong'].find(r=>r['id'] === id) : null;
             const item = {
                 __index:index+1,
-                sbd:thisinhinfo ? 'TNU' + (thisinhinfo.id <10 ? ('000'+thisinhinfo.id):(thisinhinfo.id >10 && thisinhinfo.id <100?('00'+thisinhinfo.id):(thisinhinfo.id>100 && thisinhinfo.id <1000 ? ('0'+thisinhinfo.id) : thisinhinfo.id.toString()) )) :'',
+                sbd:thisinhinfo ? this.hoidong.tiento_sobaodanh + (thisinhinfo.id <10 ? ('000'+thisinhinfo.id):(thisinhinfo.id >10 && thisinhinfo.id <100?('00'+thisinhinfo.id):(thisinhinfo.id>100 && thisinhinfo.id <1000 ? ('0'+thisinhinfo.id) : thisinhinfo.id.toString()) )) :'',
                 hoten: thisinhinfo ? thisinhinfo['hoten'] : '',
                 ngaysinh: thisinhinfo ? thisinhinfo['ngaysinh'] : '',
                 gioitinh: thisinhinfo && thisinhinfo['gioitinh'] ==='nam' ? 'Nam' : 'Nữ',
@@ -828,6 +844,6 @@ export class PhongThiV2Component implements OnInit, OnChanges {
   }
 
   covertId(iput:number){
-    return iput<10? '000'+iput: (iput>10 && iput<100 ? '00'+ iput : (iput>100 && iput<1000 ? '0' +iput :iput));
+    return iput<10? '000'+iput: (iput>=10 && iput<100 ? '00'+ iput : (iput>=100 && iput<1000 ? '0' +iput :iput));
   }
 }

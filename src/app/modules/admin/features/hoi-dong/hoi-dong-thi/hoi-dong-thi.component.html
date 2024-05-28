@@ -118,12 +118,19 @@
             </div>
           </div>
           <div class="row">
-            <div class="col-12 ">
+            <div class="col-6">
               <p class="form-row">
                 <label>Kế hoạch thi <span class="ovic-mark">*</span></label>
                 <p-dropdown placeholder="Chọn..." class="w-100" [options]="dataKeHoach"
                             optionLabel="dotthi" optionValue="id" [showClear]="true"
                             formControlName='kehoach_id'></p-dropdown>
+              </p>
+            </div>
+            <div class="col-6">
+              <p class="form-row">
+                <label>Tiền tố số báo danh</label>
+                <input type="text" placeholder="Vd: TNU241"
+                       formControlName="tiento_sobaodanh" autocomplete="off">
               </p>
             </div>
           </div>

@@ -6,6 +6,7 @@ import { HttpParamsHeplerService } from '@core/services/http-params-hepler.servi
 import { ThemeSettingsService } from '@core/services/theme-settings.service';
 import { Observable, map } from 'rxjs';
 import { getRoute } from 'src/environments/environment';
+import {ThptCathi} from "@shared/services/thpt-hoidong-cathi.service";
 
 export interface ThptHoiDong {
   id: number;
@@ -13,6 +14,7 @@ export interface ThptHoiDong {
   ten_hoidong: string;
   mota: string;
   status: 0 | 1;
+  tiento_sobaodanh?:string;
 }
 
 @Injectable({
@@ -112,5 +114,25 @@ export class ThptHoiDongService {
 
   getTotalHoidong():Observable<number>{
     return this.http.get<Dto>(this.api).pipe(map(res => res.recordsFiltered));
+  }
+
+  getDataByKehoachIdandStatus(kehoach_id:number):Observable<ThptHoiDong[]>{
+    const conditions: OvicConditionParam[] = [
+      {
+        conditionName: 'kehoach_id',
+        condition: OvicQueryCondition.equal,
+        value: kehoach_id.toString(),
+      },
+      {
+        conditionName:'status',
+        condition: OvicQueryCondition.equal,
+        value: '1',
+        orWhere:'and'
+      }
+    ];
+
+
+    const params = this.httpParamsHelper.paramsConditionBuilder(conditions);
+    return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data));
   }
 }

@@ -146,3 +146,32 @@
 /*  background: #addbff;*/
 /*  text-align:center;*/
 /*}*/
+
+.align-phieu{
+  align-items: center;
+  background: #fafafa;
+  color: #000000;
+}
+
+.btn_exportPhieeus{
+  position: absolute;top: 75px;left: 20px;z-index: 10;
+}
+.phieu_content{
+  /*margin-top:70px;*/
+}
+@media (max-width: 768px){
+  .align-phieu{
+    align-items: normal;
+  }
+
+  .btn_exportPhieeus{
+    position: relative;
+    top:30px;
+    left:10px;
+  }
+
+  .phieu_content{
+    margin-top:30px;
+
+  }
+}

@@ -107,6 +107,7 @@ export class HoiDongThiComponent implements OnInit {
       ten_hoidong: ['', Validators.required],
       mota: [null],
       status: [1, Validators.required],
+      tiento_sobaodanh: ['TNU241', ],
     })
   }
 
@@ -214,7 +215,8 @@ export class HoiDongThiComponent implements OnInit {
         kehoach_id: null,
         ten_hoidong: '',
         mota: '',
-        status: 1
+        status: 1,
+        tiento_sobaodanh:'TNU241'
       });
     } else if (type === 'update') {
       this.btn_checkAdd = "Cập nhật"
@@ -223,7 +225,8 @@ export class HoiDongThiComponent implements OnInit {
         kehoach_id: object1.kehoach_id,
         ten_hoidong: object1.ten_hoidong,
         mota: object1.mota,
-        status: object1.status
+        status: object1.status,
+        tiento_sobaodanh: object1.tiento_sobaodanh
       });
       this.formActive = this.listForm[FormType.UPDATE];
       this.formActive.object = object1;
@@ -268,6 +271,7 @@ export class HoiDongThiComponent implements OnInit {
       this.hoiDongService.delete(item.id).subscribe({
         next: () => {
           // this.page = Math.max(1, this.page - (this.listData.length > 1 ? 0 : 1));
+          this.listData.filter(f=>f.id !== item.id)
           this.notifi.isProcessing(false);
           this.notifi.toastSuccess('Thao tác thành công');
           this.getDataHoiDong(this._kehoach_id);
@@ -320,14 +324,15 @@ export class HoiDongThiComponent implements OnInit {
   }
 
 
-  btnExportExcelV2(item: ThptHoiDong) {
+  btnExportExcelV2(hoidong: ThptHoiDong) {
+
     this.notifi.isProcessing(true);
     forkJoin(
-      this.hoiDongThiSinhService.getDataByHoiDongIdNotPage(item.id),
-      this.thptHoidongCathiService.getDataUnlimitByhoidongId(item.id).pipe(
+      this.hoiDongThiSinhService.getDataByHoiDongIdNotPage(hoidong.id),
+      this.thptHoidongCathiService.getDataUnlimitByhoidongId(hoidong.id).pipe(
         concatMap(cathi => {
           const cathiIds = cathi.map(m => m.id);
-          return forkJoin(of(cathi), this.thptHoidongPhongthiService.getDataByHoidongVaCathiIds(item.id, cathiIds));
+          return forkJoin(of(cathi), this.thptHoidongPhongthiService.getDataByHoidongVaCathiIds(hoidong.id, cathiIds));
         }))
     ).subscribe(
       {
@@ -353,7 +358,7 @@ export class HoiDongThiComponent implements OnInit {
               const thisinh = m['thisinh'];
               item['__indexTable'] = index + 1;
               item['__thisinh_id'] = thisinh ? thisinh['id'] : '';
-              item['__madk'] = thisinh ? 'TNU' + this.covertId(thisinh['id']) : '';
+              item['__madk'] = thisinh ? hoidong.tiento_sobaodanh + this.covertId(thisinh['id']) : '';
               item['__hoten'] = thisinh ? thisinh['hoten'] : '';
               item['__ngaysinh'] = thisinh ? this.repplaceNgaysinh(thisinh['ngaysinh'])  : '';
               item['__gioitinh'] = thisinh && thisinh['gioitinh'] === 'nam' ? 'Nam' : (thisinh && thisinh['gioitinh'] === 'nu' ? 'Nữ' : '');
@@ -366,9 +371,8 @@ export class HoiDongThiComponent implements OnInit {
               })
               this.dmMon.map(a => {
                 const cathiselect = dataCathi.find(f=>f.mon_ids.find(mon=>mon=== a.id));
-                // console.log(cathiselect)
                 const phongthi = dataPhongthi.find(phongthi => phongthi.thisinh_ids.find(id=>id === m.thisinh_id) && phongthi.cathi_id === cathiselect.id);
-                item['__sbd_' + a.kyhieu]       = m.monthi_ids.find(mon_id => mon_id === a.id)  ? 'TNU' + this.covertId(thisinh['id']) : '';
+                item['__sbd_' + a.kyhieu]       = m.monthi_ids.find(mon_id => mon_id === a.id)  ? hoidong.tiento_sobaodanh + this.covertId(thisinh['id']) : '';
                 item['__cathi_' + a.kyhieu]     = m.monthi_ids.find(mon_id => mon_id === a.id) && cathiselect ? cathiselect.cathi : '';
                 item['__diadiem_' + a.kyhieu]   = m.monthi_ids.find(mon_id => mon_id === a.id)  ? 'Trung tâm Khảo thí và Quản lý chất lượng – ĐHTN, Phường Tân Thịnh – Thành phố Thái Nguyên' : '';
                 item['__phongthi_' + a.kyhieu]  = m.monthi_ids.find(mon_id => mon_id === a.id) && phongthi ? phongthi.ten_phongthi : '';
@@ -393,7 +397,7 @@ export class HoiDongThiComponent implements OnInit {
               dataPhongthiExport.push(item)
 
             })
-            this.expostExcelPhongthiThisinhService.exportExcel(thisinhsExpostExcel, this.columns, item.ten_hoidong, dataPhongthiExport, this.columnSheet2);
+            this.expostExcelPhongthiThisinhService.exportExcel(thisinhsExpostExcel, this.columns, hoidong.ten_hoidong, dataPhongthiExport, this.columnSheet2);
 
           }else{
             this.notifi.toastWarning('Vui lòng tạo ca thi và phòng thi trước khi export');
@@ -403,6 +407,7 @@ export class HoiDongThiComponent implements OnInit {
           this.notifi.isProcessing(false);
         },error:(e)=>{
           this.notifi.isProcessing(false);
+          this.notifi.toastError('Load dữ liệu không thành công');
         }
       }
     )
@@ -531,7 +536,7 @@ export class HoiDongThiComponent implements OnInit {
   ]
 
   covertId(iput:number){
-    return iput<10? '000'+iput: (iput>10 && iput<100 ? '00'+ iput : (iput>100 && iput<1000 ? '0' +iput :iput));
+    return iput<10? '000'+iput: (iput>=10 && iput<100 ? '00'+ iput : (iput>=100 && iput<1000 ? '0' +iput :iput));
   }
   repplaceNgaysinh (text:string){
     const parts = text.split('/');

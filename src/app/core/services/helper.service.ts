@@ -187,6 +187,13 @@ export class HelperService {
     //'YYYY-MM-DD' type of sql DATETIME format
     return `${y}-${m}-${d}`;
   }
+  formatSQLTime(date: Date): string {
+    const h = date.getHours() <0 ? '0'+ date.getHours() : date.getHours().toString();
+    const m = date.getMinutes() <0 ? '0'+ date.getMinutes() : date.getMinutes().toString();
+
+    //'YYYY-MM-DD' type of sql DATETIME format
+    return `${h}:${m}`;
+  }
 
   formatSQLToDateDMY(date: Date): string {
     const y = date.getFullYear().toString(10);

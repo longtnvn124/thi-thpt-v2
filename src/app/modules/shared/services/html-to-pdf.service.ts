@@ -77,7 +77,7 @@ export class HtmlToPdfService {
 
       const thisinhs = phongthi['__thisinh_in_phong']
       thisinhs.forEach((item ,index)=>{
-        const sbd= 'TNU' + item.id ;
+        const sbd= phongthi['hoidong'].tiento_sobaodanh + this.covertId(item.id) ;
         // const imgObject =  item['__img_object'];
         const hoten = item['hoten'];
         const cccd = item['cccd_so'];
@@ -169,5 +169,9 @@ export class HtmlToPdfService {
       x: 10,
       y: 10
     });
+  }
+
+  covertId(iput:number){
+    return iput<10? '000'+iput: (iput>=10 && iput<100 ? '00'+ iput : (iput>=100 && iput<1000 ? '0' +iput :iput));
   }
 }

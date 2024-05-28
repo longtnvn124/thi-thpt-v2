@@ -179,4 +179,18 @@ export class ThptHoidongPhongthiService {
     const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }));
     return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data));
   }
+
+  getDataByCathiIds(cathi_ids:number[]):Observable<ThptHoiDongPhongThi[]>{
+    const conditions: OvicConditionParam[] = [
+
+    ]
+    const fromObject = {
+      page: 1,
+      limit: -1,
+      include:cathi_ids.join(','),
+      include_by:'cathi_id'
+    }
+    const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }));
+    return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data));
+  }
 }

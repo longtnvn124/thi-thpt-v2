@@ -1,10 +1,9 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {getRoute} from "@env";
 import {HttpClient, HttpParams} from "@angular/common/http";
 import {HttpParamsHeplerService} from "@core/services/http-params-hepler.service";
 import {ThemeSettingsService} from "@core/services/theme-settings.service";
 import {map, Observable} from "rxjs";
-import {ThptHoiDongPhongThi} from "@shared/models/thpt-model";
 import {Dto, OvicConditionParam, OvicQueryCondition} from "@core/models/dto";
 
 export interface ThptCathi{
@@ -14,6 +13,7 @@ export interface ThptCathi{
   mota:string;
   time_start?:string;
   mon_ids?:number[];
+  hoidong_id:number;
 }
 @Injectable({
   providedIn: 'root'
@@ -116,6 +116,39 @@ export class ThptHoidongCathiService {
       orderby: 'id',
       order: 'ASC'
     };
+    const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }));
+    return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data));
+  }
+
+  getDataByKehoachIdandStatus(kehoach_id:number):Observable<ThptCathi[]>{
+    const conditions: OvicConditionParam[] = [
+      {
+        conditionName: 'kehoach_id',
+        condition: OvicQueryCondition.equal,
+        value: kehoach_id.toString(),
+      },
+      {
+        conditionName:'status',
+        condition: OvicQueryCondition.equal,
+        value: '1',
+      }
+    ];
+
+
+    const params = this.httpParamsHelper.paramsConditionBuilder(conditions);
+    return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data));
+  }
+
+  getdataByHdongIds(hoidong_ids:number[]):Observable<ThptCathi[]>{
+    const conditions: OvicConditionParam[] = [
+
+    ];
+
+    const fromObject = {
+      include:hoidong_ids.join(','),
+      include_by:'hoidong_id'
+    };
+
     const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }));
     return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data));
   }

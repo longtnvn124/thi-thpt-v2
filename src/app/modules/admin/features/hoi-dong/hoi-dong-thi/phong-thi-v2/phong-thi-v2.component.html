@@ -77,7 +77,7 @@
               <div class="p-datatable-header" style="height:65px; border-bottom:1px solid #CCC;">
                 <h3 class="tbl-title ">Danh sách ca thi</h3>
                 <div class="search-block ui-table-globalfilter-container ">
-                  <button pButton pRipple class="p-button-warning" icon="pi pi-send" label="Thông báo Email cho thí sinh" (click)="btnSendEmail()"></button>
+                  <button pButton pRipple class="p-button-warning" icon="pi pi-send" label="Thông báo Email cho thí sinh" [loading]="sendEmailLoadding" (click)="btnSendEmail()"></button>
                 </div>
               </div>
               <div class="ovic-wrap-table-rps ovic-scroll-style"

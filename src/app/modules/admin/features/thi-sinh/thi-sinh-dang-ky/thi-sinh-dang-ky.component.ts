@@ -1,13 +1,13 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {ThisinhInfoService} from "@shared/services/thisinh-info.service";
 import {DanhMucMonService} from "@shared/services/danh-muc-mon.service";
 import {DanhMucToHopMonService} from "@shared/services/danh-muc-to-hop-mon.service";
-import {forkJoin} from "rxjs";
+import {forkJoin, of, switchMap} from "rxjs";
 import {AuthService} from "@core/services/auth.service";
 import {ThiSinhInfo} from "@shared/models/thi-sinh";
 import {DmMon, DmToHopMon} from "@shared/models/danh-muc";
 import {NotificationService} from "@core/services/notification.service";
-import {AbstractControl, FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {AbstractControl, FormBuilder, FormGroup, NgModel, Validators} from "@angular/forms";
 import {KeHoachThi, ThptKehoachThiService} from "@shared/services/thpt-kehoach-thi.service";
 import {Options, ThptOptionsService} from "@shared/services/thpt-options.service";
 import {ThptOrderMonhocService} from "@shared/services/thpt-order-monhoc.service";
@@ -16,10 +16,37 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {SenderEmailService} from "@shared/services/sender-email.service";
 import {HelperService} from "@core/services/helper.service";
 import {HtmlToPdfService} from "@shared/services/html-to-pdf.service";
+import {ThptHoidongCathiService} from "@shared/services/thpt-hoidong-cathi.service";
+import {ThptHoiDongPhongThi} from "@shared/models/thpt-model";
+import {ThptHoidongPhongthiService} from "@shared/services/thpt-hoidong-phongthi.service";
+import {ThptHoiDong, ThptHoiDongService} from "@shared/services/thpt-hoi-dong.service";
+import {FileService} from "@core/services/file.service";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
+import {map} from "rxjs/operators";
+import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
+import {MAXIMIZE_MODAL_OPTIONS} from "@shared/utils/syscat";
 
 export interface SumMonThi {
   tenmon: number,
   total: number,
+}
+
+interface Phieuduthi {
+  hoten: string;
+  ngaysinh: string;
+  dantoc: string;
+  gioitinh: string;
+  noisinh: string;
+  cccd_so: number;
+  thuongtru: string;
+  truong: string;
+  ketqua_xetdaihoc: number;
+  doituong: string;
+  khuvuc: number;
+  phongthi: ThptHoiDongPhongThi[];
+  anh_chandung: string;
+  sobaodanh?: string;
 }
 
 @Component({
@@ -28,6 +55,8 @@ export interface SumMonThi {
   styleUrls: ['./thi-sinh-dang-ky.component.css']
 })
 export class ThiSinhDangKyComponent implements OnInit {
+  // @ViewChild( 'ViewPhieu') ViewPhieu : ElementRef;
+  @ViewChild( 'dataToExport' , { static : false } ) public dataToExport : ElementRef;
   ngType: 1 | 0 | -1 = 0;//0: form,1:thanh toasn thanh coong, -1:chờ thanh toán,
   isLoading: boolean = true;
   loadInitFail = false;
@@ -71,6 +100,7 @@ export class ThiSinhDangKyComponent implements OnInit {
   content_pay: string = '';
   orderParram: OrdersTHPT;
   activeIndex1: number = 0;
+  phieuduthi: Phieuduthi;
 
   constructor(
     private thisinhInfoService: ThisinhInfoService,
@@ -87,7 +117,13 @@ export class ThiSinhDangKyComponent implements OnInit {
     private activeRouter: ActivatedRoute,
     private senderEmailService: SenderEmailService,
     private helperService: HelperService,
-    private htmlToPdfService: HtmlToPdfService
+    private htmlToPdfService: HtmlToPdfService,
+    private thptHoiDongService: ThptHoiDongService,
+    private thptCathiService: ThptHoidongCathiService,
+    private thptHoidongPhongthiService: ThptHoidongPhongthiService,
+    private fileService: FileService,
+    private modalService: NgbModal
+
   ) {
     this._user_id = this.auth.user.id;
     this.formSave = this.fb.group({
@@ -151,18 +187,24 @@ export class ThiSinhDangKyComponent implements OnInit {
   getDataDanhMuc() {
     this.isLoading = true;
     this.notifi.isProcessing(true);
-    forkJoin<[ThiSinhInfo, DmMon[], DmToHopMon[], KeHoachThi[], Options,]>(
+    forkJoin<[ThiSinhInfo, DmMon[], DmToHopMon[], KeHoachThi[], Options]>(
       [
         this.thisinhInfoService.getUserInfo(this._user_id),
         this.monService.getDataUnlimit(),
         this.toHopMonService.getDataUnlimit(),
         this.kehoachThiService.getDataUnlimit(),
         this.lephithi.getdata()
-
       ]
+    ).pipe(
+      switchMap(([thisinhInfo, dmMon, dmtohopmon, keHoachThi, options,])=>{
+        return this.fileService.getUnionFile( thisinhInfo.anh_chandung[0]).pipe( map( base64 => {
+          thisinhInfo['base64'] = base64;
+          return { thisinhInfo, dmMon, dmtohopmon, keHoachThi, options }
+        }))
+      })
     ).subscribe({
-      next: ([thisinhInfo, dmMon, dmtohopmon, keHoachThi, options,]) => {
-        const date = new Date();
+      next: ( { thisinhInfo, dmMon, dmtohopmon, keHoachThi, options  } ) => {
+
         this.userInfo = thisinhInfo;
         this.dmMon = dmMon;
         this.dmToHopMon = dmtohopmon.map(m => {
@@ -177,7 +219,6 @@ export class ThiSinhDangKyComponent implements OnInit {
         })
         const curentDate = new Date();
         this.keHoachThi_dangky = keHoachThi.filter(f => (this.helperService.formatSQLDate(new Date(f.ngayketthuc))) >= this.helperService.formatSQLDate(curentDate));
-        console.log(this.keHoachThi_dangky)
         this.keHoachThi = keHoachThi;
         this.lephithiData = options;
         this.lephithiData['_value_coverted'] = options.value.toLocaleString('vi-VN', {
@@ -523,12 +564,122 @@ export class ThiSinhDangKyComponent implements OnInit {
     })
   }
 
-  isScrollEnabled: boolean = false
+  isShower: boolean = false;
 
-  btnEpostPDF(item) {
-    const textHTml = `<p style="width:100%; font-family: Arial;">Trần Minh Long</p>`;
-    this.htmlToPdfService.textHtmlToWord(textHTml, 'phiếu dự thi');
+  btnViewPDF(item: OrdersTHPT) {
+
+    // this.modalService.open(this.ViewPhieu,MAXIMIZE_MODAL_OPTIONS);
+    // const textHTml = `<p style="width:100%; font-family: Arial;">Trần Minh Long</p>`;
+    // this.htmlToPdfService.textHtmlToWord(textHTml, 'phiếu dự thi');
+    const thisinh_id = item.thisinh_id;
+    const kehoach_id = item.kehoach_id;
+    this.notifi.isProcessing(true);
+    this.thptHoiDongService.getDataByKehoachIdandStatus(kehoach_id).pipe(switchMap(prj => {
+      const ids = prj.map(a => a.id);
+      return forkJoin(of(prj), this.thptCathiService.getdataByHdongIds(ids).pipe(switchMap(cts => {
+        const cathi_ids = cts.map(m => m.id);
+        return forkJoin(of(cts), this.thptHoidongPhongthiService.getDataByCathiIds(cathi_ids))
+      })))
+    })).subscribe(
+      {
+        next: (data) => {
+
+          const dsHoidong = data[0] ? data[0] : [];
+          const dsCathi = data[1][0].map(m => {
+            m['__ngaythi'] = this.helperService.formatSQLToDateDMY(new Date(m.ngaythi));
+            m['__time_start'] = this.helperService.formatSQLTime(new Date(m.time_start));
+            m['monthi'] = m.mon_ids ? m.mon_ids.map(mon_id => this.dmMon.find(a => a.id === mon_id)) : '';
+            m['hoidong'] = dsHoidong ? dsHoidong.find(f => f.id === m.hoidong_id) : null;
+            return m;
+          });
+          const dsPhongthi = data[1][1].map(m => {
+            m['__cathi_info'] = dsCathi ? dsCathi.find(f => f.id === m.cathi_id) : null;
+            return m;
+          });
+          const lichthi: ThptHoiDongPhongThi[] = [];
+          dsPhongthi.forEach(room => {
+            if (room.thisinh_ids.find(f => f === thisinh_id)) {
+              lichthi.push(room);
+            }
+          })
+
+          if (dsHoidong.length > 0 && lichthi.length >0) {
+
+            const phongthi = lichthi.map((m, index) => {
+              const monthis:DmMon[] = [];
+              m['__cathi_info']['monthi'].forEach(mon=>{
+                 if(item.mon_id.find(id=> id === mon.id)){
+                   monthis.push(mon);
+                 }
+              })
+              const hoidong = m['__cathi_info']['hoidong'];
+              m['__index'] = index + 1;
+              m['__sobaodanh'] = hoidong ? hoidong['tiento_sobaodanh'] + this.covertId(this.userInfo.id) : '';
+              m['__monthi'] = monthis ? monthis.map(m=>m.tenmon).join(', ') : '';
+              m['__ngaythi'] = m['__cathi_info'] ? m['__cathi_info']['__ngaythi'] : '';
+              m['__time_start'] = m['__cathi_info'] ? m['__cathi_info']['__time_start'] : '';
+              return m;
+            })
+
+            const phieuduthi: Phieuduthi = {
+              hoten: this.userInfo.hoten,
+              ngaysinh: this.userInfo.ngaysinh,
+              dantoc: this.userInfo.dantoc,
+              gioitinh: this.userInfo.gioitinh === 'nu' ? 'Nữ' : 'Nam',
+              noisinh: this.userInfo.noisinh,
+              cccd_so: this.userInfo.cccd_so,
+              thuongtru: this.userInfo.thuongtru_diachi.fullAddress,
+              truong: this.userInfo.lop12_truong ? this.userInfo.lop12_truong : (this.userInfo.lop11_truong ? this.userInfo.lop11_truong : this.userInfo.lop10_truong),
+              ketqua_xetdaihoc: this.userInfo.ketqua_xetdaihoc,
+              doituong: this.userInfo.doituong,
+              khuvuc: this.userInfo.khuvuc,
+              phongthi: phongthi ? phongthi : [],
+              // anh_chandung: this.fileService.getPreviewLinkLocalFileNotToken(this.userInfo.anh_chandung[0]),
+              anh_chandung: this.userInfo['base64'],
+              sobaodanh: this.covertId(this.userInfo.id),
+            }
+            this.phieuduthi = phieuduthi;
+            // this.downloadAsPdf(this.dataToExport);
+            this.notifi.isProcessing(false);
+            this.isShower = true;
+          } else {
+            this.notifi.toastWarning('Phòng thi cho thí sinh chưa được tạo, vui lòng quay lại sau ');
+          }
+
+
+          this.notifi.isProcessing(false);
+
+        },
+        error: (e) => {
+          this.notifi.isProcessing(false);
+          this.notifi.toastError('Load dữ liệu không thành công');
+        }
+      }
+    )
+
   }
+
+  covertId(iput: number) {
+    return iput < 10 ? '000' + iput : (iput >= 10 && iput < 100 ? '00' + iput : (iput >= 100 && iput < 1000 ? '0' + iput : iput.toString()));
+  }
+
+  public downloadAsPdf(): void {
+    const quality: number = 1; // Higher the better but larger file
+    html2canvas(this.dataToExport.nativeElement, {scale: quality, allowTaint: true}).then(canvas => {
+      const image: string = canvas.toDataURL('image/jpg', quality);
+      const pdf: jsPDF = new jsPDF({
+        orientation: 'l', // landscape
+        unit: 'pt', // points, pixels won't work properly
+        format: [canvas.width, canvas.height] // set needed dimensions for any element
+      });
+      pdf.addImage(image, 'JPEG', 0, 0, canvas.width, canvas.height);
+      pdf.save('phieuduthi.pdf');
+    });
+
+
+  }
+
+
 
 }
 
