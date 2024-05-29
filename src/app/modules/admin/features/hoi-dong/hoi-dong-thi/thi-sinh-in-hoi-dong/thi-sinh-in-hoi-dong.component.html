@@ -1,0 +1,93 @@
+<div class="w-100" style="height:calc(100% - 90px)">
+  <div class="row w-100 m-0">
+    <div class="col-12 p-0 ovic-ui-table site-thpt" style="height:calc(100vh - 84px)"
+         [class.ovic-is-loading]="isLoading">
+      <div class="p-datatable-header" style="height:65px; border-bottom:1px solid #CCC;">
+        <h3 class="tbl-title ">Danh sách thí sinh đăng ký</h3>
+        <div class="search-block ui-table-globalfilter-container ">
+<!--          <button pRipple pButton label="Gửi thông báo cho thí sinh" (click)="btnSentEmail()"></button>-->
+          <button pButton pRipple icon="pi pi-book" label="Xuất Album Ảnh" (click)="btnExportAlbumAnh()"></button>
+          <button pButton pRipple icon="pi pi-send" class="mx-2 p-button-warning" label="Gửi Email cho thí sinh" (click)="btnSendEmail()"></button>
+        </div>
+      </div>
+      <div class="ovic-wrap-table-rps ovic-scroll-style overflow-hidden overflow-y-auto" style="height:calc(100% - 65px - 60px);background: #dedede;">
+        <!--              <div class="ovic-wrap-table-rps__inner">-->
+        <div class="">
+          <p-table  styleClass="p-datatable-gridlines"
+                   [value]="thisinhInhoidong" [rowHover]="true"
+                    [showCurrentPageReport]="true" [rowsPerPageOptions]="[10,25,50]"
+                   [loading]="isLoading">
+            <ng-template pTemplate="header" class="d-bock">
+              <tr>
+
+                <th class="ovic-w-40px text-center ">STT</th>
+                <th class="ovic-w-100px text-center ">Số báo danh</th>
+                <th class="ovic-w-200px text-center">Họ và tên</th>
+                <th class="ovic-w-120px text-center">Ngày sinh</th>
+                <th class="ovic-w-120px text-center">Giới tính</th>
+                <th class="ovic-w-120px text-center">Số CCCD</th>
+                <th class="ovic-w-120px text-center">Phòng thi</th>
+                <th class="text-center">Ca thi toán</th>
+                <th class="text-center">Ca thi Vật lí</th>
+                <th class="text-center">Ca thi hóa học</th>
+                <th class="text-center">Ca thi sinh học</th>
+                <th class="text-center">Ca thi Lịch sử</th>
+                <th class="text-center">Ca thi địa lí </th>
+                <th class="text-center">Ca thi tiếng anh </th>
+
+              </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-item let-i="rowIndex">
+              <tr>
+
+
+                <td class="text-center">{{ item['__index'] }}</td>
+                <td><span class="tt-hover" > {{ item['__sobaodanh'] }}</span></td>
+                <td class="text-left">{{ item['__hoten'] }}</td>
+                <td class="text-center">{{ item['__ngaysinh'] }}</td>
+                <td class="text-center">{{ item['__gioitinh'] }}</td>
+                <td class="ovic-w-80px text-right">{{ item['__cccd_so'] }}</td>
+<!--                <td>-->
+<!--                  <div class="d-flex flex-wrap " style="gap:6px;">-->
+<!--                    <div *ngFor=" let mon of item['__monthi_covered']"-->
+<!--                         [ngClass]=" 'mon-thi mon-' + mon['kyhieu'] ">{{ mon['tenmon'] }}-->
+<!--                    </div>-->
+<!--                  </div>-->
+<!--                </td>-->
+                <td class="text-center">{{item.phongthi}}</td>
+                <td class="text-center">{{item.ca_th !==0 ? item.ca_th : '' }}</td>
+                <td class="text-center">{{item.ca_vl !==0 ? item.ca_vl : '' }}</td>
+                <td class="text-center">{{item.ca_hh !==0 ? item.ca_hh : '' }}</td>
+                <td class="text-center">{{item.ca_sh !==0 ? item.ca_sh : '' }}</td>
+                <td class="text-center">{{item.ca_ls !==0 ? item.ca_ls : '' }}</td>
+                <td class="text-center">{{item.ca_dl !==0 ? item.ca_dl : '' }}</td>
+                <td class="text-center">{{item.ca_ta !==0 ? item.ca_ta : '' }}</td>
+
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+              <tr>
+                <td colspan="20">
+                  Không có dữ liệu thí sinh!
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      </div>
+      <p-paginator class="duthi_panigator" [showCurrentPageReport]="true" [rows]="thisinhInhoidong.length"
+                   [totalRecords]="thisinhInhoidong.length" [pageLinkSize]="5"></p-paginator>
+    </div>
+  </div>
+
+</div>
+
+<ng-template #templateWaiting let-c="close" let-d="dismiss">
+  <div class="waiting-container">
+    <label>Vui lòng chờ...</label>
+    <div class="waiting-content">
+      <mat-progress-bar mode="buffer"></mat-progress-bar>
+    </div>
+  </div>
+</ng-template>

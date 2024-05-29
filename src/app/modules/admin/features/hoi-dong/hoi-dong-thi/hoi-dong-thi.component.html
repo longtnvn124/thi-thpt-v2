@@ -67,12 +67,17 @@
                 <button [pTooltip]="'Thêm thí sinh'" [tooltipPosition]="'top'" pButton pRipple
                         icon="pi pi-user-plus" class="mx-1 p-button-secondary"
                         (click)="btnAddThisinh(item)"></button>
-                <button [pTooltip]="'Tạo ca thi'" [tooltipPosition]="'top'" pButton pRipple
-                        icon="pi pi-inbox" class="mx-1 p-button-" (click)="btnViewPhongThi(item)"></button>
+<!--                <button [pTooltip]="'Tạo ca thi'" [tooltipPosition]="'top'" pButton pRipple-->
+<!--                        icon="pi pi-inbox" class="mx-1 p-button-" (click)="btnViewPhongThi(item)"></button>-->
+                <button [pTooltip]="'Danh sách thí sinh'" [tooltipPosition]="'top'" pButton pRipple
+                icon="pi pi-users" class="mx-1 "
+                (click)="btnThiSinhInHoiDong(item)"></button>
+<!--                <button [pTooltip]="'Xuất dữ liệu '" [tooltipPosition]="'top'" pButton pRipple-->
+<!--                        icon="pi pi-file-excel" class="mx-1 p-button-success"-->
+<!--                        (click)="btnExportExcelV2(item)"></button>-->
                 <button [pTooltip]="'Xuất dữ liệu '" [tooltipPosition]="'top'" pButton pRipple
-                        icon="pi pi-file-excel" class="mx-1 p-button-success"
-                        (click)="btnExportExcelV2(item)"></button>
-<!--<button [pTooltip]="'Xuất dữ liệu '" [tooltipPosition]="'top'" pButton pRipple-->
+                                          icon="pi pi-file-excel" class="mx-1 p-button-success" (click)="btnExportExcelV3(item)"></button>
+                  <!--<button [pTooltip]="'Xuất dữ liệu '" [tooltipPosition]="'top'" pButton pRipple-->
 <!--                        icon="pi pi-file-excel" class="mx-1 p-button-success"-->
 <!--                        (click)="btnExportExcel(item)"></button>-->
                 <button [pTooltip]="'Cập nhật'" [tooltipPosition]="'top'" pButton pRipple
@@ -118,7 +123,7 @@
             </div>
           </div>
           <div class="row">
-            <div class="col-6">
+            <div class="col-4">
               <p class="form-row">
                 <label>Kế hoạch thi <span class="ovic-mark">*</span></label>
                 <p-dropdown placeholder="Chọn..." class="w-100" [options]="dataKeHoach"
@@ -126,14 +131,29 @@
                             formControlName='kehoach_id'></p-dropdown>
               </p>
             </div>
-            <div class="col-6">
+            <div class="col-4 ">
+              <p class="form-row">
+                <label>Ngày thi <span class="ovic-mark">*</span></label>
+                <p-calendar class="w-100" formControlName="ngaythi" placeholder="Chọn ngày thi" dateFormat="dd/mm/yy" [showIcon]="true" [showSeconds]="false"></p-calendar>
+              </p>
+            </div>
+            <div class="col-4">
               <p class="form-row">
                 <label>Tiền tố số báo danh</label>
                 <input type="text" placeholder="Vd: TNU241"
                        formControlName="tiento_sobaodanh" autocomplete="off">
               </p>
             </div>
+
           </div>
+<!--          <div class="row">-->
+<!--            <div class="col-12 ">-->
+<!--              <p class="form-row">-->
+<!--                <label>Ngày thi <span class="ovic-mark">*</span></label>-->
+<!--                <p-calendar class="w-100" formControlName="ngaythi" placeholder="Chọn ngày thi" dateFormat="dd/mm/yy" [showIcon]="true" [showSeconds]="false"></p-calendar>-->
+<!--              </p>-->
+<!--            </div>-->
+<!--          </div>-->
           <div class="row">
             <div class="col-12 ">
               <p class="form-row">
@@ -167,6 +187,7 @@
     <div class="ovic-side-navigation-content__body --no-footer ovic-scroll-style ">
 <!--      <app-phong-thi class="w-100" [hoidong_id]="hoidong_id" [kehoach_id]="kehoach_id_param"></app-phong-thi>-->
       <app-phong-thi-v2 class="w-100" [hoidong_id]="hoidong_id" [kehoach_id]="kehoach_id_param"></app-phong-thi-v2>
+<!--      <app-phong-thi-v3 class="w-100" [hoidong_id]="hoidong_id" [kehoach_id]="kehoach_id_param"></app-phong-thi-v3>-->
     </div>
 
   </div>
@@ -180,6 +201,7 @@
         <button pButton pRipple icon="pi pi-sync" class="p-button-secondary" label="Reload" (click)="btnReloadData()"></button>
         <button pButton pRipple icon="pi pi-user-plus" class="p-button-success" [disabled]="orderSelectTotal === 0" label="Thêm thí sinh vào hội đồng" (click)="btnCreateThisinhInHoiDOng()"></button>
         <button pButton pRipple icon="pi pi-trash" class="p-button-danger" [disabled]="thiSinhSelectTotal === 0" label="Xóa thi sinh trong hội đồng" (click)="btnDeleteThiSinhInHoiDong()"></button>
+        <button pButton pRipple icon="pi pi-file-edit" class="" [disabled]="thiSinhSelectTotal === 0" label="Cập nhật phòng thi cho thí sinh" (click)="btnUpdateRoombyThisinh()"></button>
       </div>
       <button (click)="closeForm()" pButton pRipple type="button" icon="pi pi-times"
               class="p-button-rounded p-button-danger p-button-text close "></button>
@@ -190,4 +212,20 @@
 
   </div>
 
+</ng-template>
+
+<ng-template #thiSinhInPhongThi>
+  <div class="ovic-side-navigation-content">
+    <div class="ovic-side-navigation-content__head">
+      <h4 class="ovic-side-navigation-content__head__title">Danh sách thí sinh</h4>
+      <button (click)="closeForm()" pButton pRipple type="button" icon="pi pi-times"
+              class="p-button-rounded p-button-danger p-button-text close ovic-side-navigation-content__head__btn-close"></button>
+    </div>
+    <div class="ovic-side-navigation-content__body --no-footer ovic-scroll-style ">
+      <!--      <app-phong-thi class="w-100" [hoidong_id]="hoidong_id" [kehoach_id]="kehoach_id_param"></app-phong-thi>-->
+      <thi-sinh-in-hoi-dong class="w-100" [hoidong_id]="hoidong_id" [kehoach_id]="kehoach_id_param"></thi-sinh-in-hoi-dong>
+      <!--      <app-phong-thi-v3 class="w-100" [hoidong_id]="hoidong_id" [kehoach_id]="kehoach_id_param"></app-phong-thi-v3>-->
+    </div>
+
+  </div>
 </ng-template>

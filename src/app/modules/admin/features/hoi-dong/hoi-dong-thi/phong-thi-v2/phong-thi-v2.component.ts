@@ -563,6 +563,7 @@ export class PhongThiV2Component implements OnInit, OnChanges {
   }
 
   btnViewInfoByPhongThi(item: ThptHoiDongPhongThi) {
+    this.phongthi_select = item;
     this.switchPage = "CHITIET_PHONGTHI"
     const thisinh_ids = item.thisinh_ids;
     this.phongthi_select = item;

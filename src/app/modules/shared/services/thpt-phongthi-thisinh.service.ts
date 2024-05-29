@@ -9,6 +9,16 @@ import { Observable, map } from 'rxjs';
 import { ThptHoiDongThiSinh } from '../models/thpt-model';
 import { KeHoachThi } from './thpt-kehoach-thi.service';
 
+export interface ThptPhongthiThiSinh {
+  id?:number;
+  phongthi_id:number;
+  hoidong_id:number;
+  cathi_id:number;
+  kehoach_id:number;
+  mon_id:number;
+  thisinh_id:number;
+
+}
 @Injectable({
   providedIn: 'root'
 })
@@ -24,7 +34,7 @@ export class ThptPhongthiThisinhService {
   ) {
   }
 
-  load(page: number): Observable<{ recordsTotal: number, data: ThptHoiDongThiSinh[] }> {
+  load(page: number): Observable<{ recordsTotal: number, data: ThptPhongthiThiSinh[] }> {
     const conditions: OvicConditionParam[] = [
 
     ];
@@ -56,7 +66,7 @@ export class ThptPhongthiThisinhService {
   //   return this.http.delete(''.concat(this.api, id.toString(10)));
   // }
 
-  search(page: number, ten: string): Observable<{ recordsTotal: number, data: ThptHoiDongThiSinh[] }> {
+  search(page: number, ten: string): Observable<{ recordsTotal: number, data: ThptPhongthiThiSinh[] }> {
     const conditions: OvicConditionParam[] = [];
     const fromObject = {
       paged: page,
@@ -79,7 +89,7 @@ export class ThptPhongthiThisinhService {
     })));
   }
 
-  getDataUnlimit(): Observable<KeHoachThi[]> {
+  getDataUnlimit(): Observable<ThptPhongthiThiSinh[]> {
     const conditions: OvicConditionParam[] = [
       {
         conditionName: 'status',
@@ -97,7 +107,7 @@ export class ThptPhongthiThisinhService {
     return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data));
   }
 
-  getDataByPhongthiAndHoidongId(page: number, phongthi_id: number, hoidong_id: number): Observable<{ recordsTotal: number, data: ThptHoiDongThiSinh[] }> {
+  getDataByPhongthiAndHoidongId(page: number, phongthi_id: number, hoidong_id: number): Observable<{ recordsTotal: number, data: ThptPhongthiThiSinh[] }> {
     const conditions: OvicConditionParam[] = [
       {
         conditionName: 'phongthi_id',
@@ -125,7 +135,7 @@ export class ThptPhongthiThisinhService {
     })))
   }
 
-  getDataByPhongthiAndHoidongIdnotPage(phongthi_id: number, hoidong_id: number): Observable<ThptHoiDongThiSinh[]> {
+  getDataByPhongthiAndHoidongIdnotPage(phongthi_id: number, hoidong_id: number): Observable<ThptPhongthiThiSinh[]> {
     const conditions: OvicConditionParam[] = [
       {
         conditionName: 'phongthi_id',
@@ -150,7 +160,7 @@ export class ThptPhongthiThisinhService {
     return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data));
   }
 
-  getDataByHoiDongId(page: number, hoidong_id: number): Observable<{ recordsTotal: number, data: ThptHoiDongThiSinh[] }> {
+  getDataByHoiDongId(page: number, hoidong_id: number): Observable<{ recordsTotal: number, data: ThptPhongthiThiSinh[] }> {
     const conditions: OvicConditionParam[] = [
       {
         conditionName: 'hoidong_id',
@@ -173,7 +183,7 @@ export class ThptPhongthiThisinhService {
     })))
   }
 
-  getDataByHoidongIdUnlimit(hoidong_id: number): Observable<ThptHoiDongThiSinh[]> {
+  getDataByHoidongIdUnlimit(hoidong_id: number): Observable<ThptPhongthiThiSinh[]> {
     const conditions: OvicConditionParam[] = [
       {
         conditionName: 'hoidong_id',
@@ -193,5 +203,57 @@ export class ThptPhongthiThisinhService {
     return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data));
   }
 
+  getDataByHoidongIdAndCathiIdAndPhongId(hoidong_id:number,cathi_id:number, phongthi_id:number):Observable<ThptPhongthiThiSinh[]>{
+    const conditions: OvicConditionParam[] = [
+      {
+        conditionName: 'hoidong_id',
+        condition: OvicQueryCondition.equal,
+        value: hoidong_id.toString(),
+      },
+      {
+        conditionName: 'cathi_id',
+        condition: OvicQueryCondition.equal,
+        value: cathi_id.toString(),
+        orWhere:'and'
+      },
+      {
+        conditionName: 'phongthi_id',
+        condition: OvicQueryCondition.equal,
+        value: phongthi_id.toString(),
+        orWhere:'and'
+      },
+
+    ];
+
+    const fromObject = {
+      paged: 1,
+      limit: -1,
+      orderby: 'id',
+      order: 'ASC'
+    };
+    const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }).set('with', 'thisinh'));
+    return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data));
+  }
+
+  getDataByPhongthiId(phongthi_id:number):Observable<ThptPhongthiThiSinh[]>{
+    const conditions: OvicConditionParam[] = [
+      {
+        conditionName: 'phongthi_id',
+        condition: OvicQueryCondition.equal,
+        value: phongthi_id.toString(),
+      },
+    ];
+
+    const fromObject = {
+      paged: 1,
+      limit: -1,
+      orderby: 'id',
+      order: 'ASC',
+
+    };
+
+    const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }).set('with', 'thisinh'));
+    return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data));
+  }
 
 }

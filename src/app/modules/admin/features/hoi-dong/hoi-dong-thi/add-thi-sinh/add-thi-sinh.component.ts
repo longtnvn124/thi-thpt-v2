@@ -21,6 +21,8 @@ import {DanhMucMonService} from "@shared/services/danh-muc-mon.service";
 import {DmMon} from "@shared/models/danh-muc";
 import {catchError, delay, finalize} from "rxjs/operators";
 import {WAITING_POPUP} from "@shared/utils/syscat";
+import {DanhMucPhongThiService, DmPhongThi} from "@shared/services/danh-muc-phong-thi.service";
+import {setup} from "plyr";
 
 @Component({
   selector: 'app-add-thi-sinh',
@@ -48,6 +50,7 @@ export class AddThiSinhComponent implements OnInit, OnChanges {
   dataThiSinhSelect: ThptHoiDongThiSinh[] = [];
 
   listData: ThptHoiDongThiSinh[];
+  dmPhongthi :any[];
 
   trangthai_thanhtoan = [
     {label: ' Đã thanh toán ', value:1},
@@ -60,6 +63,7 @@ export class AddThiSinhComponent implements OnInit, OnChanges {
     private notifi: NotificationService,
     private danhMucMonService: DanhMucMonService,
     private modalService: NgbModal,
+    private danhMucPhongThiService: DanhMucPhongThiService,
   ) {
     this.dataSelectSubject.subscribe(data => this.emitDataChanges());
 
@@ -76,10 +80,14 @@ export class AddThiSinhComponent implements OnInit, OnChanges {
   ngOnInit(): void {
     this.emitDataChanges()
     if (this.hoidong_id) {
-      this.danhMucMonService.getDataUnlimit().subscribe({
-        next: (data) => {
-          this.dsMon = data;
-          this.loadInit();
+      forkJoin<[DmPhongThi[],DmMon[]]>(this.danhMucPhongThiService.getDataUnlimit(),this.danhMucMonService.getDataUnlimit()).subscribe({
+        next: ([dmPhongthi, dmMon]) => {
+          this.dmPhongthi = this.convertDmPhongThi(dmPhongthi);
+
+          this.dsMon = dmMon;
+          if(this.dmPhongthi && this.dsMon){
+            this.loadInit();
+          }
 
         }
       })
@@ -94,8 +102,7 @@ export class AddThiSinhComponent implements OnInit, OnChanges {
   loadData() {
     this.isLoading = true;
     this.hoiDongThiSinhService.getDataByHoidongIdUnlimit(this.hoidong_id).pipe(switchMap(project => {
-      const ids = project.length > 0 ? project.map(m => m.thisinh_id) : [];
-
+      const ids = project.map(m => m.thisinh_id);
       return forkJoin<[ThptHoiDongThiSinh[], OrdersTHPT[]]>([of(project), this.orderSerivce.getDataBykehoachIdAndStatusUnlimit(this.kehoach_id, ids,this.type_select)]);
     })).subscribe({
       next: ([dataThiSinh, orderThpt]) => {
@@ -111,11 +118,11 @@ export class AddThiSinhComponent implements OnInit, OnChanges {
           m['__thisinh_gioitinh'] = thisinh ? thisinh['gioitinh'] : '';
           m['__thisinh_phone'] = thisinh ? thisinh['phone'] : '';
           m['__thisinh_email'] = thisinh ? thisinh['email'] : '';
-          m['__monthi_covered'] = this.dsMon ? m.mon_id.map(b => this.dsMon.find(f => f.id == b) ? this.dsMon.find(f => f.id == b) : []) : [];
+          m['__monthi_covered'] = this.dsMon ? m.mon_id.sort((a,b)=>a-b).map(b => this.dsMon.find(f => f.id == b) ? this.dsMon.find(f => f.id == b) : []) : [];
           return m;
         });
         this.recordsTotalOrderThpt = this.dataOrderThpt.length;
-        this.listData = dataThiSinh.map((m, index) => {
+        this.listData = dataThiSinh.sort((a,b)=>b.monthi_ids.length -a.monthi_ids.length).map((m, index) => {
           const thisinh = m['thisinh'];
           m['_indexTable'] = index + 1;
 
@@ -126,7 +133,7 @@ export class AddThiSinhComponent implements OnInit, OnChanges {
           m['__thisinh_gioitinh'] = thisinh ? thisinh['gioitinh'] : '';
           m['__thisinh_phone'] = thisinh ? thisinh['phone'] : '';
           m['__thisinh_email'] = thisinh ? thisinh['email'] : '';
-          m['__monthi_covered'] = this.dsMon && m.monthi_ids ? m.monthi_ids.map(b => this.dsMon.find(f => f.id == b) ? this.dsMon.find(f => f.id == b) : []) : [];
+          m['__monthi_covered'] = this.dsMon && m.monthi_ids ? m.monthi_ids.sort((a,b)=>a-b).map(b => this.dsMon.find(f => f.id == b) ? this.dsMon.find(f => f.id == b) : []) : [];
 
           return m;
         })
@@ -155,7 +162,7 @@ export class AddThiSinhComponent implements OnInit, OnChanges {
       return acc;
     }, []);
 
-    return mergedData;
+    return mergedData.sort((a,b)=> b.mon_id.length - a.mon_id.length);
   }
 
 
@@ -180,8 +187,12 @@ export class AddThiSinhComponent implements OnInit, OnChanges {
 
   async btnAddHoidong() {
     if (this.dataOrderSelect.length > 0) {
-      const dataCreate = this.dataOrderSelect.map(m => {
-        return {thisinh_id: m.thisinh_id, monthi_ids: m.mon_id, hoidong_id: this.hoidong_id};
+      // const dataCreate = this.dataOrderSelect.map(m => {
+      //   return {thisinh_id: m.thisinh_id, monthi_ids: m.mon_id, hoidong_id: this.hoidong_id};
+      // })
+
+      const dataCreate = this.setUpData(this.dmPhongthi,this.dataOrderSelect).map(data=>{
+        return {hoidong_id:this.hoidong_id,thisinh_id:data.thisinh_id,monthi_ids:data.mon_id,phongthi:data['phongthi'],ca_th:data['ca_th'],ca_vl:data['ca_vl'],ca_hh:data['ca_hh'],ca_sh:data['ca_sh'], ca_ls:data['ca_ls'],ca_dl:data['ca_dl'],ca_ta:data['ca_ta']};
       })
 
       this.processItems(dataCreate);
@@ -198,9 +209,7 @@ export class AddThiSinhComponent implements OnInit, OnChanges {
     this.modalService.open(this.templateWaiting, WAITING_POPUP);
     dataCreate.forEach((r, index) => {
       const request$ =
-        this.hoiDongThiSinhService.create(r).pipe(concatMap((id) => {
-            return of(null);
-          }),
+        this.hoiDongThiSinhService.create(r).pipe(concatMap((id) => {return of(null);}),
           delay(index * 150),
           catchError(error => {
             console.error(error);
@@ -274,8 +283,120 @@ export class AddThiSinhComponent implements OnInit, OnChanges {
 
   type_select:number =1 ;
   drdSelectTrangThai(event){
-    console.log(event);
+
     this.type_select = event.value;
     this.loadData();
+  }
+
+  //====================Dm Phongthi=============================
+  convertDmPhongThi(data: DmPhongThi[]) {
+    let result: any[] = [];
+    for (let item of data) {
+      let start = item.fromAt;
+      let end = item.toAt;
+      let soluong = item.soluong;
+      for (let i = start; i <= end; i++) {
+        result.push({soluong: soluong, phongso: i});
+      }
+    }
+    return result;
+  }
+  setUpData(dataphongthi: { phongso: number, soluong }[], dsthisinh: OrdersTHPT[]) {
+    let indexRoom = 0;
+    for (let ts = 0; ts < dsthisinh.length; ts++) {
+      let total = 0;
+      if(dsthisinh[ts].mon_id[0]=== 1){
+        total = 0
+      }else{
+        total = 1
+      }
+      this.dsMon.forEach(mon=>{
+        if(dsthisinh[ts].mon_id.find(f=>f === mon.id)){
+          total = total+1;
+          dsthisinh[ts]['ca_' +mon.kyhieu.toLowerCase()] = total;
+        }else
+        {
+          dsthisinh[ts]['ca_' +mon.kyhieu.toLowerCase()] = 0
+        }
+      })
+    }
+
+    return dsthisinh;
+  }
+  sortRoomByThisinhs(dataphongthi: { phongso: number, soluong }[],dsthisinh:ThptHoiDongThiSinh[]){
+    const phongCanthiet = dataphongthi.map(phong => {
+
+      return {phongso: phong.phongso, soluong: phong.soluong, thisinh_ids: [], soluong_thucte: 0, created: false}
+    });
+    let indexRoom = 0;
+    for (let ts = 0; ts < dsthisinh.length; ts++) {
+      const ts_id = dsthisinh[ts].thisinh_id;
+      const dk1 = phongCanthiet[indexRoom].soluong
+      const dk2 = phongCanthiet[indexRoom].thisinh_ids.length;
+      if (dk2 >= dk1) {
+        indexRoom++;
+      }
+      phongCanthiet[indexRoom].thisinh_ids.push(ts_id);
+      dsthisinh[ts]['phongthi'] = indexRoom+1
+      let total = 0;
+      this.dsMon.forEach(mon=>{
+        if(dsthisinh[ts].monthi_ids.find(f=>f === mon.id)){
+          if(dsthisinh[ts].monthi_ids.find(a=>a===1)){
+          total =total+1;
+          }else{
+            total =total+2;
+          }
+          dsthisinh[ts]['ca_' +mon.kyhieu.toLowerCase()] = total
+        }
+      })
+    }
+
+    return dsthisinh;
+  }
+
+  btnXepphong(){
+    if(this.dataThiSinhSelect.length>0){
+      const dataUpphong =  this.sortRoomByThisinhs(this.dmPhongthi, this.dataThiSinhSelect)
+      this.upDatePhongthi(dataUpphong);
+    }else{
+      this.notifi.toastWarning('vui lòng chọn thí sinh để xếp phòng thi');
+    }
+  }
+
+  async upDatePhongthi(dataCreate: ThptHoiDongThiSinh[]) {
+    const requests$: Observable<any>[] = [];
+    this.isloading = true;
+    this.notifi.isProcessing(true);
+    this.modalService.open(this.templateWaiting, WAITING_POPUP);
+    dataCreate.forEach((r, index) => {
+      const request$ =
+        this.hoiDongThiSinhService.update(r.id ,{phongthi: r['phongthi']}).pipe(concatMap((id) => {return of(null);}),
+          delay(index * 150),
+          catchError(error => {
+            console.error(error);
+            return of(null);
+          })
+        );
+
+      requests$.push(request$);
+    });
+
+    forkJoin(requests$).pipe(
+      finalize(() => {
+        this.modalService.dismissAll();
+        this.loadData();
+        this.isloading = false;
+        this.emitDataChanges()
+      })
+    ).subscribe({
+      next:(data)=>{
+        this.notifi.isProcessing(false);
+        this.notifi.toastSuccess('Thao tác thành công');
+      },
+      error:(e)=>{
+        this.notifi.isProcessing(false);
+        this.notifi.toastError("Cập nhật phòng thi cho thí sinh không thành công");
+      }
+    });
   }
 }

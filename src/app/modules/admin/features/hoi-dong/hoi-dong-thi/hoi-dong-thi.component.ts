@@ -18,6 +18,7 @@ import {ExpostExcelPhongthiThisinhService} from "@shared/services/expost-excel-p
 import {ThptHoidongThisinhService} from "@shared/services/thpt-hoidong-thisinh.service";
 import {error} from "@angular/compiler-cli/src/transformers/util";
 import {DatePipe} from "@angular/common";
+import {HoiDongLichThiService, ThptLichThi} from "@shared/services/hoi-dong-lich-thi.service";
 
 interface FormHoiDong extends OvicForm {
   object: ThptHoiDong;
@@ -52,6 +53,7 @@ export class HoiDongThiComponent implements OnInit {
   @ViewChild('examinationRoom', {static: true}) examinationRoom: TemplateRef<any>;
   @ViewChild('addThiSinh', {static: true}) addThiSinh: TemplateRef<any>;
   @ViewChild(AddThiSinhComponent) addThisinhComponent: AddThiSinhComponent;
+  @ViewChild('thiSinhInPhongThi', {static: true}) thiSinhInPhongThi: TemplateRef<any>;
 
   statusList = [
     {value: 1, label: 'Active', color: '<span class="badge badge--size-normal badge-success w-100">Active</span>'},
@@ -81,7 +83,7 @@ export class HoiDongThiComponent implements OnInit {
   orderSelectTotal: number = 0;
   dmMon: DmMon[];
   hoidongSelect: ThptHoiDong;
-
+  thptLichthi:ThptLichThi[];
   constructor(
     private kehoachThiService: ThptKehoachThiService,
     private hoiDongService: ThptHoiDongService,
@@ -94,6 +96,8 @@ export class HoiDongThiComponent implements OnInit {
     private danhMucMonService: DanhMucMonService,
     private expostExcelPhongthiThisinhService: ExpostExcelPhongthiThisinhService,
     private hoiDongThiSinhService: ThptHoidongThisinhService,
+    private thptLichthiSerive:HoiDongLichThiService
+
   ) {
     const observeProcessFormData = this.OBSERVE_PROCESS_FORM_DATA.asObservable().pipe(debounceTime(100)).subscribe(form => this.__processFrom(form));
     this.subscription.add(observeProcessFormData);
@@ -107,7 +111,8 @@ export class HoiDongThiComponent implements OnInit {
       ten_hoidong: ['', Validators.required],
       mota: [null],
       status: [1, Validators.required],
-      tiento_sobaodanh: ['TNU241', ],
+      tiento_sobaodanh: ['TNU241',],
+      ngaythi: ['', Validators.required],
     })
   }
 
@@ -131,8 +136,9 @@ export class HoiDongThiComponent implements OnInit {
   getDataKeHoach() {
     this.notifi.isProcessing(true)
     this.isLoading = true;
-    this.kehoachThiService.getDataUnlimit().subscribe({
-      next: (data) => {
+    forkJoin<[ThptLichThi[],KeHoachThi[]]>(this.thptLichthiSerive.getDataUnlimit(),this.kehoachThiService.getDataUnlimit()).subscribe({
+      next: ([lichthi, data]) => {
+        this.thptLichthi = lichthi;
         this.dataKeHoach = data;
         this.getDataHoiDong();
         this.notifi.isProcessing(false);
@@ -161,6 +167,7 @@ export class HoiDongThiComponent implements OnInit {
           m['__kehoach_coverted'] = this.dataKeHoach && this.dataKeHoach.find(f => f.id === m.kehoach_id) ? this.dataKeHoach.find(f => f.id === m.kehoach_id).dotthi : '';
           const sIndex = this.statusList.findIndex(i => i.value === m.status);
           m['__status_converted'] = sIndex !== -1 ? this.statusList[sIndex].color : '';
+          m['__ngaythi'] = m.ngaythi ? this.helperService.formatSQLToDateDMY(new Date(m.ngaythi)) :"";
           return m;
         })
         this.isLoading = false;
@@ -216,7 +223,8 @@ export class HoiDongThiComponent implements OnInit {
         ten_hoidong: '',
         mota: '',
         status: 1,
-        tiento_sobaodanh:'TNU241'
+        tiento_sobaodanh: 'TNU241',
+        ngaythi:''
       });
     } else if (type === 'update') {
       this.btn_checkAdd = "Cập nhật"
@@ -226,7 +234,8 @@ export class HoiDongThiComponent implements OnInit {
         ten_hoidong: object1.ten_hoidong,
         mota: object1.mota,
         status: object1.status,
-        tiento_sobaodanh: object1.tiento_sobaodanh
+        tiento_sobaodanh: object1.tiento_sobaodanh,
+        ngaythi:new Date(object1.ngaythi)
       });
       this.formActive = this.listForm[FormType.UPDATE];
       this.formActive.object = object1;
@@ -248,10 +257,21 @@ export class HoiDongThiComponent implements OnInit {
     this.loadInit();
     this.notifi.closeSideNavigationMenu(this.menuName);
   }
-
+  formatSQLDateTime(date: Date): string {
+    const y = date.getFullYear().toString();
+    const m = (date.getMonth() + 1).toString().padStart(2, '0');
+    const d = date.getDate().toString().padStart(2, '0');
+    const h = date.getHours().toString().padStart(2, '0');
+    const min = date.getMinutes().toString().padStart(2, '0');
+    const sec = '00';
+    //'YYYY-MM-DD hh:mm:ss' type of sql DATETIME format
+    return `${y}-${m}-${d}`;
+  }
   saveForm() {
     const titleInput = this.f['ten_hoidong'].value.trim();
     this.f['ten_hoidong'].setValue(titleInput);
+    const time = this.formatSQLDateTime(new Date(this.formSave.value['ngaythi']));
+    this.f['ngaythi'].setValue(time)
     if (this.formSave.valid) {
       if (titleInput !== '') {
         this.formActive.data = this.formSave.value;
@@ -271,7 +291,7 @@ export class HoiDongThiComponent implements OnInit {
       this.hoiDongService.delete(item.id).subscribe({
         next: () => {
           // this.page = Math.max(1, this.page - (this.listData.length > 1 ? 0 : 1));
-          this.listData.filter(f=>f.id !== item.id)
+          this.listData.filter(f => f.id !== item.id)
           this.notifi.isProcessing(false);
           this.notifi.toastSuccess('Thao tác thành công');
           this.getDataHoiDong(this._kehoach_id);
@@ -314,6 +334,10 @@ export class HoiDongThiComponent implements OnInit {
     this.addThisinhComponent.btndelete();
   }
 
+  btnUpdateRoombyThisinh() {
+    this.addThisinhComponent.btnXepphong()
+  }
+
   btnReloadData() {
     this.addThisinhComponent.loadData();
   }
@@ -336,10 +360,10 @@ export class HoiDongThiComponent implements OnInit {
         }))
     ).subscribe(
       {
-        next:(data)=>{
+        next: (data) => {
           const dataThisinh = data[0];
-          const dataCathi: ThptCathi[] = data[1][0].map(m=>{
-              m['__time_start']= m ? (this.covernumber(new Date(m.time_start).getHours()) + ':' + this.covernumber(new Date(m.time_start).getMinutes())) : '';
+          const dataCathi: ThptCathi[] = data[1][0].map(m => {
+            m['__time_start'] = m ? (this.covernumber(new Date(m.time_start).getHours()) + ':' + this.covernumber(new Date(m.time_start).getMinutes())) : '';
             return m;
           });
           const dataPhongthi: ThptHoiDongPhongThi[] = data[1][1].map(m => {
@@ -350,9 +374,9 @@ export class HoiDongThiComponent implements OnInit {
             return m;
           });
 
-          if(dataThisinh.length>0 && dataCathi.length>0 && dataPhongthi.length  ){
+          if (dataThisinh.length > 0 && dataCathi.length > 0 && dataPhongthi.length) {
             const thisinhsExpostExcel = [];
-            dataThisinh.forEach((m,index)=>{
+            dataThisinh.forEach((m, index) => {
               const datePipe = new DatePipe('en-US');
               const item = {};
               const thisinh = m['thisinh'];
@@ -360,7 +384,7 @@ export class HoiDongThiComponent implements OnInit {
               item['__thisinh_id'] = thisinh ? thisinh['id'] : '';
               item['__madk'] = thisinh ? hoidong.tiento_sobaodanh + this.covertId(thisinh['id']) : '';
               item['__hoten'] = thisinh ? thisinh['hoten'] : '';
-              item['__ngaysinh'] = thisinh ? this.repplaceNgaysinh(thisinh['ngaysinh'])  : '';
+              item['__ngaysinh'] = thisinh ? this.repplaceNgaysinh(thisinh['ngaysinh']) : '';
               item['__gioitinh'] = thisinh && thisinh['gioitinh'] === 'nam' ? 'Nam' : (thisinh && thisinh['gioitinh'] === 'nu' ? 'Nữ' : '');
               item['__cccd'] = thisinh ? thisinh['cccd_so'] : '';
               item['__email'] = thisinh ? thisinh['email'] : '';
@@ -370,12 +394,12 @@ export class HoiDongThiComponent implements OnInit {
                 item['__mon_' + a.kyhieu] = m.monthi_ids.find(f => f === a.id) ? a.tenmon : '';
               })
               this.dmMon.map(a => {
-                const cathiselect = dataCathi.find(f=>f.mon_ids.find(mon=>mon=== a.id));
-                const phongthi = dataPhongthi.find(phongthi => phongthi.thisinh_ids.find(id=>id === m.thisinh_id) && phongthi.cathi_id === cathiselect.id);
-                item['__sbd_' + a.kyhieu]       = m.monthi_ids.find(mon_id => mon_id === a.id)  ? hoidong.tiento_sobaodanh + this.covertId(thisinh['id']) : '';
-                item['__cathi_' + a.kyhieu]     = m.monthi_ids.find(mon_id => mon_id === a.id) && cathiselect ? cathiselect.cathi : '';
-                item['__diadiem_' + a.kyhieu]   = m.monthi_ids.find(mon_id => mon_id === a.id)  ? 'Trung tâm Khảo thí và Quản lý chất lượng – ĐHTN, Phường Tân Thịnh – Thành phố Thái Nguyên' : '';
-                item['__phongthi_' + a.kyhieu]  = m.monthi_ids.find(mon_id => mon_id === a.id) && phongthi ? phongthi.ten_phongthi : '';
+                const cathiselect = dataCathi.find(f => f.mon_ids.find(mon => mon === a.id));
+                const phongthi = dataPhongthi.find(phongthi => phongthi.thisinh_ids.find(id => id === m.thisinh_id) && phongthi.cathi_id === cathiselect.id);
+                item['__sbd_' + a.kyhieu] = m.monthi_ids.find(mon_id => mon_id === a.id) ? hoidong.tiento_sobaodanh + this.covertId(thisinh['id']) : '';
+                item['__cathi_' + a.kyhieu] = m.monthi_ids.find(mon_id => mon_id === a.id) && cathiselect ? cathiselect.cathi : '';
+                item['__diadiem_' + a.kyhieu] = m.monthi_ids.find(mon_id => mon_id === a.id) ? 'Trung tâm Khảo thí và Quản lý chất lượng – ĐHTN, Phường Tân Thịnh – Thành phố Thái Nguyên' : '';
+                item['__phongthi_' + a.kyhieu] = m.monthi_ids.find(mon_id => mon_id === a.id) && phongthi ? phongthi.ten_phongthi : '';
                 item['__timeStart_' + a.kyhieu] = m.monthi_ids.find(mon_id => mon_id === a.id) && cathiselect && phongthi ? cathiselect['__time_start'].replace(':', 'g') + ' ngày ' + phongthi['__ngaythi'] : '';
               })
 
@@ -383,13 +407,13 @@ export class HoiDongThiComponent implements OnInit {
             })
 
             const dataPhongthiExport: any[] = [];
-            dataPhongthi.forEach((f,index)=>{
+            dataPhongthi.forEach((f, index) => {
               const item = {};
               item["cathi"] = f['__cathi_Covented'];
               item['phong'] = f.ten_phongthi;
 
-              this.dmMon.forEach(dm=>{
-                const cathiselect = dataCathi.find(ct=>ct.id === f.cathi_id).mon_ids.find(id=> id === dm.id)
+              this.dmMon.forEach(dm => {
+                const cathiselect = dataCathi.find(ct => ct.id === f.cathi_id).mon_ids.find(id => id === dm.id)
                 item['__monthi_' + dm.kyhieu] = cathiselect ? dm.tenmon : '';
               });
               item['__timeStart'] = f ? f['__time_start'].replace(':', 'g') + ' ngày ' + f['__ngaythi'] : '';
@@ -399,13 +423,13 @@ export class HoiDongThiComponent implements OnInit {
             })
             this.expostExcelPhongthiThisinhService.exportExcel(thisinhsExpostExcel, this.columns, hoidong.ten_hoidong, dataPhongthiExport, this.columnSheet2);
 
-          }else{
+          } else {
             this.notifi.toastWarning('Vui lòng tạo ca thi và phòng thi trước khi export');
           }
 
 
           this.notifi.isProcessing(false);
-        },error:(e)=>{
+        }, error: (e) => {
           this.notifi.isProcessing(false);
           this.notifi.toastError('Load dữ liệu không thành công');
         }
@@ -413,8 +437,53 @@ export class HoiDongThiComponent implements OnInit {
     )
   }
 
-  covernumber(input:number){
-    return input<10 ? '0' + input: input.toString();
+  btnExportExcelV3(hoidong:ThptHoiDong){
+
+    this.notifi.isProcessing(true);
+
+    this.hoiDongThiSinhService.getDataByHoiDongIdNotPage(hoidong.id).subscribe({
+      next:(data)=>{
+
+        const dataParam = [];
+        data.sort((a,b)=>a['thisinh']['ten'].localeCompare(b['thisinh']['ten'])).forEach((m,index)=>{
+          const item = {};
+          const thisinh = m['thisinh'];
+          item['__index_table']= index+1;
+          item['__thisinh_id'] = m.thisinh_id;
+          item['__ma_dk'] = hoidong.tiento_sobaodanh + this.covertId(m.thisinh_id);
+          item['__hoten'] = thisinh ? thisinh['hoten'] : '';
+          item['__ngaysinh'] = thisinh ? this.repplaceNgaysinh(thisinh['ngaysinh']) : '';
+          item['__gioitinh'] = thisinh && thisinh['gioitinh'] === 'nu' ? 'Nữ' : 'Nam';
+          item['__cccd_so'] = thisinh ? thisinh['cccd_so'] : '';
+          item['__email'] = thisinh ? thisinh['email'] : '';
+          item['__phone'] = thisinh ? thisinh['phone'] : '';
+
+          this.dmMon.map(a => {
+            item['__mon_' + a.kyhieu] = m.monthi_ids.find(f => f === a.id) ? a.tenmon : '';
+          })
+
+          this.dmMon.map(a => {
+            const mon = m.monthi_ids.find(mon_id => mon_id === a.id)
+            item['__sbd_' + a.kyhieu]        = mon ? hoidong.tiento_sobaodanh + this.covertId(m.thisinh_id) : '';
+            item['__cathi_' + a.kyhieu]      = mon ? m['ca_' +  a.kyhieu.toLowerCase()] : '';
+            const cathi = m['ca_' +  a.kyhieu.toLowerCase()];
+            item['__diadiem_' + a.kyhieu]    = mon ? 'Trung tâm Khảo thí và Quản lý chất lượng – ĐHTN, Phường Tân Thịnh – Thành phố Thái Nguyên' : '';
+            item['__phongthi_' + a.kyhieu]   = mon ? m['phongthi'] : '';
+            item['__timeStart_' + a.kyhieu]  = mon ? this.thptLichthi.find(f=>f.id === cathi )['gio_goivao_phongthi'].replace(' giờ ', 'g')+ ' ngày ' + hoidong['__ngaythi'] : '';
+          })
+          dataParam.push(item);
+        })
+
+        this.expostExcelPhongthiThisinhService.exportExcelOnlySheet1(dataParam, this.columns, hoidong.ten_hoidong);
+        this.notifi.isProcessing(false);
+      },error:(e)=>{
+        this.notifi.isProcessing(false);
+        this.notifi.toastError('Load dữ liệu thành công')
+      }
+    })
+  }
+  covernumber(input: number) {
+    return input < 10 ? '0' + input : input.toString();
   }
 
   btnExportExcel(item: ThptHoiDong) {
@@ -441,7 +510,7 @@ export class HoiDongThiComponent implements OnInit {
             const cathi = dataCathi.find(f => f.id === m.cathi_id);
             m['__cathi_Covented'] = cathi ? cathi.cathi : '';
             m['__ngaythi'] = cathi ? this.helperService.formatSQLToDateDMY(new Date(cathi.ngaythi)) : '';
-            m['__time_start']= cathi ? (new Date(cathi.time_start).getHours() + ':' + this.covernumber(new Date(cathi.time_start).getMinutes())) : '';
+            m['__time_start'] = cathi ? (new Date(cathi.time_start).getHours() + ':' + this.covernumber(new Date(cathi.time_start).getMinutes())) : '';
             return m;
           });
           const dataMonthi: ThptPhongThiMonThi[] = data[1][1][1].filter(f => f.thisinh_ids.length !== 0).sort((a, b) => a.phongthi_id - b.phongthi_id).map(m => {
@@ -535,10 +604,11 @@ export class HoiDongThiComponent implements OnInit {
     'Ca', 'Phòng', 'Toán', 'Vật lí', 'Hóa học', 'Sinh học', 'Lịch sử', 'Địa lí', 'Tiếng Anh', 'Thời điểm gọi thí sinh', 'Địa điểm'
   ]
 
-  covertId(iput:number){
-    return iput<10? '000'+iput: (iput>=10 && iput<100 ? '00'+ iput : (iput>=100 && iput<1000 ? '0' +iput :iput));
+  covertId(iput: number) {
+    return iput < 10 ? '000' + iput : (iput >= 10 && iput < 100 ? '00' + iput : (iput >= 100 && iput < 1000 ? '0' + iput : iput));
   }
-  repplaceNgaysinh (text:string){
+
+  repplaceNgaysinh(text: string) {
     const parts = text.split('/');
     const day = parts[0];
     const month = parts[1];
@@ -547,5 +617,16 @@ export class HoiDongThiComponent implements OnInit {
     // Chuyển đổi sang định dạng mới
     const newDateString = `${year}-${month}-${day}`;
     return newDateString;
-}
+  }
+  //--------------------------
+  btnThiSinhInHoiDong(item: ThptHoiDong) {
+    this.notifi.isProcessing(false);
+    this.hoidong_id = item.id;
+    this.kehoach_id_param = item.kehoach_id;
+    this.notifi.openSideNavigationMenu({
+      template: this.thiSinhInPhongThi,
+      size: this.sizeFullWidth,
+      offsetTop: '0px'
+    });
+  }
 }

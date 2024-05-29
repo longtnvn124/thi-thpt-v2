@@ -13,6 +13,7 @@ export interface ThptHoiDongPhongThi {
   ma_phongthi: string;
   cathi_id:number;
   soluong_toida:number;
+  soluong_thucte?:number;
 }
 
 export interface ThptHoiDongThiSinh {

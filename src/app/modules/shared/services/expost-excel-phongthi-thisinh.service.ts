@@ -25,6 +25,146 @@ export interface PhongthiExportExcel {
 export class ExpostExcelPhongthiThisinhService {
   constructor() { }
 
+  exportExcelOnlySheet1(json: any[], headersArray: any[], nameexcelFileName: string){
+    const header = headersArray;
+    const workbook = new Workbook();
+    workbook.created = new Date();
+    workbook.modified = new Date();
+
+    const worksheet = workbook.addWorksheet("V-SAT-TNU_SBD" );
+
+
+    // worksheet.addRow([]);
+    const headerRow = worksheet.addRow(header);
+    headerRow.eachCell((cell, index) => {
+
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'CCCCCC' },
+        bgColor: { argb: '000000' },
+      };
+      cell.border = {
+        top: { style: 'thin' },
+        left: { style: 'thin' },
+        bottom: { style: 'thin' },
+        right: { style: 'thin' }
+      };
+      cell.font = { size: 13, bold: true, name: 'Times New Roman' };
+      cell.alignment = { horizontal: 'center' };
+
+
+      worksheet.getColumn(index).width = header[index - 1].length < 20 ? 20 : header[index - 1].length;
+      worksheet.getColumn(1).width = 7;
+      worksheet.getColumn(1).alignment = { horizontal: 'center' };
+    });
+
+    const objectColWidth = {
+      1: 6,
+      2: 6,
+      3: 12,
+      4: 24,
+      5: 12,
+      6: 12,
+      7: 16,
+      8: 36,
+      9: 12,
+
+      10: 16,
+      11: 16,
+      12: 16,
+      13: 16,
+      14: 16,
+      15: 16,
+      16: 16,
+
+
+      17: 16,
+      18: 16,
+      19: 77,
+      20: 16,
+      21: 24,
+
+      22: 16,
+      23: 16,
+      24: 77,
+      25: 16,
+      26: 24,
+
+      27: 16,
+      28: 16,
+      29: 77,
+      30: 16,
+      31: 24,
+
+      32: 16,
+      33: 16,
+      34: 77,
+      35: 16,
+      36: 24,
+
+      37: 16,
+      38: 16,
+      39: 77,
+      40: 16,
+      41: 24,
+
+      42: 16,
+      43: 16,
+      44: 77,
+      45: 16,
+      46: 24,
+
+      47: 16,
+      48: 16,
+      49: 77,
+      50: 16,
+      51: 24,
+    };
+
+    this.setColWidth(worksheet, objectColWidth);
+    let columnsArray: any[];
+    for (const key in json) {
+      if (json.hasOwnProperty(key)) {
+        columnsArray = Object.keys(json[key]);
+      }
+    }
+
+    json.forEach((element: any) => {
+      const eachRow = [];
+      columnsArray.forEach((column) => {
+        eachRow.push(element[column]);
+
+      });
+
+      if (element.isDeleted === 'Y') {
+        const deleteRow = worksheet.addRow(eachRow);
+        deleteRow.eachCell((cell) => {
+          cell.font = { name: 'Times New Roman', family: 4, size: 11, bold: false, strike: true };
+
+        })
+      } else {
+        worksheet.addRow(eachRow);
+      }
+      //set with column to fit
+      worksheet.columns.forEach((column, columnIndex) => {
+        let maxLength = 0;
+        column.eachCell({ includeEmpty: true }, (cell) => {
+          const cellLength = cell.value ? cell.value.toString().length : 0;
+          maxLength = cellLength;
+        });
+        // worksheet.getColumn(columnIndex + 1).width = maxLength + 2;
+      });
+
+    });
+
+
+    workbook.xlsx.writeBuffer().then((data: ArrayBuffer) => {
+      const blob = new Blob([data], { type: EXCEL_TYPE });
+      fs.saveAs(blob, nameexcelFileName + EXCEL_EXTENSION);
+    })
+
+  }
   exportExcel(
     json: any[],
     headersArray: any[],// column name

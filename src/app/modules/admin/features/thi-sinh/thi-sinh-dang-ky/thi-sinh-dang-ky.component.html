@@ -352,12 +352,12 @@
             <td class="text-center font-weight-bold">Thời gian gọi thí sinh vào phòng thi</td>
           </tr>
           <tr *ngFor="let item of phieuduthi['phongthi']">
-            <td class="text-center">{{ item['__index'] }}</td>
-            <td class="text-center">{{ item['__sobaodanh'] }}</td>
-            <td>{{ item['__monthi'] }}</td>
-            <td class="text-center">{{ item.ten_phongthi }}</td>
-            <td class="text-center">{{ item['__ngaythi'] }}</td>
-            <td class="text-center">{{ item['__time_start'] }}</td>
+            <td class="text-center">{{ item['_index'] }}</td>
+            <td class="text-center">{{ phieuduthi.sobaodanh }}</td>
+            <td>{{ item['monthi'] }}</td>
+            <td class="text-center">{{ phieuduthi.tenphongthi }}</td>
+            <td class="text-center">{{ item['ngaythi'] }}</td>
+            <td class="text-center">{{ item['time_start'] }}</td>
           </tr>
         </table>
       </div>
@@ -371,101 +371,3 @@
 
   </div>
 </p-dialog>
-
-<ng-template #ViewPhieu >
-
-  <div  class="w-100 h-100 d-flex flex-column align-phieu " style="background: #fafafa;color: #000000">
-
-    <div class="m-2 w-100 btn_exportPhieeus" >
-
-    </div>
-    <div class="phieu_content" style="width:21cm;background: #fff; padding: 20px;" #dataToExport>
-      <table class="w-100 my-3 px-2">
-        <tr>
-          <td>
-            <div class="--font-times-new-roman d-flex justify-content-center align-items-center flex-column">
-              <div class="text-center"><strong><u>HỘI ĐỒNG THI ĐẠI HỌC THÁI NGUYÊN</u></strong></div>
-              <div>KỲ THI VSAT-TNU NĂM 2024</div>
-            </div>
-          </td>
-          <td>
-            <div class="--font-times-new-roman d-flex justify-content-center align-items-center flex-column">
-              <div class="text-center"><strong>CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</strong></div>
-              <div><strong><u>Độc lập – Tự do – Hạnh phúc</u></strong></div>
-            </div>
-          </td>
-        </tr>
-
-      </table>
-
-      <div class="--font-times-new-roman text-center my-5" style="font-size:22px;"><strong>GIẤY BÁO DỰ THI</strong>
-      </div>
-      <div class="row mx-0 --font-times-new-roman">
-        <div class="col-10">
-          <div>Họ và tên thí sinh: <span><b>{{ phieuduthi.hoten }}</b></span></div>
-          <div class="row mx-0">
-            <div class="p-0 my-3 col-4">Ngày sinh:{{ phieuduthi.ngaysinh }}</div>
-            <div class="p-0 my-3 col-4">Dân tộc: {{ phieuduthi.dantoc }}</div>
-            <div class="p-0 my-3 col-4">Nam/Nữ: {{ phieuduthi.gioitinh }}</div>
-          </div>
-
-          <div class="row mx-0">
-            <div class="p-0 my-3 col-8">Nơi sinh:{{ phieuduthi.noisinh }}</div>
-            <div class="p-0 my-3 col-4">Số CCCD: {{ phieuduthi.cccd_so }}</div>
-
-          </div>
-          <div class="my-3">Hộ khẩu TT: {{ phieuduthi.thuongtru }}</div>
-          <div class="my-3">Học sinh trường: {{ phieuduthi.truong }}</div>
-          <div class="my-3">Đăng ký dự thi để tuyển sinh ĐH, CĐ:
-            <i *ngIf="phieuduthi.ketqua_xetdaihoc === 1" class="pi pi-times" style="border:1px solid #000; color:#000;"></i>
-            <i *ngIf="phieuduthi.ketqua_xetdaihoc === 0" class="pi pi-stop" style=" color:#000"></i>
-          </div>
-          <div class="row mx-0">
-            <div class="my-3 p-0 col-4">Đối tượng: {{ phieuduthi.doituong }}</div>
-            <div class="my-3 p-0 col-4">Khu vực: {{ phieuduthi.khuvuc }}</div>
-          </div>
-
-          <div class="my-3">Hội đồng thi: TNU - Hội đồng thi Đại học Thái Nguyên</div>
-
-        </div>
-        <div class="col-2">
-          <img class="w-100"
-               [src]="phieuduthi ? (phieuduthi.anh_chandung | ovicSafeUrl) : 'src/assets/images/placeholder.jpg' "
-               alt="">
-        </div>
-      </div>
-      <div class="--font-times-new-roman" style="padding-left:15px">Địa chỉ Điểm thi: Trung tâm Khảo thí và Quản lý chất
-        lượng – ĐHTN, Phường Tân Thịnh – Thành phố Thái Nguyên
-      </div>
-      <div class="--font-times-new-roman my-3" style="padding-left:15px"><strong>Số báo danh:</strong>
-        <span>{{ 'TNU' + phieuduthi.sobaodanh }}</span></div>
-
-      <div class="--font-times-new-roman" style="padding:15px">
-        <table class="w-100" border="1px solid #ccc">
-          <tr>
-            <td class="text-center font-weight-bold">TT</td>
-            <td class="text-center font-weight-bold">Môn thi</td>
-            <td class="text-center font-weight-bold">Phòng thi</td>
-            <td class="text-center font-weight-bold">Ngày thi</td>
-            <td class="text-center font-weight-bold">Thời gian gọi thí sinh vào phòng thi</td>
-          </tr>
-          <tr *ngFor="let item of phieuduthi['phongthi']">
-            <td class="text-center">{{ item['__index'] }}</td>
-            <td>{{ item['__monthi'] }}</td>
-            <td class="text-center">{{ 'Phòng ' + item.ten_phongthi }}</td>
-            <td class="text-center">{{ item['__ngaythi'] }}</td>
-            <td class="text-center">{{ item['__time_start'] }}</td>
-          </tr>
-
-        </table>
-      </div>
-      <div class="--font-times-new-roman" style="padding:15px">
-
-        <div>Thí sinh có mặt tại địa điểm thi từ <strong>06 giờ 30 phút</strong> để hoàn thành thủ tục dự thi tại Trung tâm Khảo thí và Quản lý chất lượng giáo
-          dục, Phường Tân Thịnh TP Thái Nguyên.</div>
-      </div>
-    </div>
-
-  </div>
-
-</ng-template>

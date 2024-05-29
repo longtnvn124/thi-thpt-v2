@@ -22,12 +22,16 @@ import {CheckboxModule} from "primeng/checkbox";
 import {MatMenuModule} from "@angular/material/menu";
 import {CalendarModule} from "primeng/calendar";
 import { PhongThiV2Component } from './hoi-dong-thi/phong-thi-v2/phong-thi-v2.component';
+import { PhongThiV3Component } from './hoi-dong-thi/phong-thi-v3/phong-thi-v3.component';
+import { ThiSinhInHoiDongComponent } from './hoi-dong-thi/thi-sinh-in-hoi-dong/thi-sinh-in-hoi-dong.component';
 @NgModule({
     declarations: [
         HoiDongThiComponent,
         PhongThiComponent,
         AddThiSinhComponent,
-        PhongThiV2Component
+        PhongThiV2Component,
+        PhongThiV3Component,
+        ThiSinhInHoiDongComponent
     ],
     imports: [
         CommonModule,
