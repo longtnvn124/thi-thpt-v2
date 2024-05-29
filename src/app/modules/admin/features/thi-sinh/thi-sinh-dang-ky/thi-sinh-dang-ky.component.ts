@@ -627,12 +627,12 @@ export class ThiSinhDangKyComponent implements OnInit {
           }
           this.isShower= true;
         }else{
-          this.notifi.toastWarning('Lịch thi của thí sinh đang cập nhật, vui lòng quay lại sau. ')
+          this.notifi.toastWarning('Phiếu dự thi của thí sinh đang cập nhật, vui lòng quay lại sau. ')
         }
 
       },error:(e)=>{
         console.log(e);
-        this.notifi.toastError('Load dữ liệu thí sinh chưa thành công');
+        this.notifi.toastError('Phiếu dự thi của thí sinh đang cập nhật, vui lòng quay lại sau. ');
         this.notifi.isProcessing(false);
       }
     })

@@ -779,48 +779,48 @@ export class PhongThiV2Component implements OnInit, OnChanges {
 //======================================================================================
   btnExportExcelRoom(cathi: ThptCathi) {
 
-    this.notifi.isProcessing(true);
-    this.hoidongPhongThiService.getDataByHoidongVaCathiId(this.hoidong_id, cathi.id).pipe(switchMap(prj => {
-      return this.loadphongthiandThisinh(prj)
-    })).subscribe({
-      next: (data) => {
-        const dataExport:PhongthiExportExcel[] = [];
-        data.forEach(room=>{
-
-          const thisinhParram = room.thisinh_ids.map((id,index)=>{
-            const thisinhinfo = room['__thisinh_in_phong'].find(r=>r['id'] === id)? room['__thisinh_in_phong'].find(r=>r['id'] === id) : null;
-            const item = {
-                __index:index+1,
-                sbd:thisinhinfo ? this.hoidong.tiento_sobaodanh + (thisinhinfo.id <10 ? ('000'+thisinhinfo.id):(thisinhinfo.id >10 && thisinhinfo.id <100?('00'+thisinhinfo.id):(thisinhinfo.id>100 && thisinhinfo.id <1000 ? ('0'+thisinhinfo.id) : thisinhinfo.id.toString()) )) :'',
-                hoten: thisinhinfo ? thisinhinfo['hoten'] : '',
-                ngaysinh: thisinhinfo ? thisinhinfo['ngaysinh'] : '',
-                gioitinh: thisinhinfo && thisinhinfo['gioitinh'] ==='nam' ? 'Nam' : 'Nữ',
-                cccd_so: thisinhinfo ? thisinhinfo['cccd_so'] : '',
-                ky:'',
-            }
-            return item
-          })
-
-          const roomParam :PhongthiExportExcel= {
-            ten_phongthi    : room.ten_phongthi,
-            cathi_name      : cathi.cathi,
-            cathi_ngaythi   : cathi['__ngaythi_coverted'],
-            time_ngaythi    : cathi['__time_start_coverted'],
-            monthi          : cathi['__monthi_covered'].map(m=>m['tenmon']).join(', '),
-            thisinh         : room['__thisinh_in_phong'] ? thisinhParram : room.thisinh_ids ,
-          };
-          dataExport.push(roomParam);
-        })
-
-        this.expostExcelPhongthiThisinhService.exportHoidongPhongthi(('Danh sách phòng thi Ca ' + cathi.cathi),this.thisinhs_column,dataExport)
-        this.notifi.isProcessing(false);
-      },
-      error: (e) => {
-        this.notifi.toastError('load dữ liệu phòng thi không thành công');
-        this.notifi.isProcessing(false);
-
-      }
-    })
+    // this.notifi.isProcessing(true);
+    // this.hoidongPhongThiService.getDataByHoidongVaCathiId(this.hoidong_id, cathi.id).pipe(switchMap(prj => {
+    //   return this.loadphongthiandThisinh(prj)
+    // })).subscribe({
+    //   next: (data) => {
+    //     const dataExport:PhongthiExportExcel[] = [];
+    //     data.forEach(room=>{
+    //
+    //       const thisinhParram = room.thisinh_ids.map((id,index)=>{
+    //         const thisinhinfo = room['__thisinh_in_phong'].find(r=>r['id'] === id)? room['__thisinh_in_phong'].find(r=>r['id'] === id) : null;
+    //         const item = {
+    //             __index:index+1,
+    //             sbd:thisinhinfo ? this.hoidong.tiento_sobaodanh + (thisinhinfo.id <10 ? ('000'+thisinhinfo.id):(thisinhinfo.id >10 && thisinhinfo.id <100?('00'+thisinhinfo.id):(thisinhinfo.id>100 && thisinhinfo.id <1000 ? ('0'+thisinhinfo.id) : thisinhinfo.id.toString()) )) :'',
+    //             hoten: thisinhinfo ? thisinhinfo['hoten'] : '',
+    //             ngaysinh: thisinhinfo ? thisinhinfo['ngaysinh'] : '',
+    //             gioitinh: thisinhinfo && thisinhinfo['gioitinh'] ==='nam' ? 'Nam' : 'Nữ',
+    //             cccd_so: thisinhinfo ? thisinhinfo['cccd_so'] : '',
+    //             ky:'',
+    //         }
+    //         return item
+    //       })
+    //
+    //       const roomParam :PhongthiExportExcel= {
+    //         ten_phongthi    : room.ten_phongthi,
+    //         cathi_name      : cathi.cathi,
+    //         cathi_ngaythi   : cathi['__ngaythi_coverted'],
+    //         time_ngaythi    : cathi['__time_start_coverted'],
+    //         monthi          : cathi['__monthi_covered'].map(m=>m['tenmon']).join(', '),
+    //         thisinh         : room['__thisinh_in_phong'] ? thisinhParram : room.thisinh_ids ,
+    //       };
+    //       dataExport.push(roomParam);
+    //     })
+    //
+    //     this.expostExcelPhongthiThisinhService.exportHoidongPhongthi(('Danh sách phòng thi Ca ' + cathi.cathi),this.thisinhs_column,dataExport)
+    //     this.notifi.isProcessing(false);
+    //   },
+    //   error: (e) => {
+    //     this.notifi.toastError('load dữ liệu phòng thi không thành công');
+    //     this.notifi.isProcessing(false);
+    //
+    //   }
+    // })
   }
   thisinhs_column= ['STT','SBD','Họ và tên thí sinh','Ngày sinh','Giới tính','Số CCCD','Thí sinh ký tên'];
 

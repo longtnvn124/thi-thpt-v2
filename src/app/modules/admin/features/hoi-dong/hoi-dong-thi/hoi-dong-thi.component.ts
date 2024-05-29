@@ -191,7 +191,8 @@ export class HoiDongThiComponent implements OnInit {
             kehoach_id: null,
             ten_hoidong: '',
             mota: '',
-            status: 1
+            status: 1,
+            ngaythi:''
           });
         }
         this.getDataHoiDong(this._kehoach_id);
@@ -235,7 +236,7 @@ export class HoiDongThiComponent implements OnInit {
         mota: object1.mota,
         status: object1.status,
         tiento_sobaodanh: object1.tiento_sobaodanh,
-        ngaythi:new Date(object1.ngaythi)
+        ngaythi:object1.ngaythi ?  new Date(object1.ngaythi) : null
       });
       this.formActive = this.listForm[FormType.UPDATE];
       this.formActive.object = object1;
@@ -270,8 +271,7 @@ export class HoiDongThiComponent implements OnInit {
   saveForm() {
     const titleInput = this.f['ten_hoidong'].value.trim();
     this.f['ten_hoidong'].setValue(titleInput);
-    const time = this.formatSQLDateTime(new Date(this.formSave.value['ngaythi']));
-    this.f['ngaythi'].setValue(time)
+    this.f['ngaythi'].setValue(this.formatSQLDateTime(new Date(this.formSave.value['ngaythi'])));
     if (this.formSave.valid) {
       if (titleInput !== '') {
         this.formActive.data = this.formSave.value;

@@ -25,6 +25,7 @@ interface FormatPhongthiBythisinh {
   ngaythi: string;
   time_start: string;
 }
+
 interface FormatthisinhSendEmail {
   hoten: string;
   email: string;
@@ -38,106 +39,107 @@ interface FormatthisinhSendEmail {
   noisinh: string;
   created: boolean;
 }
+
 @Component({
   selector: 'thi-sinh-in-hoi-dong',
   templateUrl: './thi-sinh-in-hoi-dong.component.html',
   styleUrls: ['./thi-sinh-in-hoi-dong.component.css']
 })
 
-export class ThiSinhInHoiDongComponent implements OnInit,OnChanges {
+export class ThiSinhInHoiDongComponent implements OnInit, OnChanges {
   @Input() hoidong_id: number;
   @Input() kehoach_id: number;
   @ViewChild('templateWaiting') templateWaiting: ElementRef;
 
   //=================== Danh muc===================================
-  dmMon:DmMon[];
-  dmPhongthi:DmPhongThi[];
-  dmLichthi:ThptLichThi[];
-  hoidong:ThptHoiDong;
-  isLoading:boolean=false;
-  cathi_id_select:number;
+  dmMon: DmMon[];
+  dmPhongthi: DmPhongThi[];
+  dmLichthi: ThptLichThi[];
+  hoidong: ThptHoiDong;
+  isLoading: boolean = false;
+  cathi_id_select: number;
   // ==================================
-  thisinhInhoidong:ThptHoiDongThiSinh[] =[];
+  thisinhInhoidong: ThptHoiDongThiSinh[] = [];
 
   constructor(
-    private dmMonSerive:DanhMucMonService,
-    private danhMucPhongThiService:DanhMucPhongThiService,
-    private hoidongService:ThptHoiDongService,
-    private hoidongThisinhSerive:ThptHoidongThisinhService,
+    private dmMonSerive: DanhMucMonService,
+    private danhMucPhongThiService: DanhMucPhongThiService,
+    private hoidongService: ThptHoiDongService,
+    private hoidongThisinhSerive: ThptHoidongThisinhService,
     private senderEmailService: SenderEmailService,
-    private expostExcelPhongthiThisinhService:ExpostExcelPhongthiThisinhService,
-    private fileService:FileService,
-    private notificationService:NotificationService,
+    private expostExcelPhongthiThisinhService: ExpostExcelPhongthiThisinhService,
+    private fileService: FileService,
+    private notificationService: NotificationService,
     private thptLichThiService: HoiDongLichThiService,
     private modalService: NgbModal,
     private htmlToPdfService: HtmlToPdfService,
-    private helperService:HelperService
-
-
-  ) { }
+    private helperService: HelperService
+  ) {
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if(this.hoidong_id)
-    {
-      this.loadInit()
-    }
-  }
-  ngOnInit(): void {
-    if(this.hoidong_id){
+    if (this.hoidong_id) {
       this.loadInit()
     }
   }
 
-  loadInit(){
-    forkJoin<[DmMon[],DmPhongThi[],ThptLichThi[],ThptHoiDong]>(
+  ngOnInit(): void {
+    if (this.hoidong_id) {
+      this.loadInit()
+    }
+  }
+
+  loadInit() {
+    forkJoin<[DmMon[], DmPhongThi[], ThptLichThi[], ThptHoiDong]>(
       this.dmMonSerive.getDataUnlimit(),
       this.danhMucPhongThiService.getDataUnlimit(),
       this.thptLichThiService.getDataUnlimit(),
       this.hoidongService.getHoidongonly(this.hoidong_id)
     ).subscribe({
-      next:([dmMon,dmPhongthi,dmLichthi,thptHoidong])=>{
+      next: ([dmMon, dmPhongthi, dmLichthi, thptHoidong]) => {
         this.dmMon = dmMon;
-        this.dmPhongthi =this.convertDmPhongThi(dmPhongthi).map(m=>{
-          m['ten_phong']= 'Phòng '+ m.phongso;
+        this.dmPhongthi = this.convertDmPhongThi(dmPhongthi).map(m => {
+          m['ten_phong'] = 'Phòng ' + m.phongso;
           return m
         });
-        this.dmLichthi = dmLichthi.map(m=>{
-          m['ten_cathi'] = 'Ca '+ m.id;
+        this.dmLichthi = dmLichthi.map(m => {
+          m['ten_cathi'] = 'Ca ' + m.id;
           return m;
         });
         this.hoidong = thptHoidong
-        if(this.dmMon && this.dmPhongthi && this.dmLichthi){
+        if (this.dmMon && this.dmPhongthi && this.dmLichthi) {
           this.getDathThisinh(this.hoidong_id)
         }
-      },error:()=>{
+      }, error: () => {
         this.notificationService.toastError('Load dữ liệu không thành công');
       }
     })
   }
+
   // .pipe(switchMap(pjs=>{return this.loadThiSinhAvatarProcess(pjs)}))
-  getDathThisinh(hoidong_id:number, phongthi_id_select?:number){
-    this.isLoading= true;
+  getDathThisinh(hoidong_id: number, phongthi_id_select?: number) {
+    this.isLoading = true;
     this.notificationService.isProcessing(true);
     this.hoidongThisinhSerive.getDataByHoidongIdUnlimit(hoidong_id, phongthi_id_select).subscribe({
-      next:(data)=>{
-        this.thisinhInhoidong = data.sort((a,b)=>b.monthi_ids.length - a.monthi_ids.length).map((m,index)=>{
+      next: (data) => {
+        this.thisinhInhoidong = data.sort((a, b) => b.monthi_ids.length - a.monthi_ids.length).map((m, index) => {
           const thisinh = m['thisinh'];
-          m['__index'] = index+1;
-          m['__hoten'] = thisinh ? thisinh['hoten']: '';
+          m['__index'] = index + 1;
+          m['__hoten'] = thisinh ? thisinh['hoten'] : '';
           m['__sobaodanh'] = this.hoidong.tiento_sobaodanh + this.covertId(m.thisinh_id);
-          m['__ngaysinh'] = thisinh ? thisinh['ngaysinh']: '';
-          m['__gioitinh'] = thisinh && thisinh['gioitinh'] === 'nu'? 'Nữ': 'Nam';
+          m['__ngaysinh'] = thisinh ? thisinh['ngaysinh'] : '';
+          m['__gioitinh'] = thisinh && thisinh['gioitinh'] === 'nu' ? 'Nữ' : 'Nam';
           m['__cccd_so'] = thisinh ? thisinh['cccd_so'] : '';
 
           return m;
         })
 
 
-        this.isLoading= false;
+        this.isLoading = false;
         this.notificationService.isProcessing(false);
 
-      },error:(e)=>{
-        this.isLoading= false;
+      }, error: (e) => {
+        this.isLoading = false;
         this.notificationService.isProcessing(false);
         this.notificationService.toastError('Load dữ liệu thí sinh không thành công ');
       }
@@ -180,46 +182,51 @@ export class ThiSinhInHoiDongComponent implements OnInit,OnChanges {
     }
     return result;
   }
+
   covertId(iput: number) {
     return iput < 10 ? '000' + iput : (iput >= 10 && iput < 100 ? '00' + iput : (iput >= 100 && iput < 1000 ? '0' + iput : iput));
   }
+
   //=====================================================
-  phongthi_id_select:number;
-  cathiChange(event){
+  phongthi_id_select: number;
+
+  cathiChange(event) {
 
     this.phongthi_id_select = event.value;
-    this.getDathThisinh(this.hoidong_id,event.value);
+    this.getDathThisinh(this.hoidong_id, event.value);
   }
-  btnExportAlbumAnh(){
+
+  btnExportAlbumAnh() {
     this.modalService.open(this.templateWaiting, WAITING_POPUP);
-    const fileName = this.hoidong.ten_hoidong  + ' - Danh sách thí sinh';
+    const fileName = this.hoidong.ten_hoidong + ' - Danh sách thí sinh';
 
     this.notificationService.isProcessing(true);
-    this.hoidongThisinhSerive.getDataByHoidongIdUnlimit(this.hoidong_id).pipe(switchMap(pjs=>
-    {return this.loadThiSinhAvatarProcess(pjs).pipe(map(m=>{
-      pjs['__thisinh_info'] =m;
-      return pjs
-    }))})).subscribe({
-      next:(data)=>{
-        const dataThisinh = data.sort().map(m=>{
+    this.hoidongThisinhSerive.getDataByHoidongIdUnlimit(this.hoidong_id).pipe(switchMap(pjs => {
+      return this.loadThiSinhAvatarProcess(pjs).pipe(map(m => {
+        pjs['__thisinh_info'] = m;
+        return pjs
+      }))
+    })).subscribe({
+      next: (data) => {
+        const dataThisinh = data.sort().map(m => {
           m['hoidong'] = this.hoidong
           return m;
         })
-        const dataMap = this.dmPhongthi.map(m=>{
-          m['thisinhs'] = dataThisinh.filter(f=>f['phongthi'] === m['phongso'])
+        const dataMap = this.dmPhongthi.map(m => {
+          m['thisinhs'] = dataThisinh.sort((a, b) => a['thisinh']['ten'].localeCompare(b['thisinh']['ten'])).filter(f => f['phongthi'] === m['phongso'])
           return m
-        }).filter(f=>f['thisinhs'].length>0);
-        if(dataMap.length>0){
+        }).filter(f => f['thisinhs'].length > 0);
+        if (dataMap.length > 0) {
           this.htmlToPdfService.exportHtmlToWordV2(dataMap, fileName);
           this.modalService.dismissAll();
-        }else{
+        } else {
           this.modalService.dismissAll();
           this.notificationService.toastError('Chưa có dữ liệu thí sinh !');
         }
         this.notificationService.isProcessing(false);
         this.modalService.dismissAll();
 
-      },error:()=>{
+      }, error: () => {
         this.notificationService.toastError('Thao tác không thành công');
         this.notificationService.isProcessing(false);
         this.modalService.dismissAll();
@@ -239,45 +246,46 @@ export class ThiSinhInHoiDongComponent implements OnInit,OnChanges {
     const newDateString = `${year}-${month}-${day}`;
     return newDateString;
   }
-  async btnSendEmail(){
+
+  async btnSendEmail() {
     const button = await this.notificationService.confirmRounded('Gửi email thông báo lịch thi cho thí sinh ', 'XÁC NHẬN', [BUTTON_NO, BUTTON_YES]);
     if (button.name === BUTTON_YES.name) {
       this.notificationService.isProcessing(true)
       this.hoidongThisinhSerive.getDataByHoidongIdUnlimit(this.hoidong_id).subscribe({
-        next:(data)=>{
+        next: (data) => {
           const dataParam = [];
-          data.sort((a,b)=>a['thisinh']['ten'].localeCompare(b['thisinh']['ten'])).forEach(m=>{
+          data.sort((a, b) => a['thisinh']['ten'].localeCompare(b['thisinh']['ten'])).forEach(m => {
             const thisinh = m['thisinh'];
-            const phongthi:FormatPhongthiBythisinh[] = []
-            m.monthi_ids.map((mon,index)=>{
-              const dmTungMon = this.dmMon.find(f=>f.id === mon);
+            const phongthi: FormatPhongthiBythisinh[] = []
+            m.monthi_ids.map((mon, index) => {
+              const dmTungMon = this.dmMon.find(f => f.id === mon);
               const cathi = m['ca_' + dmTungMon.kyhieu.toLowerCase()];
-              const item:FormatPhongthiBythisinh = {
-                index :index+1,
-                monthi :dmTungMon.tenmon,
-                ngaythi : this.helperService.formatSQLToDateDMY(new Date(this.hoidong.ngaythi)),
-                phong : m['phongthi'],
-                time_start: this.dmLichthi.find(f=>f.id === cathi) ? this.dmLichthi.find(f=>f.id === cathi).gio_goivao_phongthi :''
+              const item: FormatPhongthiBythisinh = {
+                index: index + 1,
+                monthi: dmTungMon.tenmon,
+                ngaythi: this.helperService.formatSQLToDateDMY(new Date(this.hoidong.ngaythi)),
+                phong: m['phongthi'],
+                time_start: this.dmLichthi.find(f => f.id === cathi) ? this.dmLichthi.find(f => f.id === cathi).gio_goivao_phongthi : ''
               }
               phongthi.push(item)
             })
-            const item :FormatthisinhSendEmail= {
-              sobaodanh :thisinh ? this.hoidong.tiento_sobaodanh + this.covertId(thisinh['id']) : '',
-              hoten : thisinh ? thisinh['hoten'] : '',
-              ngaysinh : thisinh ?thisinh['ngaysinh'] : '',
-              gioitinh : thisinh && thisinh['gioitinh'] === 'nu' ? 'Nữ' : 'Nam',
-              cccd_so : thisinh ? thisinh['cccd_so'] : '',
-              email : thisinh ? thisinh['email'] : '',
+            const item: FormatthisinhSendEmail = {
+              sobaodanh: thisinh ? this.hoidong.tiento_sobaodanh + this.covertId(thisinh['id']) : '',
+              hoten: thisinh ? thisinh['hoten'] : '',
+              ngaysinh: thisinh ? thisinh['ngaysinh'] : '',
+              gioitinh: thisinh && thisinh['gioitinh'] === 'nu' ? 'Nữ' : 'Nam',
+              cccd_so: thisinh ? thisinh['cccd_so'] : '',
+              email: thisinh ? thisinh['email'] : '',
               dantoc: thisinh ? thisinh['dantoc'] : '',
-              noisinh : thisinh ? thisinh['noisinh'] : '',
-              thuongtru : thisinh ? thisinh['thuongtru_diachi']['fullAddress'] : '',
-              created : false,
+              noisinh: thisinh ? thisinh['noisinh'] : '',
+              thuongtru: thisinh ? thisinh['thuongtru_diachi']['fullAddress'] : '',
+              created: false,
               phongthi: phongthi
             };
             dataParam.push(item);
           })
 
-          if(dataParam.length > 0){
+          if (dataParam.length > 0) {
             const step: number = 100 / dataParam.length;
             this.notificationService.loadingAnimationV2({process: {percent: 0}});
             this.emailCall(dataParam, step, 0).subscribe({
@@ -293,13 +301,14 @@ export class ThiSinhInHoiDongComponent implements OnInit,OnChanges {
           }
 
         },
-        error:(e)=>{
+        error: (e) => {
           this.notificationService.isProcessing(false);
           this.notificationService.toastError('Load dữ liệu thí sinh không thành công');
         }
       })
     }
   }
+
   private emailCall(thisinhForm: FormatthisinhSendEmail[], step: number, percent: number) {
     const index: number = thisinhForm.findIndex(i => !i.created);
     if (index !== -1) {
@@ -378,7 +387,7 @@ export class ThiSinhInHoiDongComponent implements OnInit,OnChanges {
       message += `</table> <p>Chúc Bạn thành công.</p>`
       const emailsend: any = {
         title: 'THÔNG BÁO LỊCH THI V-SAT-TNU',
-        to:email,
+        to: email,
         message: message
       }
       return this.senderEmailService.sendEmail(emailsend).pipe(switchMap(() => {
@@ -393,4 +402,49 @@ export class ThiSinhInHoiDongComponent implements OnInit,OnChanges {
       return of('complete');
     }
   }
+
+  btnExportDsPhongthi() {
+    this.notificationService.isProcessing(true);
+    this.hoidongThisinhSerive.getDataByHoidongIdUnlimitnotOrder(this.hoidong_id).subscribe({
+      next: (data) => {
+        const thisinhInhoidong = data.sort((a, b) => b.monthi_ids.length - a.monthi_ids.length).map((m, index) => {
+          const thisinh = m['thisinh'];
+          m['__index'] = index + 1;
+          m['__hoten'] = thisinh ? thisinh['hoten'] : '';
+          m['__sobaodanh'] = this.hoidong.tiento_sobaodanh + this.covertId(m.thisinh_id);
+          m['__ngaysinh'] = thisinh ? thisinh['ngaysinh'] : '';
+          m['__gioitinh'] = thisinh && thisinh['gioitinh'] === 'nu' ? 'Nữ' : 'Nam';
+          m['__cccd_so'] = thisinh ? thisinh['cccd_so'] : '';
+          m['hoidong'] = this.hoidong;
+          m['phongthi'] = m['phongthi']? m['phongthi'] : null
+          return m ;
+        })
+
+        const phongthiPaam = []
+        this.dmPhongthi.forEach(phongthi=>{
+            const item ={
+              dsThisinh : thisinhInhoidong.sort((a, b) => a['thisinh']['ten'].localeCompare(b['thisinh']['ten'])).filter(f=>f['phongthi'] === phongthi['phongso']).map((m,i)=>{
+                const index =i+1
+                return {index:index, sobaodanh:m['__sobaodanh'],hoten:m['__hoten'],ngaysinh:m['__ngaysinh'],gioitinh: m['__gioitinh'],cccd_so:m['__cccd_so'],ca_th:m['ca_th'] !== 0 ? m['ca_th'] :'',ca_vl:m['ca_vl'] !== 0 ? m['ca_vl'] :'',ca_hh:m['ca_hh'] !==0?m['ca_hh'] :'',ca_sh:m['ca_sh'] !==0?m['ca_sh'] :'',ca_ls:m['ca_ls'] !==0?m['ca_ls'] :'',ca_dl:m['ca_dl'] !==0?m['ca_dl'] :'',ca_ta:m['ca_ta'] !==0?m['ca_ta'] :'' }
+              }),
+              phongso:phongthi['phongso'],
+              ngaythi: this.helperService.formatSQLToDateDMY(new Date(this.hoidong.ngaythi))
+            }
+            phongthiPaam.push(item);
+        })
+
+        this.expostExcelPhongthiThisinhService.exportHoidongPhongthi(('Danh sách phòng thi - ' + this.hoidong.ten_hoidong ),this.thisinhs_column,phongthiPaam.filter(f=>f.dsThisinh.length>0))
+
+
+        this.notificationService.isProcessing(false);
+
+      }, error: (e) => {
+        this.notificationService.isProcessing(false);
+
+      }
+    })
+  }
+  thisinhs_column= ['STT','Số báo danh','Họ và tên ','Ngày sinh','Giới tính','Số CCCD','Ca thi Toán','Ca thi Vật lí',	'Ca thi Hóa học',	'Ca thi Sinh học',	'Ca thi Lịch sử','Ca thi Địa lí','Ca thi Tiếng Anh'
+  ];
+
 }

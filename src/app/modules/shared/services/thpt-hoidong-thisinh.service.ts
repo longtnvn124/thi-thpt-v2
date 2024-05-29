@@ -235,4 +235,33 @@ export class ThptHoidongThisinhService {
     return this.http.get<Dto>(this.api, { params }).pipe(map(res =>  res.data[0]));
   }
 
+  getDataByHoidongIdUnlimitnotOrder(hoidong_id: number, phongthi?:number): Observable<ThptHoiDongThiSinh[]> {
+    const conditions: OvicConditionParam[] = [
+      {
+        conditionName: 'hoidong_id',
+        condition: OvicQueryCondition.equal,
+        value: hoidong_id.toString(),
+      }
+
+    ];
+    if(phongthi){
+      conditions.push({
+        conditionName: 'phongthi',
+        condition: OvicQueryCondition.equal,
+        value: phongthi.toString(),
+        orWhere:'and'
+
+      })
+    }
+
+    const fromObject = {
+      paged: 1,
+      limit: -1,
+      orderby: 'id',
+      order: 'ASC'
+    };
+    const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }).set('with', 'thisinh'));
+    return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data));
+  }
+
 }

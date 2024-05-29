@@ -323,35 +323,53 @@ export class AddThiSinhComponent implements OnInit, OnChanges {
 
     return dsthisinh;
   }
+
+  coverthisinhParramnotMath( thisinhInHoidong:ThptHoiDongThiSinh[]){
+    const ids:number[] = [];
+    const dsThisinhParram = [];
+    thisinhInHoidong.forEach(m => {
+      if (m.monthi_ids.find(f => f === 1)) {
+        ids.push(m.id);
+        dsThisinhParram.push(m);
+      }
+    })
+    const DsThisinhNotToant = thisinhInHoidong.filter(thiSinh => !ids.includes(thiSinh.id));
+    return [].concat(dsThisinhParram,DsThisinhNotToant);
+  }
+
   sortRoomByThisinhs(dataphongthi: { phongso: number, soluong }[],dsthisinh:ThptHoiDongThiSinh[]){
     const phongCanthiet = dataphongthi.map(phong => {
 
       return {phongso: phong.phongso, soluong: phong.soluong, thisinh_ids: [], soluong_thucte: 0, created: false}
     });
     let indexRoom = 0;
-    for (let ts = 0; ts < dsthisinh.length; ts++) {
-      const ts_id = dsthisinh[ts].thisinh_id;
+
+    const dscovert = this.coverthisinhParramnotMath(dsthisinh);
+
+
+    for (let ts = 0; ts < dscovert.length; ts++) {
+      const ts_id = dscovert[ts].thisinh_id;
       const dk1 = phongCanthiet[indexRoom].soluong
       const dk2 = phongCanthiet[indexRoom].thisinh_ids.length;
       if (dk2 >= dk1) {
         indexRoom++;
       }
       phongCanthiet[indexRoom].thisinh_ids.push(ts_id);
-      dsthisinh[ts]['phongthi'] = indexRoom+1
+      dscovert[ts]['phongthi'] = indexRoom+1
       let total = 0;
       this.dsMon.forEach(mon=>{
-        if(dsthisinh[ts].monthi_ids.find(f=>f === mon.id)){
-          if(dsthisinh[ts].monthi_ids.find(a=>a===1)){
+        if(dscovert[ts].monthi_ids.find(f=>f === mon.id)){
+          if(dscovert[ts].monthi_ids.find(a=>a===1)){
           total =total+1;
           }else{
             total =total+2;
           }
-          dsthisinh[ts]['ca_' +mon.kyhieu.toLowerCase()] = total
+          dscovert[ts]['ca_' +mon.kyhieu.toLowerCase()] = total
         }
       })
     }
 
-    return dsthisinh;
+    return dscovert;
   }
 
   btnXepphong(){
