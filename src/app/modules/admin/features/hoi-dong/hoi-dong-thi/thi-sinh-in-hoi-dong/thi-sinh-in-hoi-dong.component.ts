@@ -405,6 +405,8 @@ export class ThiSinhInHoiDongComponent implements OnInit, OnChanges {
 
   btnExportDsPhongthi() {
     this.notificationService.isProcessing(true);
+    this.modalService.open(this.templateWaiting, WAITING_POPUP);
+
     this.hoidongThisinhSerive.getDataByHoidongIdUnlimitnotOrder(this.hoidong_id).subscribe({
       next: (data) => {
         const thisinhInhoidong = data.sort((a, b) => b.monthi_ids.length - a.monthi_ids.length).map((m, index) => {
@@ -437,9 +439,11 @@ export class ThiSinhInHoiDongComponent implements OnInit, OnChanges {
 
 
         this.notificationService.isProcessing(false);
-
+        this.modalService.dismissAll()
       }, error: (e) => {
         this.notificationService.isProcessing(false);
+        this.notificationService.toastWarning('Load dữ liệu thí sinh không thành công');
+        this.modalService.dismissAll()
 
       }
     })
