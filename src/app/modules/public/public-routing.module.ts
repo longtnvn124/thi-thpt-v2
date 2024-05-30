@@ -16,6 +16,7 @@ import {
 import {
   RegisterAccountComponent
 } from "@modules/public/features/home-thi-thpt/layouts/register-account/register-account.component";
+import {TraCuuKetQuaComponent} from "@modules/public/features/tra-cuu-ket-qua/tra-cuu-ket-qua.component";
 
 
 const routes: Routes = [
@@ -60,6 +61,10 @@ const routes: Routes = [
   {
     path: 'login',
     component: LoginVideoComponent
+  },
+  {
+    path:'tra-cuu-ket-qua',
+    component:TraCuuKetQuaComponent
   },
 
   // {

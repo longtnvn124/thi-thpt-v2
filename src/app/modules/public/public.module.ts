@@ -34,6 +34,7 @@ import {
 } from './features/home/layouts/content-chuyen-de/chuyen-de-content/chuyen-de-content.component';
 import {PdfViewerModule} from "ng2-pdf-viewer";
 import {HomeDhtnComponent} from "@modules/public/features/home-dhtn/home-dhtn.component";
+import { TraCuuKetQuaComponent } from './features/tra-cuu-ket-qua/tra-cuu-ket-qua.component';
 
 @NgModule({
   declarations: [
@@ -52,7 +53,8 @@ import {HomeDhtnComponent} from "@modules/public/features/home-dhtn/home-dhtn.co
     SukienTonghopComponent,
     ChuyenDeMenuComponent,
     ChuyenDeContentComponent,
-    HomeDhtnComponent
+    HomeDhtnComponent,
+    TraCuuKetQuaComponent
   ],
   exports: [
     ChuyenDeMenuComponent,
