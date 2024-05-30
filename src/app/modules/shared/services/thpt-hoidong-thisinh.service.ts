@@ -212,7 +212,7 @@ export class ThptHoidongThisinhService {
     const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }).set('with', 'thisinh'));
     return this.http.get<Dto>(this.api, { params }).pipe(map(res =>  res.data));
   }
-  getDataByHoidongIdAndThisinhId(hoidong_id:number,thisinh_id:number):Observable<ThptHoiDongThiSinh>{
+  getDataByHoidongIdAndThisinhId(hoidong_id:number,thisinh_id:number):Observable<ThptHoiDongThiSinh[]>{
     const conditions: OvicConditionParam[] = [
       {
         conditionName: 'hoidong_id',
@@ -232,7 +232,7 @@ export class ThptHoidongThisinhService {
       limit:-1
     };
     const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }));
-    return this.http.get<Dto>(this.api, { params }).pipe(map(res =>  res.data[0]));
+    return this.http.get<Dto>(this.api, { params }).pipe(map(res =>  res.data));
   }
 
   getDataByHoidongIdUnlimitnotOrder(hoidong_id: number, phongthi?:number): Observable<ThptHoiDongThiSinh[]> {

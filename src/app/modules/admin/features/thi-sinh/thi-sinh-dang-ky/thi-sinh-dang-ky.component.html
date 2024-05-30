@@ -111,7 +111,7 @@
                         <th class=" text-left text-center">Môn thi</th>
                         <th class="ovic-w-180px text-center">Lệ phí thi</th>
                         <th class="ovic-w-110px text-center">Trạng thái</th>
-                        <th class="ovic-w-150px text-center">Thao tác</th>
+                        <th class="ovic-w-180px text-center">Thao tác</th>
                       </tr>
                     </ng-template>
                     <ng-template pTemplate="emptymessage">
@@ -140,7 +140,7 @@
                         <td class="ovic-w-150px">
                           <div class="d-block --fs-14" [innerHTML]="item['__status_converted'] | htmlDecode"></div>
                         </td>
-                        <td class="ovic-w-100px text-center">
+                        <td class="ovic-w-180px text-center">
                           <div class="d-block --fs-14">
                             <div *ngIf="item.trangthai_thanhtoan === 1,else notPay">
                               <!--                            <button pButton pRipple label="Tải phiếu đăng ký" disabled></button>-->
@@ -151,26 +151,32 @@
                                 <!--                              <button pButton pRipple class="p-button-warning" [pTooltip]="'Thanh toán'"-->
                                 <!--                                      [tooltipPosition]="'top'" icon="pi pi-credit-card"-->
                                 <!--                                      (click)="btnThanhToan(item)"></button>-->
-                                <button pButton pRipple class="p-button-warning" [pTooltip]="'Thanh toán'"
+                                <button pButton pRipple icon="pi pi-bookmark" class=" mx-1" [pTooltip]="'Phiếu dự thi '"
+                                        [tooltipPosition]="'top'" (click)="btnViewPDF(item)"></button>
+                                <button pButton pRipple class="p-button-warning mx-1" [pTooltip]="'Thanh toán'"
                                         [tooltipPosition]="'top'" icon="pi pi-credit-card" [loading]="isLoading"
                                         (click)="getPayment(item)"></button>
-                                <button pButton pRipple class="p-button-danger ml-1"
+                                <button pButton pRipple class="p-button-danger mx-1"
                                         [pTooltip]="'Xoá'" [tooltipPosition]="'top'" icon="pi pi-trash"
                                         (click)="deleteRow(item.id)"></button>
                               </div>
                               <div *ngIf="item.trangthai_chuyenkhoan === 0 && item.trangthai_thanhtoan === 1">
-                                <button pButton pRipple class="p-button-warning" [pTooltip]="'Thanh toán'"
+                                <button pButton pRipple icon="pi pi-bookmark" class="mx-1" [pTooltip]="'Phiếu dự thi '"
+                                        [tooltipPosition]="'top'" (click)="btnViewPDF(item)"></button>
+                                <button pButton pRipple class="p-button-warning mx-1" [pTooltip]="'Thanh toán'"
                                         [disabled]="true"
                                         [tooltipPosition]="'top'" icon="pi pi-credit-card"></button>
-                                <button pButton pRipple class="p-button-danger ml-1" [disabled]="true"
+                                <button pButton pRipple class="p-button-danger mx-1" [disabled]="true"
                                         [pTooltip]="'Xoá'" [tooltipPosition]="'top'" icon="pi pi-trash"
                                 ></button>
                               </div>
                               <div *ngIf="item.trangthai_thanhtoan === 2">
-                                <button pButton pRipple class="p-button-warning" [pTooltip]="'Thanh toán'"
+                                <button pButton pRipple icon="pi pi-bookmark" class="mx-1" [pTooltip]="'Phiếu dự thi '"
+                                        [tooltipPosition]="'top'" (click)="btnViewPDF(item)"></button>
+                                <button pButton pRipple class="p-button-warning mx-1" [pTooltip]="'Thanh toán'"
                                         [tooltipPosition]="'top'" icon="pi pi-credit-card"
                                         (click)="getPayment(item)"></button>
-                                <button pButton pRipple class="p-button-danger ml-1"
+                                <button pButton pRipple class="p-button-danger mx-1"
                                         [pTooltip]="'Xoá'" [tooltipPosition]="'top'" icon="pi pi-trash"
                                         (click)="deleteRow(item.id)"
                                 ></button>
@@ -338,6 +344,12 @@
       <div class="--font-times-new-roman" style="padding-left:15px">Địa chỉ Điểm thi: Trung tâm Khảo thí và Quản lý chất
         lượng – ĐHTN, Phường Tân Thịnh – Thành phố Thái Nguyên
       </div>
+      <div class="--font-times-new-roman" style="padding:15px">
+
+        <div style="font-size:16px;"><span><strong style="color:#e43d21">Lưu ý:</strong></span> Thí sinh thi môn toán mặt tại địa điểm thi từ <strong style="color:#e43d21;">06 giờ</strong> để hoàn thành thủ tục dự thi tại Trung tâm Khảo thí và Quản lý chất lượng giáo
+          dục, Phường Tân Thịnh TP Thái Nguyên.
+        </div>
+      </div>
 <!--      <div class="&#45;&#45;font-times-new-roman my-3" style="padding-left:15px"><strong>Số báo danh:</strong>-->
 <!--        <span>{{ 'TNU' + phieuduthi.sobaodanh }}</span></div>-->
 
@@ -361,12 +373,7 @@
           </tr>
         </table>
       </div>
-      <div class="--font-times-new-roman" style="padding:15px">
 
-        <div>Thí sinh có mặt tại địa điểm thi từ <strong>06 giờ 15 phút</strong> để hoàn thành thủ tục dự thi tại Trung tâm Khảo thí và Quản lý chất lượng giáo
-          dục, Phường Tân Thịnh TP Thái Nguyên.
-        </div>
-      </div>
     </div>
 
   </div>

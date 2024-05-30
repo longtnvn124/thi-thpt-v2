@@ -160,8 +160,8 @@ export class ThiSinhDuThiComponent implements OnInit {
   }
   loadInit() {
     forkJoin<[DmMon[], KeHoachThi[]]>(
-      this.monService.getDataUnlimit(),
-      this.thptKehoachThiService.getDataUnlimit()
+      this.monService.getDataUnlimitNotStatus(),
+      this.thptKehoachThiService.getDataUnlimitNotstatus()
     ).subscribe({
       next: ([mon, kehoachthi]) => {
         this.dsMon = mon;

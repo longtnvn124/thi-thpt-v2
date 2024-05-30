@@ -197,7 +197,7 @@ export class ThiSinhDangKyComponent implements OnInit {
         this.thisinhInfoService.getUserInfo(this._user_id),
         this.monService.getDataUnlimit(),
         this.toHopMonService.getDataUnlimit(),
-        this.kehoachThiService.getDataUnlimit(),
+        this.kehoachThiService.getDataUnlimitNotstatus(),
         this.lephithi.getdata(),
         this.hoiDongLichThiService.getDataUnlimit()
       ]
@@ -224,7 +224,7 @@ export class ThiSinhDangKyComponent implements OnInit {
           return m;
         })
         const curentDate = new Date();
-        this.keHoachThi_dangky = keHoachThi.filter(f => (this.helperService.formatSQLDate(new Date(f.ngayketthuc))) >= this.helperService.formatSQLDate(curentDate));
+        this.keHoachThi_dangky = keHoachThi.filter(f => f.status === 1 &&  (this.helperService.formatSQLDate(new Date(f.ngayketthuc))) >= this.helperService.formatSQLDate(curentDate));
         this.keHoachThi = keHoachThi;
         this.lephithiData = options;
         this.lephithiData['_value_coverted'] = options.value.toLocaleString('vi-VN', {
@@ -352,26 +352,28 @@ export class ThiSinhDangKyComponent implements OnInit {
 
   getPayment(item: OrdersTHPT) {
     const kehoachSelect = this.keHoachThi.find(f => f.id === item.kehoach_id)
-    this.isLoading = true;
-    if (this.helperService.formatSQLDate(new Date()) <= this.helperService.formatSQLDate(new Date(kehoachSelect.ngayketthuc))) {
-      const fullUrl: string = `${location.origin}${this.router.serializeUrl(this.router.createUrlTree(['admin/thi-sinh/dang-ky/']))}`;
-      const content = 'VSAT' + item.id;
-      this.ordersService.getPayment(item.id, fullUrl, content).subscribe({
-        next: (data) => {
-          window.location.assign(data);
-          this.ngType = 0;
-          this.notifi.isProcessing(false);
-          this.isLoading = false;
-          this.isLoading = false;
-        }, error: () => {
-          this.isLoading = false;
-          this.notifi.isProcessing(false);
-        }
-      })
-    } else {
-      this.isLoading = false;
-
-      this.notifi.toastError('Đã hết thời hạn đăng ký môn trong đợt thi này');
+    if(kehoachSelect.status === 1){
+      this.isLoading = true;
+      if (this.helperService.formatSQLDate(new Date()) <= this.helperService.formatSQLDate(new Date(kehoachSelect.ngayketthuc))) {
+        const fullUrl: string = `${location.origin}${this.router.serializeUrl(this.router.createUrlTree(['admin/thi-sinh/dang-ky/']))}`;
+        const content = 'VSAT' + item.id;
+        this.ordersService.getPayment(item.id, fullUrl, content).subscribe({
+          next: (data) => {
+            window.location.assign(data);
+            this.ngType = 0;
+            this.notifi.isProcessing(false);
+            this.isLoading = false;
+          }, error: () => {
+            this.isLoading = false;
+            this.notifi.isProcessing(false);
+          }
+        })
+      } else {
+        this.isLoading = false;
+        this.notifi.toastError('Đã hết thời hạn đăng ký môn trong đợt thi này');
+      }
+    }else{
+      this.notifi.toastWarning('Đã hết thời hạn đăng ký môn trong đợt thi này');
     }
   }
 
@@ -587,7 +589,7 @@ export class ThiSinhDangKyComponent implements OnInit {
     })).subscribe({
       next:(data)=>{
         const hoidongInfo = data[0];
-        const thisinhInhoidong = data[1];
+        const thisinhInhoidong = data[1][0];
         this.notifi.isProcessing(false);
         if(hoidongInfo && thisinhInhoidong){
           const phongthi = []
@@ -627,12 +629,12 @@ export class ThiSinhDangKyComponent implements OnInit {
           }
           this.isShower= true;
         }else{
-          this.notifi.toastWarning('Phiếu dự thi của thí sinh đang cập nhật, vui lòng quay lại sau. ')
+          this.notifi.toastWarning('Bạn chưa có tên trong danh sách hội đồng thi, vui lòng liên hệ với quản trị viên.')
         }
 
       },error:(e)=>{
-        console.log(e);
-        this.notifi.toastError('Phiếu dự thi của thí sinh đang cập nhật, vui lòng quay lại sau. ');
+
+        this.notifi.toastWarning('Bạn chưa có tên trong danh sách hội đồng thi, vui lòng liên hệ với quản trị viên.');
         this.notifi.isProcessing(false);
       }
     })

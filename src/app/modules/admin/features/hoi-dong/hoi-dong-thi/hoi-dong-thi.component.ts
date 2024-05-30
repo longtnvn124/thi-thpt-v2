@@ -136,7 +136,7 @@ export class HoiDongThiComponent implements OnInit {
   getDataKeHoach() {
     this.notifi.isProcessing(true)
     this.isLoading = true;
-    forkJoin<[ThptLichThi[],KeHoachThi[]]>(this.thptLichthiSerive.getDataUnlimit(),this.kehoachThiService.getDataUnlimit()).subscribe({
+    forkJoin<[ThptLichThi[],KeHoachThi[]]>(this.thptLichthiSerive.getDataUnlimit(),this.kehoachThiService.getDataUnlimitNotstatus()).subscribe({
       next: ([lichthi, data]) => {
         this.thptLichthi = lichthi;
         this.dataKeHoach = data;
