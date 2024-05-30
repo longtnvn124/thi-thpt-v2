@@ -323,8 +323,8 @@ export class ThiSinhInHoiDongComponent implements OnInit, OnChanges {
         <p>- Google maps: <a href="https://maps.app.goo.gl/y7r7jQTZuTtrNU9w9" target="_blank">https://maps.app.goo.gl/y7r7jQTZuTtrNU9w9</a></p>
         <p><strong>Thời gian có mặt tại địa điểm thi:</strong></p>
         <p><u><b><i>- Buổi sáng: </i></b></u></p>
-        <p>+ Thí sinh thi môn Toán: Trước 06:15</p>
-        <p>+ Thí sinh không thi môn Toán: 08:30</p>
+        <p>+ Thí sinh thi môn Toán: Trước 06 giờ</p>
+        <p>+ Thí sinh không thi môn Toán: 08 giờ 30</p>
         <p> <u><b><i>- Buổi chiều:</i></b></u> Trước 12 giờ 45 phút</p>
         <p style="font-weight:700;">THÔNG TIN THI SINH:</p>
         <table width="100%" style="border:0;">
