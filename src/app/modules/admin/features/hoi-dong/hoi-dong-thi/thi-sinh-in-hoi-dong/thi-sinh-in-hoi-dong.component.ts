@@ -102,6 +102,7 @@ export class ThiSinhInHoiDongComponent implements OnInit, OnChanges {
           m['ten_phong'] = 'Phòng ' + m.phongso;
           return m
         });
+        console.log(this.dmPhongthi);
         this.dmLichthi = dmLichthi.map(m => {
           m['ten_cathi'] = 'Ca ' + m.id;
           return m;
@@ -208,7 +209,7 @@ export class ThiSinhInHoiDongComponent implements OnInit, OnChanges {
       }))
     })).subscribe({
       next: (data) => {
-        const dataThisinh = data.sort().map(m => {
+        const dataThisinh =  data.sort((a, b) => b.monthi_ids.length - a.monthi_ids.length).map(m => {
           m['hoidong'] = this.hoidong
           return m;
         })
@@ -216,6 +217,7 @@ export class ThiSinhInHoiDongComponent implements OnInit, OnChanges {
           m['thisinhs'] = dataThisinh.sort((a, b) => a['thisinh']['ten'].localeCompare(b['thisinh']['ten'])).filter(f => f['phongthi'] === m['phongso'])
           return m
         }).filter(f => f['thisinhs'].length > 0);
+
         if (dataMap.length > 0) {
           this.htmlToPdfService.exportHtmlToWordV2(dataMap, fileName);
           this.modalService.dismissAll();

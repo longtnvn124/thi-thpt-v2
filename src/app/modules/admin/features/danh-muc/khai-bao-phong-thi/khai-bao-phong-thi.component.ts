@@ -183,7 +183,7 @@ export class KhaiBaoPhongThiComponent implements OnInit {
   }
 
   onInputChange(event: DmPhongThi) {
-    
+
     this.inputChanged.next(event);
   }
   updateContentByInput(item: DmPhongThi) {
@@ -212,6 +212,3 @@ export class KhaiBaoPhongThiComponent implements OnInit {
   }
 
 }
-// 'danhmuc-phongthi': {
-//   'table': 'dm_phongthi'
-// },

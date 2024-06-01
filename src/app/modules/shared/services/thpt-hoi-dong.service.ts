@@ -155,4 +155,21 @@ export class ThptHoiDongService {
     return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data[0]));
   }
 
+  getDataUnlimitByStatus():Observable<ThptHoiDong[]>{
+    const conditions: OvicConditionParam[] = [
+      {
+        conditionName:'status',
+        condition: OvicQueryCondition.equal,
+        value: '1',
+      }
+    ];
+    const fromObject = {
+      paged: 1,
+      orderby: 'id',
+      order: "ASC"
+    }
+    const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }));
+    return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data));
+  }
+
 }

@@ -4,7 +4,7 @@
     <div class="col">
       <div class="h-100 d-flex justify-content-center">
         <button pRipple [disabled]=" disabled === true ? true : false " class="btn w-100 btn-avata"
-          style="margin-top: 30px;height: 262px;;" (click)="fileChooser.click()">
+          style="margin-top: 30px;height: 262px;" (click)="fileChooser.click()">
           <img *ngIf="characterAvatar; else showIcon" class="imgchecksize" [src]="characterAvatar " alt="">
           <ng-template #showIcon>
             <i class="pi pi-upload"></i>

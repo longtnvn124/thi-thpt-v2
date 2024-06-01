@@ -202,6 +202,14 @@ export class HelperService {
     //'YYYY-MM-DD' type of sql DATETIME format
     return `${d}/${m}/${y}`;
   }
+  formatNumberToDateYMD(numb:number):string{
+    const date = new Date( + (numb * 24 * 60 * 60 * 1000));
+    const y = date.getFullYear().toString(10);
+    const m = (date.getMonth() + 1).toString().padStart(2, '0');
+    const d = date.getDate().toString().padStart(2, '0');
+    //'YYYY-MM-DD' type of sql DATETIME format
+    return `${y}-${m}-${d}`;
+  }
 
   sQLDateToDate(str: string): Date {
     if (!str) {

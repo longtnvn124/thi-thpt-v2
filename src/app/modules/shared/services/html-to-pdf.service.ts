@@ -186,8 +186,9 @@ export class HtmlToPdfService {
       const thisinhs = phongthi['thisinhs']
 
       thisinhs.forEach((item ,index)=>{
-        const sbd= item['hoidong'].tiento_sobaodanh + this.covertId(item.id) ;
+        const sbd= item['hoidong'].tiento_sobaodanh + this.covertId(item['thisinh']['id']) ;
         // const imgObject =  item['__img_object'];
+        const thisinh_id = item['thisinh']['id']
         const hoten = item['thisinh']['hoten'];
         const cccd = item['thisinh']['cccd_so'];
         if(index % 3 == 0){

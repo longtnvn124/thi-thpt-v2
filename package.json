@@ -58,6 +58,7 @@
     "ngx-plyr": "^4.0.1",
     "ngx-viewer": "^1.0.8",
     "pdfjs-dist": "^3.7.107",
+    "pdfmake": "^0.2.10",
     "plyr": "^3.7.8",
     "postcss-loader": "^6.2.1",
     "primeicons": "^6.0.1",

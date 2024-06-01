@@ -48,7 +48,7 @@ const routes : Routes = [
       } ,
       {
         path         : 'ketqua-thi' ,
-        loadChildren : () => import('@modules/admin/features/ket-qua/ket-qua-routing.module').then( m => m.KetQuaRoutingModule )
+        loadChildren : () => import('@modules/admin/features/ket-qua/ket-qua.module').then( m => m.KetQuaModule )
       } ,
       {
         path         : 'hoidong-thi' ,
