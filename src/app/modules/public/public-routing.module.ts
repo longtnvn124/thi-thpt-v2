@@ -28,10 +28,7 @@ const routes: Routes = [
     path: 'clear',
     component: ClearComponent
   },
-  {
-    path: "test",
-    loadChildren: () => import('@modules/public/features/test-v2/test-v2.module').then(m => m.TestV2Module)
-  },
+
   {
     path         : 'dev' ,
     loadChildren : () => import('@modules/public/features/dev/dev.module').then( m => m.DevModule )

@@ -9,11 +9,7 @@ const routes : Routes = [
     canActivate  : [ ModuleGuard ] ,
     loadChildren : () => import('@modules/admin/admin.module').then( m => m.AdminModule )
   } ,
-  {
-    path         : 'test' ,
-    loadChildren :( )=> import('@modules/public/features/test-v2/test-v2.module').then(m=>m.TestV2Module)
-    // loadChildren : () => import('@modules/public/features/test-v2/test-v2.module').then( m => m.TestV2Module )
-  } ,
+
   {
     path         : '' ,
     loadChildren : () => import('@modules/public/public.module').then( m => m.PublicModule )

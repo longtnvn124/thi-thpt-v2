@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import {ShiftComponent} from "@modules/public/features/test-v2/shift/shift.component";
+
 import {DevHomeComponent} from "@modules/public/features/dev/dev-home/dev-home.component";
 import {DevChatBotComponent} from "@modules/public/features/dev/dev-chat-bot/dev-chat-bot.component";
 

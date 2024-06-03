@@ -124,7 +124,7 @@ import { NgxMapboxGLModule } from "ngx-mapbox-gl";
 import { OvicMediaVrComponent } from '@shared/components/ovic-media-vr/ovic-media-vr.component';
 import { TreeCustomComponent } from '@shared/components/tree-custom/tree-custom.component';
 import { AutoFocusDirective } from "@shared/directives/auto-focus.directive";
-import { OvicMediaVrProductComponent } from './components/ovic-media-vr-product/ovic-media-vr-product.component';
+
 import { OvicResizeDropdowDirective } from './directives/ovic-resize-dropdow.directive';
 import { OvicAvataTypeThptComponent } from "@shared/components/ovic-avata-type-thpt/ovic-avata-type-thpt.component";
 import { OvicCountdownComponent } from "@shared/components/ovic-countdown/ovic-countdown.component";
@@ -214,7 +214,6 @@ import {CheckboxModule} from "primeng/checkbox";
     OvicMediaVrComponent,
     TreeCustomComponent,
     AutoFocusDirective,
-    OvicMediaVrProductComponent,
     OvicResizeDropdowDirective,
     OvicAvataTypeThptComponent,
     OvicPickerCandidationComponent,
@@ -342,7 +341,6 @@ import {CheckboxModule} from "primeng/checkbox";
     OvicMediaVrComponent,
     TreeCustomComponent,
     AutoFocusDirective,
-    OvicMediaVrProductComponent,
     OvicResizeDropdowDirective,
     OvicAvataTypeThptComponent,
     OvicCountdownComponent,
