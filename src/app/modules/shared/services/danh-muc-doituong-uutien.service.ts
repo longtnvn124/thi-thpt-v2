@@ -5,10 +5,8 @@ import {HttpParamsHeplerService} from "@core/services/http-params-hepler.service
 import {ThemeSettingsService} from "@core/services/theme-settings.service";
 import {AuthService} from "@core/services/auth.service";
 import {Observable} from "rxjs";
-import {DmDiemDiTich} from "@shared/models/danh-muc";
 import {Dto, OvicConditionParam, OvicQueryCondition} from "@core/models/dto";
 import {map} from "rxjs/operators";
-
 export interface DanhMucDoiTuong{
   id?:number;
   doituong:string;

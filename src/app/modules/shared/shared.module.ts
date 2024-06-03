@@ -116,7 +116,7 @@ import { EditorModule } from 'primeng/editor';
 import { OvicHtmlDecodePipe } from './pipes/ovic-html-decode.pipe';
 import { ContextMenuModule } from "primeng/contextmenu";
 import { DialogModule } from "primeng/dialog";
-import { OvicPickerNgulieuComponent } from './components/ovic-picker-ngulieu/ovic-picker-ngulieu.component';
+
 import { OrganizationPickerComponent } from "@shared/components/organization-picker/organization-picker.component";
 import { OvicFileCorpusComponent } from './components/ovic-file-corpus/ovic-file-corpus.component';
 import { OvicMapComponent } from './components/ovic-map/ovic-map.component';
@@ -208,7 +208,6 @@ import {CheckboxModule} from "primeng/checkbox";
     UserInfoComponent,
     OvicLoadImageByIdDirective,
     OvicHtmlDecodePipe,
-    OvicPickerNgulieuComponent,
     OrganizationPickerComponent,
     OvicFileCorpusComponent,
     OvicMapComponent,

@@ -18,20 +18,12 @@ import {LoginVideoComponent} from './features/login-video/login-video.component'
 import {SharedModule} from "@shared/shared.module";
 import {DialogModule} from "primeng/dialog";
 import {TabMenuModule} from "primeng/tabmenu";
-import {WebHomeComponent} from './features/web-home/web-home.component';
-import {SearchComponent} from './features/web-home/search/search.component';
-import {NhanvatComponent} from './features/web-home/nhanvat/nhanvat.component';
-import {DanhmucNgulieusoComponent} from './features/web-home/danhmuc-ngulieuso/danhmuc-ngulieuso.component';
-import {SukienTonghopComponent} from './features/web-home/sukien-tonghop/sukien-tonghop.component';
 import {GalleriaModule} from "primeng/galleria";
 import {CarouselModule} from "primeng/carousel";
 import {ImageModule} from "primeng/image";
 import {InputTextModule} from "primeng/inputtext";
 import {DropdownModule} from "primeng/dropdown";
-import {ChuyenDeMenuComponent} from './features/home/layouts/content-chuyen-de/chuyen-de-menu/chuyen-de-menu.component';
-import {
-  ChuyenDeContentComponent
-} from './features/home/layouts/content-chuyen-de/chuyen-de-content/chuyen-de-content.component';
+
 import {PdfViewerModule} from "ng2-pdf-viewer";
 import {HomeDhtnComponent} from "@modules/public/features/home-dhtn/home-dhtn.component";
 import { TraCuuKetQuaComponent } from './features/tra-cuu-ket-qua/tra-cuu-ket-qua.component';
@@ -45,23 +37,11 @@ import { TraCuuKetQuaComponent } from './features/tra-cuu-ket-qua/tra-cuu-ket-qu
     UnauthorizedComponent,
     ClearComponent,
     LoginVideoComponent,
-
-    WebHomeComponent,
-    SearchComponent,
-    NhanvatComponent,
-    DanhmucNgulieusoComponent,
-    SukienTonghopComponent,
-    ChuyenDeMenuComponent,
-    ChuyenDeContentComponent,
     HomeDhtnComponent,
     TraCuuKetQuaComponent
   ],
   exports: [
-    ChuyenDeMenuComponent,
-    ChuyenDeContentComponent,
-    NhanvatComponent,
-    SukienTonghopComponent,
-    DanhmucNgulieusoComponent
+
   ],
   imports: [
     CommonModule,
