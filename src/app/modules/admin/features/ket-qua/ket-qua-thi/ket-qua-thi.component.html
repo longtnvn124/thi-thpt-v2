@@ -96,6 +96,7 @@
                       <th class="ovic-w-130px text-center">Phòng thi</th>
                       <th class="ovic-w-130px text-center">Môn thi</th>
                       <th class="ovic-w-100px text-center">Điểm</th>
+                      <th class="ovic-w-100px text-center">Thao tác</th>
                     </tr>
                   </ng-template>
 
@@ -114,6 +115,11 @@
                       <td class="text-center">{{ item.phongthi }}</td>
                       <td class="text-center">{{ item.monthi }}</td>
                       <td class="text-center">{{ item.diem }}</td>
+                      <td class="text-center">
+                        <div>
+                          <button pRipple pButton icon="pi pi-trash" pTooltip="Xóa" tooltipPosition="left" class="p-button-danger" (click)="deleteItemInKetqua(item)"></button>
+                        </div>
+                      </td>
                     </tr>
                   </ng-template>
                   <ng-template pTemplate="emptymessage">

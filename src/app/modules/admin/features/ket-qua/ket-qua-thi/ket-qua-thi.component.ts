@@ -444,6 +444,25 @@ export class KetQuaThiComponent implements OnInit {
       return of('complete');
     }
   }
+  async deleteItemInKetqua(item:ThptKetqua){
+    const confirm = await this.notificationService.confirmDelete();
+    if (confirm) {
+      this.thptKetquaService.delete(item.id).subscribe({
+        next: () => {
+
+          this.notificationService.isProcessing(false);
+          this.notificationService.toastSuccess('Thao tác thành công');
+          this.listData = this.listData.filter(f=>f.id !== item.id);
+
+        }, error: () => {
+          this.notificationService.isProcessing(false);
+          this.notificationService.toastError('Thao tác không thành công');
+        }
+      })
+    }
+  }
+
+
 
 }
 
