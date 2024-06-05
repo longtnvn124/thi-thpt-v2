@@ -100,7 +100,7 @@
                     </tr>
                   </ng-template>
 
-                  <ng-template pTemplate="body" let-item>
+                  <ng-template pTemplate="body" let-item >
                     <tr>
                       <td class="text-center">{{ item['__index_table'] }}</td>
                       <td class="text-center">{{ item.thisinh_id }}</td>
@@ -168,6 +168,7 @@
                   <ng-template pTemplate="header" class="d-bock">
                     <tr>
 
+                      <th class="ovic-w-40px text-center ">STT</th>
                       <th class="ovic-w-40px text-center ">ID</th>
                       <th class="ovic-w-100px text-center ">Số báo danh</th>
                       <th class="ovic-w-180px text-center">Họ và tên</th>
@@ -185,6 +186,7 @@
 
                   <ng-template pTemplate="body" let-item let-i="rowIndex">
                     <tr>
+                      <td class="text-center"> {{i + 1}}</td>
                       <td class="text-center">{{ item.thisinh_id }}</td>
                       <td class="text-center">{{ item.sobd }}</td>
                       <td class="text-center">{{ item.hoten }}</td>
@@ -202,7 +204,7 @@
                   </ng-template>
                   <ng-template pTemplate="emptymessage">
                     <tr>
-                      <td colspan="12">
+                      <td colspan="20">
                         Không có dữ liệu thí sinh!
                       </td>
                     </tr>
