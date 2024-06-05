@@ -7,22 +7,22 @@ export const environment = {
 // run locall
 
 const realm = 'thithpt';
-// const host = ['h', 't', 't', 'p', 's', ':', '/', '/', 'a', 'p', 'i', '-', 'd', 'e', 'v', '.', 'i', 'c', 't', 'u', '.', 'v', 'n'];//offlline
-const host = ['h', 't', 't', 'p', 's', ':', '/', '/', 'v', 's', 'a', 't', '.', 't', 'n', 'u', '.', 'e', 'd', 'u', '.', 'v', 'n'];//online
-const port = '8091';//port online
-// const port = '10091';
+const host = 'https://api-dev.ictu.vn';//offlline
+// const host = 'https://vsat.tnu.edu.vn';//online
+// const port = '8091';//port online
+const port = '10091';
 
 const port_socket = '10092';
-const ws_url = ['w', 's', 's', ':', '/', '/', 'a', 'p', 'i', '-', 'd', 'e', 'v', '.', 'i', 'c', 't', 'u', '.', 'v', 'n'];
+const ws_url = 'wss://api-dev.ictu.vn';
 
-export const getHost = (): string => host.join('');
+export const getHost = (): string => host;
 export const getRoute = (route: string): string => [].concat(host, [':', port, '/', realm, '/api/', route]).join('');
 export const getDateTime = (): string => [].concat(host, [':', port, '/', 'datetime']).join('');
 export const getLinkDrive = (id: string): string => [].concat(host, [':', port, '/', realm, '/api/driver/', id]).join('');
 export const getLinkMedia = (id: string): string => [].concat(host, [':', port, '/', realm, '/api/uploads/', id]).join('');
 export const getFileDir = (): string => [].concat(host, [':', port, '/', realm, '/api/uploads/folder/']).join('');
 export const getLinkDownload = (id: number | string): string => [].concat(host, [':', port, '/', realm, '/api/uploads/file/', id ? id.toString(10) : '']).join('');
-export const getWsUrl = (): string => ws_url.join('') + ':' + port_socket;
+export const getWsUrl = (): string => ws_url + ':' + port_socket;
 export const wsPath = '/sso/socket';
 
 const acceptFileType = [
@@ -118,8 +118,8 @@ export const ENCRYPT_KEY = 'thithptW4jM2P5r';
 export const APP_STORES = 'thithpt4QfWtr6Z'; // no clear after logout
 export const SWITCH_DONVI_ID = 'thithptC@gGA506'; // no clear after logout
 
-// export const X_APP_ID = '64c9a192-cc0e-4198-acb8-2188dbb472fa';//dev
-export const X_APP_ID = 'E3FAF94F-60AA-40FD-9FE4-07860B4F9264';// online for dev
+export const X_APP_ID = '64c9a192-cc0e-4198-acb8-2188dbb472fa';//dev
+// export const X_APP_ID = 'E3FAF94F-60AA-40FD-9FE4-07860B4F9264';// online for dev
 
 export const imgFalback = 'assets/images/placeholder.jpg';
 

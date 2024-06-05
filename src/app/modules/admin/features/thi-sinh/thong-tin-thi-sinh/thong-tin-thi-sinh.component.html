@@ -248,12 +248,12 @@
                     <div class="row row-cols-1">
                       <div class="col col-lg-3 col-md-6">
                         <div class="form-row"
-                          [class.fieldset--error]="f['lop10_thanhpho'].touched && f['lop10_thanhpho'].invalid"
-                          [class.fieldset--invalid]="f['lop10_thanhpho'].touched && f['lop10_thanhpho'].valid">
-                          <label>Tỉnh</label>
+                          [class.fieldset--error]="f['lop10_department'].touched && f['lop10_department'].invalid"
+                          [class.fieldset--invalid]="f['lop10_department'].touched && f['lop10_department'].valid">
+                          <label>Sở giáo dục và đào tạo</label>
                           <p-dropdown class="w-100" [style]="{'width':'100%'}" [filter]="true"
-                            formControlName="lop10_thanhpho" [options]="provinceOptions" optionLabel="name" [showClear]="true"
-                            optionValue="id" placeholder="Chọn..."></p-dropdown>
+                            formControlName="lop10_department" [options]="departmentData" optionLabel="label" [showClear]="true"
+                            optionValue="label" placeholder="Chọn..." (onChange)="changeInfoDepartment10($event.value, null)"></p-dropdown>
                         </div>
                       </div>
                       <div class="col col-lg-3 col-md-6">
@@ -261,8 +261,9 @@
                           [class.fieldset--error]="f['lop10_truong'].touched && f['lop10_truong'].invalid"
                           [class.fieldset--invalid]="f['lop10_truong'].touched && f['lop10_truong'].valid">
                           <label>Trường</label>
-                          <input pInputText type="text" placeholder="Vd: Trường THPT A" formControlName="lop10_truong"
-                            autocomplete="off">
+                          <p-dropdown class="w-100" [style]="{'width':'100%'}" [filter]="true"
+                                      formControlName="lop10_truong" [options]="school10_department" optionLabel="school_name"
+                                      optionValue="school_name" placeholder="Chọn..." ></p-dropdown>
                         </div>
                       </div>
                       <div class="col col-lg-3 col-md-6">
@@ -294,21 +295,22 @@
                     <div class="row row-cols-1">
                       <div class="col col-lg-3 col-md-6">
                         <div class="form-row"
-                          [class.fieldset--error]="f['lop11_thanhpho'].touched && f['lop11_thanhpho'].invalid"
-                          [class.fieldset--invalid]="f['lop11_thanhpho'].touched && f['lop11_thanhpho'].valid">
-                          <label>Tỉnh</label>
+                             [class.fieldset--error]="f['lop11_department'].touched && f['lop11_department'].invalid"
+                             [class.fieldset--invalid]="f['lop11_department'].touched && f['lop11_department'].valid">
+                          <label>Sở giáo dục và đào tạo</label>
                           <p-dropdown class="w-100" [style]="{'width':'100%'}" [filter]="true"
-                            formControlName="lop11_thanhpho" [options]="provinceOptions" optionLabel="name" [showClear]="true"
-                            optionValue="id" placeholder="Chọn..."></p-dropdown>
+                                      formControlName="lop11_department" [options]="departmentData" optionLabel="label" [showClear]="true"
+                                      optionValue="label" placeholder="Chọn..." (onChange)="changeInfoDepartment11($event.value, null)"></p-dropdown>
                         </div>
                       </div>
                       <div class="col col-lg-3 col-md-6">
                         <div class="form-row"
-                          [class.fieldset--error]="f['lop11_truong'].touched && f['lop11_truong'].invalid"
-                          [class.fieldset--invalid]="f['lop11_truong'].touched && f['lop11_truong'].valid">
+                             [class.fieldset--error]="f['lop11_truong'].touched && f['lop11_truong'].invalid"
+                             [class.fieldset--invalid]="f['lop11_truong'].touched && f['lop11_truong'].valid">
                           <label>Trường</label>
-                          <input pInputText type="text" placeholder="Vd: Trường THPT A" formControlName="lop11_truong"
-                            autocomplete="off">
+                          <p-dropdown class="w-100" [style]="{'width':'100%'}" [filter]="true"
+                                      formControlName="lop11_truong" [options]="school11_department" optionLabel="school_name"
+                                      optionValue="school_name" placeholder="Chọn..." ></p-dropdown>
                         </div>
                       </div>
                       <div class="col col-lg-3 col-md-6">
@@ -340,21 +342,22 @@
                     <div class="row row-cols-1">
                       <div class="col col-lg-3 col-md-6">
                         <div class="form-row"
-                          [class.fieldset--error]="f['lop12_thanhpho'].touched && f['lop12_thanhpho'].invalid"
-                          [class.fieldset--invalid]="f['lop12_thanhpho'].touched && f['lop12_thanhpho'].valid">
-                          <label>Tỉnh</label>
+                             [class.fieldset--error]="f['lop12_department'].touched && f['lop12_department'].invalid"
+                             [class.fieldset--invalid]="f['lop12_department'].touched && f['lop12_department'].valid">
+                          <label>Sở giáo dục và đào tạo</label>
                           <p-dropdown class="w-100" [style]="{'width':'100%'}" [filter]="true"
-                            formControlName="lop12_thanhpho" [options]="provinceOptions" optionLabel="name" [showClear]="true"
-                            optionValue="id" placeholder="Chọn..."></p-dropdown>
+                                      formControlName="lop12_department" [options]="departmentData" optionLabel="label" [showClear]="true"
+                                      optionValue="label" placeholder="Chọn..." (onChange)="changeInfoDepartment12($event.value, null)"></p-dropdown>
                         </div>
                       </div>
                       <div class="col col-lg-3 col-md-6">
                         <div class="form-row"
-                          [class.fieldset--error]="f['lop12_truong'].touched && f['lop12_truong'].invalid"
-                          [class.fieldset--invalid]="f['lop12_truong'].touched && f['lop12_truong'].valid">
-                          <label>Trường </label>
-                          <input pInputText type="text" placeholder="Vd: Trường THPT A" formControlName="lop12_truong"
-                            autocomplete="off">
+                             [class.fieldset--error]="f['lop12_truong'].touched && f['lop12_truong'].invalid"
+                             [class.fieldset--invalid]="f['lop12_truong'].touched && f['lop12_truong'].valid">
+                          <label>Trường</label>
+                          <p-dropdown class="w-100" [style]="{'width':'100%'}" [filter]="true"
+                                      formControlName="lop12_truong" [options]="school12_department" optionLabel="school_name"
+                                      optionValue="school_name" placeholder="Chọn..." ></p-dropdown>
                         </div>
                       </div>
                       <div class="col col-lg-3 col-md-6">

@@ -9,6 +9,7 @@ import {NotificationService} from "@core/services/notification.service";
 import {DanhMucMonService} from "@shared/services/danh-muc-mon.service";
 import {DmMon} from "@shared/models/danh-muc";
 import {ExportToPdfService} from "@shared/services/export-to-pdf.service";
+import {HelperService} from "@core/services/helper.service";
 
 @Component({
   selector: 'app-tra-cuu-ket-qua',
@@ -30,7 +31,9 @@ export class TraCuuKetQuaComponent implements OnInit {
     private auth:AuthService,
     private notifi:NotificationService,
     private danhMucMonService:DanhMucMonService,
-    private exportToPdfService:ExportToPdfService
+    private exportToPdfService:ExportToPdfService,
+    private helperSerivce:HelperService
+
   ) { }
 
   ngOnInit(): void {
@@ -46,11 +49,8 @@ export class TraCuuKetQuaComponent implements OnInit {
       this.thptKehoachThiService.getDataUnlimitNotstatus()
     ).subscribe({
       next:([dmMon,thisinhInfo, kehoachthi])=>{
-
         this.thisinhInfo= thisinhInfo;
         this.kehoachThi = kehoachthi;
-        console.log(this.thisinhInfo)
-        console.log(this.kehoachThi)
         this.notifi.isProcessing(false)
       },error:(e)=>{
         this.notifi.isProcessing(false)
@@ -64,10 +64,9 @@ export class TraCuuKetQuaComponent implements OnInit {
     if(this.thisinhInfo && this.kehoach_id_select  ){
       this.ketquaService.getdataBythisinhIdAndKehoachId(this.thisinhInfo.id, this.kehoach_id_select).subscribe({
         next:(data)=>{
-          console.log(data)
-
           this.dsKetqua = data.map((m,index)=>{
             m['__index'] = index+1;
+            m['__ngaythi'] = this.helperSerivce.formatSQLToDateDMY(new Date(m.ngaythi));
             return m;
           });
           this.isLoadding = false;

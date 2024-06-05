@@ -47,4 +47,8 @@ export interface ThiSinhInfo {
   ketqua_xetdaihoc:number;
   chuongtrinhhoc:string;
   trangthaitotnghiep:string;
+
+  lop10_department?:string;
+  lop11_department?:string;
+  lop12_department?:string;
 }

@@ -1,4 +1,4 @@
-import {Component, HostListener, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 
 import {FormType, OvicForm} from '@modules/shared/models/ovic-models';
 import {ThiSinhInfo} from "@shared/models/thi-sinh";
@@ -19,12 +19,14 @@ import {LocationService} from "@shared/services/location.service";
 import {DDMMYYYYDateFormatValidator, NumberLessThanTenValidator, PhoneNumberValidator} from "@core/utils/validators";
 import {ThisinhInfoService} from "@shared/services/thisinh-info.service";
 import {BUTTON_NO, BUTTON_YES} from "@core/models/buttons";
-import {DanToc} from "@shared/utils/syscat";
+import {DanToc, DEPARTMENT_OF_EDUCATION, SCHOOL_BY_DEPARTMENT, SchoolDepartment} from "@shared/utils/syscat";
 import {DanhMucDoiTuong, DanhMucDoituongUutienService} from "@shared/services/danh-muc-doituong-uutien.service";
+
 
 interface FormThisinh extends OvicForm {
   object: ThiSinhInfo;
 }
+
 export function replaceCommaValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     if (control.value == null) {
@@ -33,11 +35,12 @@ export function replaceCommaValidator(): ValidatorFn {
     const value = control.value.toString();
     const newValue = value.replace(/,/g, '.');
     if (newValue !== value) {
-      control.setValue(newValue, { emitEvent: false }); // Update value without emitting event
+      control.setValue(newValue, {emitEvent: false}); // Update value without emitting event
     }
     return null; // Always return null since we're just replacing characters
   };
 }
+
 @Component({
   selector: 'app-thong-tin-thi-sinh',
   templateUrl: './thong-tin-thi-sinh.component.html',
@@ -45,7 +48,8 @@ export function replaceCommaValidator(): ValidatorFn {
 })
 export class ThongTinThiSinhComponent implements OnInit {
 
-
+  departmentData = DEPARTMENT_OF_EDUCATION;
+  schoolByDepartment = SCHOOL_BY_DEPARTMENT;
   checkdata: 1 | 0 = 0;// o :load data
   formSave: FormGroup;
 
@@ -120,15 +124,18 @@ export class ThongTinThiSinhComponent implements OnInit {
       lop10_thanhpho: [null],
       lop11_thanhpho: [null],
       lop12_thanhpho: [null],
+      lop10_department: [null],
+      lop11_department: [null],
+      lop12_department: [null],
       lop10_truong: [''],
       lop11_truong: [''],
       lop12_truong: [''],
-      diem10ky1: [null, [NumberLessThanTenValidator,replaceCommaValidator()]],
-      diem10ky2: [null, [NumberLessThanTenValidator,replaceCommaValidator()]],
-      diem11ky1: [null, [NumberLessThanTenValidator,replaceCommaValidator()]],
-      diem11ky2: [null, [NumberLessThanTenValidator,replaceCommaValidator()]],
-      diem12ky1: [null, [NumberLessThanTenValidator,replaceCommaValidator()]],
-      diem12ky2: [null, [NumberLessThanTenValidator,replaceCommaValidator()]],
+      diem10ky1: [null, [NumberLessThanTenValidator, replaceCommaValidator()]],
+      diem10ky2: [null, [NumberLessThanTenValidator, replaceCommaValidator()]],
+      diem11ky1: [null, [NumberLessThanTenValidator, replaceCommaValidator()]],
+      diem11ky2: [null, [NumberLessThanTenValidator, replaceCommaValidator()]],
+      diem12ky1: [null, [NumberLessThanTenValidator, replaceCommaValidator()]],
+      diem12ky2: [null, [NumberLessThanTenValidator, replaceCommaValidator()]],
       status: [0],
       camket: [0, Validators.required],
       quoctich: [null],
@@ -205,6 +212,9 @@ export class ThongTinThiSinhComponent implements OnInit {
             lop10_thanhpho: data.lop10_thanhpho,
             lop11_thanhpho: data.lop11_thanhpho,
             lop12_thanhpho: data.lop12_thanhpho,
+            lop10_department:data.lop10_department,
+            lop11_department:data.lop11_department,
+            lop12_department:data.lop12_department,
             lop10_truong: data.lop10_truong,
             lop11_truong: data.lop11_truong,
             lop12_truong: data.lop12_truong,
@@ -222,6 +232,10 @@ export class ThongTinThiSinhComponent implements OnInit {
             chuongtrinhhoc: data.chuongtrinhhoc,
             trangthaitotnghiep: data.trangthaitotnghiep,
           });
+          this.changeInfoDepartment10(data.lop10_department)
+          this.changeInfoDepartment11(data.lop11_department)
+          this.changeInfoDepartment12(data.lop12_department)
+
           this.userInfo = data;
 
         } else {
@@ -350,14 +364,14 @@ export class ThongTinThiSinhComponent implements OnInit {
   }
 
 
-  checkboxClicked(value:'chuongtrinhhoc' | 'trangthaitotnghiep') {
-    if(value === 'chuongtrinhhoc'){
+  checkboxClicked(value: 'chuongtrinhhoc' | 'trangthaitotnghiep') {
+    if (value === 'chuongtrinhhoc') {
       setTimeout(() => {
         if (Array.isArray(this.formSave.get('chuongtrinhhoc').value)) {
           this.formSave.get('chuongtrinhhoc').setValue([this.formSave.get('chuongtrinhhoc').value.pop()]);
         }
       }, 200);
-    }else{
+    } else {
       setTimeout(() => {
         if (Array.isArray(this.formSave.get('trangthaitotnghiep').value)) {
           this.formSave.get('trangthaitotnghiep').setValue([this.formSave.get('trangthaitotnghiep').value.pop()]);
@@ -366,6 +380,39 @@ export class ThongTinThiSinhComponent implements OnInit {
     }
 
   }
+
+
+  changeInfoDepartment10(department?: string, school?: string) {
+    if (department) {
+      this.school10_department = this.schoolByDepartment.filter(f => f['department_edu'] === department);
+    } else {
+      this.f['lop10_truong'].setValue(null);
+      this.school10_department = [];
+    }
+
+  }
+
+  changeInfoDepartment11(department?: string, school?: string) {
+    if (department) {
+      this.school11_department = this.schoolByDepartment.filter(f => f['department_edu'] === department);
+    } else {
+      this.f['lop12_truong'].setValue(null);
+      this.school11_department = [];
+    }
+  }
+
+  changeInfoDepartment12(department?: string, school?: string) {
+    if (department) {
+      this.school12_department = this.schoolByDepartment.filter(f => f['department_edu'] === department);
+    } else {
+      this.f['lop12_truong'].setValue(null);
+      this.school12_department = [];
+    }
+  }
+
+  school10_department: SchoolDepartment[] = [];
+  school11_department: SchoolDepartment[] = [];
+  school12_department: SchoolDepartment[] = [];
 
 }
 

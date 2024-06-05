@@ -390,7 +390,7 @@ export class PhongThiV3Component implements OnInit {
           mota: '',
           time_start: '',
         }
-        console.log(soCathi.cathi)
+
         const request$ = this.thptHoidongCathiService.create(objectCathi).pipe(switchMap(id => {
           return this.createTestRoomControl(newPhongs, id, step, 0)
         }))
@@ -490,7 +490,7 @@ export class PhongThiV3Component implements OnInit {
   //   const requests$: Observable<any>[] = [];
   //
   //   info.thisinh.forEach((r, index) => {
-  //     console.log(r)
+
   //     const object = {
   //       phongthi_id: phongthi_id,
   //       hoidong_id: this.hoidong_id,
@@ -509,7 +509,6 @@ export class PhongThiV3Component implements OnInit {
   private createdataPhongthiThisinh(phongthi_id: number, cathi_id: number, info: TestRoomPreSet): Observable<number> {
     return from(info.thisinh).pipe(
       concatMap((r, index) => {
-        console.log(r);
         const object = {
           phongthi_id: phongthi_id,
           hoidong_id: this.hoidong_id,
@@ -564,13 +563,13 @@ export class PhongThiV3Component implements OnInit {
   dataThisinhInphong: ThptHoiDongThiSinh[];
 
   btnViewInfoByPhongThi(item: ThptHoiDongPhongThi) {
-    console.log(item)
+
     this.phongthi_select = item;
     this.switchPage = "CHITIET_PHONGTHI";
     this.notifi.isProcessing(true);
     this.thptPhongthiThisinh.getDataByHoidongIdAndCathiIdAndPhongId(this.hoidong_id, this.caThiSelect.id, item.id).subscribe({
       next: (data) => {
-        console.log(data)
+
         this.dataThisinhInphong = data.map((m, index) => {
           const thisinh = m['thisinh'];
           m['__index'] = index + 1;
@@ -594,7 +593,7 @@ export class PhongThiV3Component implements OnInit {
 
   // ------------------------- album ảnh ----------------------------------
   btnExportAlbum(cathi: ThptCathi) {
-    console.log(cathi);
+
     this.modalService.open(this.templateWaiting, WAITING_POPUP);
     const fileName = cathi.cathi + '( ' + this.hoidong.ten_hoidong + ' )' + ' - Danh sách thí sinh';
     const cathi_id = cathi.id;
@@ -604,7 +603,7 @@ export class PhongThiV3Component implements OnInit {
     })).subscribe(
       {
         next: (data) => {
-          console.log(data)
+
           // const dataMap = data.map((m) => {
           //   m['__ten_cathi'] = cathi.cathi;
           //   m['__ngaythi'] = this.strToTime(cathi.ngaythi);
@@ -624,7 +623,7 @@ export class PhongThiV3Component implements OnInit {
           this.modalService.dismissAll()
         },
         error: (e) => {
-          console.log(e);
+
           this.notifi.isProcessing(false);
           this.notifi.toastError('Load dữ liệu không thàng công');
           this.modalService.dismissAll()

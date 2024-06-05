@@ -22,7 +22,7 @@ import {DmMon} from "@shared/models/danh-muc";
 import {catchError, delay, finalize} from "rxjs/operators";
 import {WAITING_POPUP} from "@shared/utils/syscat";
 import {DanhMucPhongThiService, DmPhongThi} from "@shared/services/danh-muc-phong-thi.service";
-import {setup} from "plyr";
+
 
 @Component({
   selector: 'app-add-thi-sinh',
@@ -68,15 +68,11 @@ export class AddThiSinhComponent implements OnInit, OnChanges {
     this.dataSelectSubject.subscribe(data => this.emitDataChanges());
 
   }
-
   ngOnChanges(changes: SimpleChanges): void {
     if (this.hoidong_id) {
       this.loadInit();
     }
-
   }
-
-
   ngOnInit(): void {
     this.emitDataChanges()
     if (this.hoidong_id) {
@@ -88,14 +84,12 @@ export class AddThiSinhComponent implements OnInit, OnChanges {
           if(this.dmPhongthi && this.dsMon){
             this.loadInit();
           }
-
         }
       })
     }
   }
 
   loadInit() {
-
     this.loadData();
   }
 

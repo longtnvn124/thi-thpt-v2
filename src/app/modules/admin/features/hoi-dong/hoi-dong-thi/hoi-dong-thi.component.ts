@@ -1,5 +1,5 @@
 import {NotificationService} from '@core/services/notification.service';
-import {ThptKehoachThiService, KeHoachThi} from './../../../../shared/services/thpt-kehoach-thi.service';
+
 import {Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {AbstractControl, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ThptHoiDong, ThptHoiDongService} from '@modules/shared/services/thpt-hoi-dong.service';
@@ -9,16 +9,15 @@ import {AddThiSinhComponent} from "@modules/admin/features/hoi-dong/hoi-dong-thi
 import {ThptCathi, ThptHoidongCathiService} from "@shared/services/thpt-hoidong-cathi.service";
 import {ThptHoidongPhongthiService} from "@shared/services/thpt-hoidong-phongthi.service";
 import {ThptPhongThiMonThi, ThptPhongthiMonthiService} from "@shared/services/thpt-phongthi-monthi.service";
-import {map} from "rxjs/operators";
-import {ThptHoiDongPhongThi, ThptHoiDongThiSinh} from "@shared/models/thpt-model";
+import {ThptHoiDongPhongThi} from "@shared/models/thpt-model";
 import {HelperService} from "@core/services/helper.service";
 import {DanhMucMonService} from "@shared/services/danh-muc-mon.service";
 import {DmMon} from "@shared/models/danh-muc";
 import {ExpostExcelPhongthiThisinhService} from "@shared/services/expost-excel-phongthi-thisinh.service";
 import {ThptHoidongThisinhService} from "@shared/services/thpt-hoidong-thisinh.service";
-import {error} from "@angular/compiler-cli/src/transformers/util";
 import {DatePipe} from "@angular/common";
 import {HoiDongLichThiService, ThptLichThi} from "@shared/services/hoi-dong-lich-thi.service";
+import {KeHoachThi, ThptKehoachThiService} from "@shared/services/thpt-kehoach-thi.service";
 
 interface FormHoiDong extends OvicForm {
   object: ThptHoiDong;
@@ -82,7 +81,6 @@ export class HoiDongThiComponent implements OnInit {
   thiSinhSelectTotal: number = 0;
   orderSelectTotal: number = 0;
   dmMon: DmMon[];
-  hoidongSelect: ThptHoiDong;
   thptLichthi:ThptLichThi[];
   constructor(
     private kehoachThiService: ThptKehoachThiService,

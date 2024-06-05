@@ -11,7 +11,7 @@
                 <div class="">
                 </div>
                 <div class="search-block__elm ">
-                  <p-dropdown class="h-100 border-radius-0 mx-2" placeholder="Chọn đợt thi..." (onChange)="changeDotthi($event)" [options]="kehoachThi" optionValue="id" optionLabel="dotthi"></p-dropdown>
+                  <p-dropdown [style]="{'max-width':'250px'}" class="h-100 border-radius-0 mx-2" placeholder="Chọn đợt thi..." (onChange)="changeDotthi($event)" [options]="kehoachThi" optionValue="id" optionLabel="dotthi"></p-dropdown>
                   <button pButton pRipple class="h-100 mx-2 border-radius-0" icon="pi pi-search" pTooltip="tìm kiếm" tooltipPosition="left" (click)="btnSearchData()"></button>
 <!--                  <button pRipple pButton class="p-button-success h-100 mx-2 border-radius-0" icon="pi pi-file-export" label="Tải phiếu kết quả "></button>-->
                 </div>
@@ -32,12 +32,7 @@
                 <th class="ovic-w-40px text-center ">STT</th>
 
                 <th class="ovic-w-100px text-center ">Số báo danh</th>
-                <th class="ovic-w-180px text-center">Họ và tên</th>
-                <th class="ovic-w-120px text-center">Ngày sinh</th>
-                <th class="ovic-w-80px text-center">Giới tính </th>
-                <th class="ovic-w-120px text-center">CMND/CCCD</th>
-                <th class="text-center">Email</th>
-                <th class="text-center">Số điện thoại</th>
+                <th class="ovic-w-180px text-center">Ngày thi</th>
                 <th class="ovic-w-130px text-center">Ca thi</th>
                 <th class="ovic-w-130px text-center">Phòng thi </th>
                 <th class="ovic-w-130px text-center">Môn thi</th>
@@ -50,12 +45,7 @@
                 <td class="text-center">{{ item['__index'] }}</td>
 
                 <td class="text-center">{{item.sobd}}</td>
-                <td class="text-center">{{item.hoten}}</td>
-                <td class="text-center">{{item.ngaysinh}}</td>
-                <td class="text-center">{{item.gioitinh}}</td>
-                <td class="text-center">{{item.cccd_so}}</td>
-                <td class="text-center">{{item.email}}</td>
-                <td class="text-center">{{item.dienthoai}}</td>
+                <td class="text-center">{{item['__ngaythi']}}</td>
                 <td class="text-center">{{item.cathi}}</td>
                 <td class="text-center">{{item.phongthi}}</td>
                 <td class="text-center">{{item.monthi}}</td>

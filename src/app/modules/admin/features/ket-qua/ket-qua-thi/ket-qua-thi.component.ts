@@ -100,7 +100,6 @@ export class KetQuaThiComponent implements OnInit {
     this.thptHoiDongService.getDataUnlimitByStatus().subscribe({
       next: (data) => {
         this.dsHoidong = data;
-        console.log(this.dsHoidong);
         this.notificationService.isProcessing(false);
         this.isLoading = false;
         if (this.dsHoidong.length > 0) {
@@ -150,7 +149,7 @@ export class KetQuaThiComponent implements OnInit {
     this.loadData(this.page);
   }
   inputSearch(text:string){
-    console.log(text)
+
     this.textSearch = text.trim();
     this.loadData(this.page);
   }
@@ -176,13 +175,14 @@ export class KetQuaThiComponent implements OnInit {
         const firstSheetName: string = wb.SheetNames[0];
         const ws: XLSX.WorkSheet = wb.Sheets[firstSheetName];
 
+
+
         /* save data */
         const rawData: AOA = <AOA>(XLSX.utils.sheet_to_json(ws, {header: 1}));
         const filterData = rawData.filter(u => !!(Array.isArray(u) && u.length));
         if (filterData.length) {
+          // filterData.shift();
           filterData.shift();
-          filterData.shift();
-          console.log(filterData);
           this.datafile = this.covertDataExport(filterData);
         }
 
@@ -201,7 +201,7 @@ export class KetQuaThiComponent implements OnInit {
       multiple: false,
       onchange: () => {
         this.onDroppedFiles(inputFile.files);
-        console.log(inputFile.files)
+
         setTimeout(() => inputFile.remove(), 1000)
       }
     });
@@ -213,7 +213,7 @@ export class KetQuaThiComponent implements OnInit {
   }
 
   changeHoidong(event) {
-    console.log(event.value);
+
     this.hoidongSelect = this.dsHoidong.find(f=>f.id === event.value);
     this.isLoading = true;
     this.notificationService.isProcessing(true);
@@ -244,32 +244,31 @@ export class KetQuaThiComponent implements OnInit {
         thisinh_id: row[3],
         sobd: row[4].toString(),
         diem: row[5],
-        hoten: row[6].toString(),
-        ngaysinh: row[7].toString() ,
-        gioitinh: row[8].toString(),
-        cccd_so: row[9].toString(),
-        email: row[10].toString(),
-        dienthoai: row[11].toString(),
+        hoten: row[6],
+        ngaysinh: row[7],
+        gioitinh: row[8],
+        cccd_so: row[9],
+        email: row[10],
+        dienthoai: row[11],
         created:false
       }
+
       data.push(cell)
     })
     return data;
+
 
   }
 
   btnKiemtraDulieu(){
     this.notificationService.isProcessing(true);
     this.isLoading = true;
+
     if(this.datafile.length>0 && this.dsThisinhInHoidong.length>0){
-      console.log(this.datafile)
       const dataReturn = this.kiemTraKetQua(this.datafile,this.dsThisinhInHoidong);
       this.dsKetqua_have = dataReturn[0];
       this.dsKetqua_nothave = dataReturn[1];
       this.ketquaImportView = this.dsKetqua_have;
-
-      console.log(this.ketquaImportView);
-
       this.notificationService.isProcessing(false);
       this.isLoading = false;
     }else{
@@ -318,8 +317,6 @@ export class KetQuaThiComponent implements OnInit {
   async btnSubmitData(){
     const button = await this.notificationService.confirmRounded('Tải lên kết quả của thí sinh ', 'XÁC NHẬN', [BUTTON_NO, BUTTON_YES]);
     if (button.name === BUTTON_YES.name) {
-      console.log(this.dsKetqua_have);
-      console.log(this.hoidongSelect)
       const step: number = 100 / this.dsKetqua_have.length;
       this.createThisinhControl(this.dsKetqua_have,this.hoidongSelect, step, 0).subscribe({
         next:()=>{
@@ -375,16 +372,14 @@ export class KetQuaThiComponent implements OnInit {
   //==========================================================
   hoidongSiteKetqua_select :number = null;
   selectHoidongBySiteKetqua(event){
-    console.log(event)
     this.hoidongSiteKetqua_select = event;
-    console.log(this.hoidongSiteKetqua_select);
     this.loadData(1)
   }
 
   async btnDeleteByHoidong(){
-    console.log(this.hoidongSiteKetqua_select)
+
     if(this.hoidongSiteKetqua_select){
-      console.log('xoa');
+
       const hoidongselect = this.dsHoidong.find(f=>f.id = this.hoidongSiteKetqua_select)
 
       const button = await this.notificationService.confirmRounded('Xác nhận xóa kết quả thi của '+ hoidongselect.ten_hoidong ,'XÁC NHẬN', [BUTTON_YES, BUTTON_NO]);
@@ -392,7 +387,7 @@ export class KetQuaThiComponent implements OnInit {
         this.notificationService.isProcessing(true)
           this.thptKetquaService.getDataUnlimitByHoidongId(this.hoidongSiteKetqua_select).subscribe({
             next:(data)=>{
-              console.log(data);
+
               const dataDelete = data.map(m=>{
                 m['delete'] = false;
                 return m;
