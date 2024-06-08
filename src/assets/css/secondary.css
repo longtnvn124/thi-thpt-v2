@@ -1329,6 +1329,10 @@ p .ql-align-center {
   background: #494949 !important;
   color:#fff;
 }
+.btn-menu-material.warning:hover{
+  background: #e6922f !important;
+  color:#fff;
+}
 .btn-menu-material.delete:hover{
   background: tomato !important;
   color:#fff;

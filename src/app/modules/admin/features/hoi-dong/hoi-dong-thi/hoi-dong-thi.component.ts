@@ -1,10 +1,9 @@
 import {NotificationService} from '@core/services/notification.service';
-
 import {Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {AbstractControl, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ThptHoiDong, ThptHoiDongService} from '@modules/shared/services/thpt-hoi-dong.service';
-import {FormType, OvicForm} from '@modules/shared/models/ovic-models';
-import {Observable, Subject, Subscription, debounceTime, filter, concatMap, forkJoin, of} from 'rxjs';
+import {FormType, NgPaginateEvent, OvicForm} from '@modules/shared/models/ovic-models';
+import {Observable, Subject, Subscription, debounceTime, filter, concatMap, forkJoin, of, switchMap} from 'rxjs';
 import {AddThiSinhComponent} from "@modules/admin/features/hoi-dong/hoi-dong-thi/add-thi-sinh/add-thi-sinh.component";
 import {ThptCathi, ThptHoidongCathiService} from "@shared/services/thpt-hoidong-cathi.service";
 import {ThptHoidongPhongthiService} from "@shared/services/thpt-hoidong-phongthi.service";
@@ -18,6 +17,8 @@ import {ThptHoidongThisinhService} from "@shared/services/thpt-hoidong-thisinh.s
 import {DatePipe} from "@angular/common";
 import {HoiDongLichThiService, ThptLichThi} from "@shared/services/hoi-dong-lich-thi.service";
 import {KeHoachThi, ThptKehoachThiService} from "@shared/services/thpt-kehoach-thi.service";
+import {ThemeSettings, ThemeSettingsService} from "@core/services/theme-settings.service";
+import {Paginator} from "primeng/paginator";
 
 interface FormHoiDong extends OvicForm {
   object: ThptHoiDong;
@@ -48,6 +49,7 @@ export interface itemExportExcel {
   styleUrls: ['./hoi-dong-thi.component.css']
 })
 export class HoiDongThiComponent implements OnInit {
+  @ViewChild(Paginator) paginator: Paginator;
   @ViewChild('fromUpdate', {static: true}) template: TemplateRef<any>;
   @ViewChild('examinationRoom', {static: true}) examinationRoom: TemplateRef<any>;
   @ViewChild('addThiSinh', {static: true}) addThiSinh: TemplateRef<any>;
@@ -55,14 +57,17 @@ export class HoiDongThiComponent implements OnInit {
   @ViewChild('thiSinhInPhongThi', {static: true}) thiSinhInPhongThi: TemplateRef<any>;
 
   statusList = [
-    {value: 1, label: 'Active', color: '<span class="badge badge--size-normal badge-success w-100">Active</span>'},
-    {value: 0, label: 'Inactive', color: '<span class="badge badge--size-normal badge-danger w-100">Inactive</span>'}
+    {value: 1, label: 'Active', color: '<span class="badge badge--size-normal badge-success w-100">Đã hoạt động</span>'},
+    {value: 0, label: 'Inactive', color: '<span class="badge badge--size-normal badge-danger w-100">Chưa hoạt động </span>'}
   ];
   listForm = {
     [FormType.ADDITION]: {type: FormType.ADDITION, title: 'Thêm mới hội đồng', object: null, data: null},
     [FormType.UPDATE]: {type: FormType.UPDATE, title: 'Cập nhật hội đồng', object: null, data: null}
   };
-
+  rows= this.themeSettings.settings.rows;
+  page:number = 1;
+  recordsTotal:number = 0;
+  search:string = '';
   formActive: FormHoiDong;
   formSave: FormGroup;
   isLoading: boolean = true;
@@ -82,7 +87,28 @@ export class HoiDongThiComponent implements OnInit {
   orderSelectTotal: number = 0;
   dmMon: DmMon[];
   thptLichthi:ThptLichThi[];
+
+  columns = ['STT'
+    , 'ID', 'MADK', 'Họ và tên', 'Ngày sinh', 'Giới tính', 'CCCD/CMND', 'Email',
+    'Số điện thoại', 'Đăng ký môn toán', 'Đăng ký môn Vật lí', 'Đăng ký môn Hóa học', 'Đăng ký môn Sinh học',
+    'Đăng ký môn Lịch sử', 'Đăng ký môn Địa lí', 'Đăng ký môn Tiếng anh',
+    'SBD Toán', 'Ca thi Toán', 'Địa điểm thi Toán', 'Phòng thi Toán', 'Thời điểm gọi vào Toán',
+    'SBD Vật lí', 'Ca thi Vật lý', 'Địa điểm thi Vật lí', 'Phòng thi Vật lí', 'Thời điểm gọi vào Vật lí',
+    'SBD Hóa học', 'Ca thi Hóa học', 'Địa điểm thi Hóa học', 'Phòng thi Hóa học', 'Thời điểm gọi vào Hóa học',
+    'SBD Sinh học', 'Ca thi Sinh học', 'Địa điểm thi Sinh học', 'Phòng thi Sinh học', 'Thời điểm gọi vào Sinh học',
+    'SBD Lịch sử', 'Ca thi Lịch sử', 'Địa điểm thi Lịch sử', 'Phòng thi Lịch sử', 'Thời điểm gọi vào Lịch sử',
+    'SBD Địa lí', 'Ca thi Địa lí', 'Địa điểm thi Địa lí', 'Phòng thi Địa lí', 'Thời điểm gọi vào Địa lí',
+    'SBD Tiếng anh', 'Ca thi Tiếng anh', 'Địa điểm thi Tiếng anh', 'Phòng thi Tiếng anh', 'Thời điểm gọi vào Tiếng anh',
+  ];
+
+  columnSheet2 = [
+    'Ca', 'Phòng', 'Toán', 'Vật lí', 'Hóa học', 'Sinh học', 'Lịch sử', 'Địa lí', 'Tiếng Anh', 'Thời điểm gọi thí sinh', 'Địa điểm'
+  ]
+
+  private inputChanged: Subject<string> = new Subject<string>();
+
   constructor(
+    private themeSettings:ThemeSettingsService,
     private kehoachThiService: ThptKehoachThiService,
     private hoiDongService: ThptHoiDongService,
     private notifi: NotificationService,
@@ -94,7 +120,8 @@ export class HoiDongThiComponent implements OnInit {
     private danhMucMonService: DanhMucMonService,
     private expostExcelPhongthiThisinhService: ExpostExcelPhongthiThisinhService,
     private hoiDongThiSinhService: ThptHoidongThisinhService,
-    private thptLichthiSerive:HoiDongLichThiService
+    private thptLichthiSerive:HoiDongLichThiService,
+    private thptHoidongThisinhService:ThptHoidongThisinhService
 
   ) {
     const observeProcessFormData = this.OBSERVE_PROCESS_FORM_DATA.asObservable().pipe(debounceTime(100)).subscribe(form => this.__processFrom(form));
@@ -115,33 +142,26 @@ export class HoiDongThiComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.inputChanged.pipe(debounceTime(1000)).subscribe((item: string) => {
+      this.searchContentByInput(item);
+    });
     this.loadInit()
   }
 
   loadInit() {
-    this.danhMucMonService.getDataUnlimit().subscribe({
-      next: (data) => {
-        this.dmMon = data;
-      }
-    })
-    this.loadData();
-  }
-
-  loadData() {
-    this.getDataKeHoach();
-  }
-
-  getDataKeHoach() {
     this.notifi.isProcessing(true)
     this.isLoading = true;
-    forkJoin<[ThptLichThi[],KeHoachThi[]]>(this.thptLichthiSerive.getDataUnlimit(),this.kehoachThiService.getDataUnlimitNotstatus()).subscribe({
-      next: ([lichthi, data]) => {
+    forkJoin<[ DmMon[], ThptLichThi[],KeHoachThi[]]>(this.danhMucMonService.getDataUnlimit() , this.thptLichthiSerive.getDataUnlimit(),this.kehoachThiService.getDataUnlimitNotstatus()).subscribe({
+      next: ([dmMon, lichthi, data]) => {
+        this.dmMon = dmMon;
         this.thptLichthi = lichthi;
         this.dataKeHoach = data;
-        this.getDataHoiDong();
+        if(this.dmMon && this.thptLichthi && this.dataKeHoach){
+          this.loadData()
+        }
         this.notifi.isProcessing(false);
         this.isLoading = false;
-      }, error: (e) => {
+      }, error: () => {
         this.notifi.isProcessing(false);
         this.isLoading = false;
         this.notifi.toastError('Mất kết nối với máy chủ');
@@ -154,18 +174,34 @@ export class HoiDongThiComponent implements OnInit {
     this.getDataHoiDong(event);
   }
 
-  getDataHoiDong(kehoach_id?: number, search?: string) {
+  loadData(){
+    this.getDataHoiDong(1)
+  }
+
+
+  getDataHoiDong(page:number) {
     this.isLoading = true;
     this.notifi.isProcessing(true);
-    this.hoiDongService.loadDataUnlimit(kehoach_id).subscribe({
-      next: (data) => {
-        let i = 1;
-        this.listData = data.map(m => {
-          m['__indexTable'] = i++;
+    this.page= page;
+    this.hoiDongService.getDataBypageAndkehoachAndSearch(this.page,this._kehoach_id,this.search).pipe(switchMap(prj=>{
+      return this.loadThisinhByHoidong(prj)
+    })).subscribe({
+      next: ({ recordsTotal , data}) => {
+        console.log(data);
+        this.recordsTotal= recordsTotal;
+        this.listData = data.map((m,index) => {
+          m['__indexTable'] = index + 1 + (this.page -1)*10  ;
           m['__kehoach_coverted'] = this.dataKeHoach && this.dataKeHoach.find(f => f.id === m.kehoach_id) ? this.dataKeHoach.find(f => f.id === m.kehoach_id).dotthi : '';
           const sIndex = this.statusList.findIndex(i => i.value === m.status);
           m['__status_converted'] = sIndex !== -1 ? this.statusList[sIndex].color : '';
           m['__ngaythi'] = m.ngaythi ? this.helperService.formatSQLToDateDMY(new Date(m.ngaythi)) :"";
+          const thisinhData = m['thisinhData'];
+          m['__total'] = thisinhData ?  thisinhData.length : 0;
+          this.dmMon.forEach(f=>{
+            m['__mon_' + f.kyhieu.toLowerCase()] =thisinhData ?  this.countOccurrences(f.id, thisinhData) : 0;
+          })
+
+
           return m;
         })
         this.isLoading = false;
@@ -176,6 +212,25 @@ export class HoiDongThiComponent implements OnInit {
         this.notifi.isProcessing(false);
       }
     })
+  }
+
+  private loadThisinhByHoidong(input: {recordsTotal: number; data: ThptHoiDong[]}):Observable<{ recordsTotal: number; data: ThptHoiDong[] }>{
+    try {
+      const index: number = input.data.findIndex(t => !t['_haveThisinh']);
+      if (index !== -1) {
+        return this.thptHoidongThisinhService.getDataUnlimitSelectByhoidongId(input.data[index].id).pipe(
+          switchMap(m => {
+            input.data[index]['_haveThisinh'] = true;
+            input.data[index]['thisinhData'] = m;
+            return this.loadThisinhByHoidong(input);
+          })
+        );
+      } else {
+        return of(input);
+      }
+    } catch (e) {
+      return of(input);
+    }
   }
 
   private __processFrom({data, object, type}: FormHoiDong) {
@@ -208,8 +263,14 @@ export class HoiDongThiComponent implements OnInit {
     return this.formSave.controls;
   }
 
-  changeInput(text) {
-
+  searchContentByInput(text: string) {
+    this.page = 1;
+    this.search = text.trim();
+    console.log(this.search)
+    this.getDataHoiDong(this.page);
+  }
+  onInputChange(event: string) {
+    this.inputChanged.next(event);
   }
 
   btnAddNew(type: 'add' | 'update', item?: ThptHoiDong) {
@@ -260,19 +321,23 @@ export class HoiDongThiComponent implements OnInit {
     const y = date.getFullYear().toString();
     const m = (date.getMonth() + 1).toString().padStart(2, '0');
     const d = date.getDate().toString().padStart(2, '0');
-    const h = date.getHours().toString().padStart(2, '0');
-    const min = date.getMinutes().toString().padStart(2, '0');
-    const sec = '00';
     //'YYYY-MM-DD hh:mm:ss' type of sql DATETIME format
     return `${y}-${m}-${d}`;
   }
   saveForm() {
     const titleInput = this.f['ten_hoidong'].value.trim();
-    this.f['ten_hoidong'].setValue(titleInput);
-    this.f['ngaythi'].setValue(this.formatSQLDateTime(new Date(this.formSave.value['ngaythi'])));
+
+    const object= {
+      ten_hoidong:titleInput,
+      ngaythi:this.formatSQLDateTime(new Date(this.formSave.value['ngaythi'])),
+      kehoach_id:   this.f['kehoach_id'].value,
+      mota: this.f['mota'].value,
+      status: this.f['status'].value,
+      tiento_sobaodanh:  this.f['tiento_sobaodanh'].value,
+    }
     if (this.formSave.valid) {
       if (titleInput !== '') {
-        this.formActive.data = this.formSave.value;
+        this.formActive.data = object;
         this.OBSERVE_PROCESS_FORM_DATA.next(this.formActive);
       } else {
         this.notifi.toastWarning('Vui lòng không nhập khoảng trống');
@@ -302,17 +367,6 @@ export class HoiDongThiComponent implements OnInit {
     }
   }
 
-  btnViewPhongThi(item: ThptHoiDong) {
-    this.notifi.isProcessing(false);
-    this.notifi.openSideNavigationMenu({
-      template: this.examinationRoom,
-      size: this.sizeFullWidth,
-      offsetTop: '0px'
-    });
-    this.hoidong_id = item.id;
-    this.kehoach_id_param = item.kehoach_id;
-  }
-
   btnAddThisinh(item: ThptHoiDong) {
     this.notifi.isProcessing(false);
     this.hoidong_id = item.id;
@@ -334,6 +388,9 @@ export class HoiDongThiComponent implements OnInit {
 
   btnUpdateRoombyThisinh() {
     this.addThisinhComponent.btnXepphong()
+  }
+  btnUpdateCompactRoom() {
+    this.addThisinhComponent.btnCompactRoom()
   }
 
   btnReloadData() {
@@ -380,7 +437,7 @@ export class HoiDongThiComponent implements OnInit {
               const thisinh = m['thisinh'];
               item['__indexTable'] = index + 1;
               item['__thisinh_id'] = thisinh ? thisinh['id'] : '';
-              item['__madk'] = thisinh ? hoidong.tiento_sobaodanh + this.covertId(thisinh['id']) : '';
+              item['__madk'] = m['sobaodanh'];
               item['__hoten'] = thisinh ? thisinh['hoten'] : '';
               item['__ngaysinh'] = thisinh ? this.repplaceNgaysinh(thisinh['ngaysinh']) : '';
               item['__gioitinh'] = thisinh && thisinh['gioitinh'] === 'nam' ? 'Nam' : (thisinh && thisinh['gioitinh'] === 'nu' ? 'Nữ' : '');
@@ -394,7 +451,7 @@ export class HoiDongThiComponent implements OnInit {
               this.dmMon.map(a => {
                 const cathiselect = dataCathi.find(f => f.mon_ids.find(mon => mon === a.id));
                 const phongthi = dataPhongthi.find(phongthi => phongthi.thisinh_ids.find(id => id === m.thisinh_id) && phongthi.cathi_id === cathiselect.id);
-                item['__sbd_' + a.kyhieu] = m.monthi_ids.find(mon_id => mon_id === a.id) ? hoidong.tiento_sobaodanh + this.covertId(thisinh['id']) : '';
+                item['__sbd_' + a.kyhieu] = m.monthi_ids.find(mon_id => mon_id === a.id) ? m['sobaodanh'] : '';
                 item['__cathi_' + a.kyhieu] = m.monthi_ids.find(mon_id => mon_id === a.id) && cathiselect ? cathiselect.cathi : '';
                 item['__diadiem_' + a.kyhieu] = m.monthi_ids.find(mon_id => mon_id === a.id) ? 'Trung tâm Khảo thí và Quản lý chất lượng – ĐHTN, Phường Tân Thịnh – Thành phố Thái Nguyên' : '';
                 item['__phongthi_' + a.kyhieu] = m.monthi_ids.find(mon_id => mon_id === a.id) && phongthi ? phongthi.ten_phongthi : '';
@@ -443,13 +500,13 @@ export class HoiDongThiComponent implements OnInit {
       next:(data)=>{
 
         const dataParam = [];
-        data.sort((a,b)=>a['thisinh']['ten'].localeCompare(b['thisinh']['ten'])).forEach((m,index)=>{
+        data.sort((a, b) => this.extractNumberFromString(a['sobaodanh'],hoidong.tiento_sobaodanh) - this.extractNumberFromString(b['sobaodanh'],hoidong.tiento_sobaodanh)).forEach((m,index)=>{
           const item = {};
           const thisinh = m['thisinh'];
           item['__index_table']= index+1;
           item['__thisinh_id'] = m.thisinh_id;
-          item['__ma_dk'] = hoidong.tiento_sobaodanh + this.covertId(m.thisinh_id);
-          item['__hoten'] = thisinh ? thisinh['hoten'] : '';
+          item['__ma_dk'] = m['sobaodanh'];
+          item['__hoten'] = thisinh ? this.helperService.capitalizeAfterSpace(thisinh['hoten']) : '';
           item['__ngaysinh'] = thisinh ? this.repplaceNgaysinh(thisinh['ngaysinh']) : '';
           item['__gioitinh'] = thisinh && thisinh['gioitinh'] === 'nu' ? 'Nữ' : 'Nam';
           item['__cccd_so'] = thisinh ? thisinh['cccd_so'] : '';
@@ -462,7 +519,7 @@ export class HoiDongThiComponent implements OnInit {
 
           this.dmMon.map(a => {
             const mon = m.monthi_ids.find(mon_id => mon_id === a.id)
-            item['__sbd_' + a.kyhieu]        = mon ? hoidong.tiento_sobaodanh + this.covertId(m.thisinh_id) : '';
+            item['__sbd_' + a.kyhieu]        = mon ? m['sobaodanh'] : '';
             item['__cathi_' + a.kyhieu]      = mon ? m['ca_' +  a.kyhieu.toLowerCase()] : '';
             const cathi = m['ca_' +  a.kyhieu.toLowerCase()];
             item['__diadiem_' + a.kyhieu]    = mon ? 'Trung tâm Khảo thí và Quản lý chất lượng – ĐHTN, Phường Tân Thịnh – Thành phố Thái Nguyên' : '';
@@ -585,26 +642,8 @@ export class HoiDongThiComponent implements OnInit {
   }
 
 
-  columns = ['STT'
-    , 'ID', 'MADK', 'Họ và tên', 'Ngày sinh', 'Giới tính', 'CCCD/CMND', 'Email',
-    'Số điện thoại', 'Đăng ký môn toán', 'Đăng ký môn Vật lí', 'Đăng ký môn Hóa học', 'Đăng ký môn Sinh học',
-    'Đăng ký môn Lịch sử', 'Đăng ký môn Địa lí', 'Đăng ký môn Tiếng anh',
-    'SBD Toán', 'Ca thi Toán', 'Địa điểm thi Toán', 'Phòng thi Toán', 'Thời điểm gọi vào Toán',
-    'SBD Vật lí', 'Ca thi Vật lý', 'Địa điểm thi Vật lí', 'Phòng thi Vật lí', 'Thời điểm gọi vào Vật lí',
-    'SBD Hóa học', 'Ca thi Hóa học', 'Địa điểm thi Hóa học', 'Phòng thi Hóa học', 'Thời điểm gọi vào Hóa học',
-    'SBD Sinh học', 'Ca thi Sinh học', 'Địa điểm thi Sinh học', 'Phòng thi Sinh học', 'Thời điểm gọi vào Sinh học',
-    'SBD Lịch sử', 'Ca thi Lịch sử', 'Địa điểm thi Lịch sử', 'Phòng thi Lịch sử', 'Thời điểm gọi vào Lịch sử',
-    'SBD Địa lí', 'Ca thi Địa lí', 'Địa điểm thi Địa lí', 'Phòng thi Địa lí', 'Thời điểm gọi vào Địa lí',
-    'SBD Tiếng anh', 'Ca thi Tiếng anh', 'Địa điểm thi Tiếng anh', 'Phòng thi Tiếng anh', 'Thời điểm gọi vào Tiếng anh',
-  ];
 
-  columnSheet2 = [
-    'Ca', 'Phòng', 'Toán', 'Vật lí', 'Hóa học', 'Sinh học', 'Lịch sử', 'Địa lí', 'Tiếng Anh', 'Thời điểm gọi thí sinh', 'Địa điểm'
-  ]
 
-  covertId(iput: number) {
-    return iput < 10 ? '000' + iput : (iput >= 10 && iput < 100 ? '00' + iput : (iput >= 100 && iput < 1000 ? '0' + iput : iput));
-  }
 
   repplaceNgaysinh(text: string) {
     const parts = text.split('/');
@@ -613,8 +652,7 @@ export class HoiDongThiComponent implements OnInit {
     const year = parts[2];
 
     // Chuyển đổi sang định dạng mới
-    const newDateString = `${year}-${month}-${day}`;
-    return newDateString;
+    return `${year}-${month}-${day}`;
   }
   //--------------------------
   btnThiSinhInHoiDong(item: ThptHoiDong) {
@@ -627,4 +665,20 @@ export class HoiDongThiComponent implements OnInit {
       offsetTop: '0px'
     });
   }
+
+  extractNumberFromString(inputString:string, tiento:string) {
+    const prefix = tiento;
+    const startIndex = inputString.indexOf(prefix);
+    return startIndex !== -1 ? parseInt(inputString.substring(startIndex + prefix.length), 10) : NaN;
+  }
+  paginate({page}: NgPaginateEvent) {
+    this.page = page + 1;
+
+    this.getDataHoiDong(this.page );
+  }
+  countOccurrences(number,data) {
+    return data.reduce((acc, item) => acc + (item.monthi_ids.includes(number) ? 1 : 0), 0);
+  }
+
+
 }

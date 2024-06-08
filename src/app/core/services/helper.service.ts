@@ -343,4 +343,13 @@ export class HelperService {
   //   return typeof date === 'string' ? new Date(new Date(date).toLocaleString('en-US', {timeZone})) : new Date(date.toLocaleString('en-US', {timeZone}));
   // }
 
+  capitalizeAfterSpace(text) {
+    return text
+      .trim()
+      .toLowerCase()
+      .split(' ') // Tách đoạn văn bản thành mảng các từ
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1)) // Viết hoa chữ cái đầu của mỗi từ
+      .join(' '); // Ghép lại thành chuỗi
+  }
+
 }

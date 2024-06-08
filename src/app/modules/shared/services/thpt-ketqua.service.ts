@@ -172,5 +172,27 @@ export class ThptKetquaService {
     return this.http.get<Dto>(this.api, {params}).pipe(map(res => res.data));
   }
 
+  getDataUnlimitBycccd_soAnd_ngaysinh(cccd_so:number,ngaysinh:string):Observable<ThptKetqua[]>{
+    const conditions: OvicConditionParam[] = [
+      {
+        conditionName: 'cccd_so',
+        condition: OvicQueryCondition.equal,
+        value: cccd_so.toString()
+      },
+      {
+        conditionName: 'ngaysinh',
+        condition: OvicQueryCondition.equal,
+        value: ngaysinh.toString()
+      },
+    ];
+    const fromObject = {
+      paged: 1,
+      limit: -1,
+      orderby: 'id',
+      order: "ASC"
+    }
+    const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({fromObject}));
+    return this.http.get<Dto>(this.api, {params}).pipe(map(res => res.data));
+  }
 
 }

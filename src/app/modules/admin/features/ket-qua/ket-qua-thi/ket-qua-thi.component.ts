@@ -23,7 +23,7 @@ interface FileImport {
   monthi: string;
   thisinh_id: number;
   sobd: string;
-  diem: number;
+  diem: string;
   hoten: string;
   ngaysinh: string;
   gioitinh: string;
@@ -184,6 +184,7 @@ export class KetQuaThiComponent implements OnInit {
           // filterData.shift();
           filterData.shift();
           this.datafile = this.covertDataExport(filterData);
+
         }
 
       };
@@ -243,7 +244,7 @@ export class KetQuaThiComponent implements OnInit {
         monthi: row[2],
         thisinh_id: row[3],
         sobd: row[4].toString(),
-        diem: row[5],
+        diem: row[5].toFixed(1).toString(),
         hoten: row[6],
         ngaysinh: row[7],
         gioitinh: row[8],

@@ -22,6 +22,8 @@ import {DmMon} from "@shared/models/danh-muc";
 import {catchError, delay, finalize} from "rxjs/operators";
 import {WAITING_POPUP} from "@shared/utils/syscat";
 import {DanhMucPhongThiService, DmPhongThi} from "@shared/services/danh-muc-phong-thi.service";
+import {ThptHoiDong, ThptHoiDongService} from "@shared/services/thpt-hoi-dong.service";
+import {BUTTON_NO, BUTTON_YES} from "@core/models/buttons";
 
 
 @Component({
@@ -51,6 +53,7 @@ export class AddThiSinhComponent implements OnInit, OnChanges {
 
   listData: ThptHoiDongThiSinh[];
   dmPhongthi :any[];
+  hoidongSelect:ThptHoiDong;
 
   trangthai_thanhtoan = [
     {label: ' Đã thanh toán ', value:1},
@@ -64,6 +67,7 @@ export class AddThiSinhComponent implements OnInit, OnChanges {
     private danhMucMonService: DanhMucMonService,
     private modalService: NgbModal,
     private danhMucPhongThiService: DanhMucPhongThiService,
+    private thptHoidongService: ThptHoiDongService
   ) {
     this.dataSelectSubject.subscribe(data => this.emitDataChanges());
 
@@ -76,11 +80,16 @@ export class AddThiSinhComponent implements OnInit, OnChanges {
   ngOnInit(): void {
     this.emitDataChanges()
     if (this.hoidong_id) {
-      forkJoin<[DmPhongThi[],DmMon[]]>(this.danhMucPhongThiService.getDataUnlimit(),this.danhMucMonService.getDataUnlimit()).subscribe({
-        next: ([dmPhongthi, dmMon]) => {
+      forkJoin<[DmPhongThi[],DmMon[], ThptHoiDong]>(
+        this.danhMucPhongThiService.getDataUnlimit(),
+        this.danhMucMonService.getDataUnlimit(),
+        this.thptHoidongService.getHoidongonly(this.hoidong_id)
+        ).subscribe({
+        next: ([dmPhongthi, dmMon,hoidong]) => {
           this.dmPhongthi = this.convertDmPhongThi(dmPhongthi);
 
           this.dsMon = dmMon;
+          this.hoidongSelect = hoidong;
           if(this.dmPhongthi && this.dsMon){
             this.loadInit();
           }
@@ -327,8 +336,42 @@ export class AddThiSinhComponent implements OnInit, OnChanges {
         dsThisinhParram.push(m);
       }
     })
-    const DsThisinhNotToant = thisinhInHoidong.filter(thiSinh => !ids.includes(thiSinh.id));
-    return [].concat(dsThisinhParram,DsThisinhNotToant);
+
+
+    const datathisinhHaveToan7 =dsThisinhParram.filter(f=>f.monthi_ids.length === 7).length>0 ? dsThisinhParram.filter(f=>f.monthi_ids.length === 7).sort(() => Math.random() - 0.5): [];
+    const datathisinhHaveToan6 =dsThisinhParram.filter(f=>f.monthi_ids.length === 6).length>0 ? dsThisinhParram.filter(f=>f.monthi_ids.length === 6).sort(() => Math.random() - 0.5): [];
+    const datathisinhHaveToan5 =dsThisinhParram.filter(f=>f.monthi_ids.length === 5).length>0 ? dsThisinhParram.filter(f=>f.monthi_ids.length === 5).sort(() => Math.random() - 0.5): [];
+    const dataThisinhHaveToan4 =dsThisinhParram.filter(f=>f.monthi_ids.length === 4).length>0 ? dsThisinhParram.filter(f=>f.monthi_ids.length === 4).sort(() => Math.random() - 0.5): [];
+    const dataThisinhHaveToan3 =dsThisinhParram.filter(f=>f.monthi_ids.length === 3).length>0 ? dsThisinhParram.filter(f=>f.monthi_ids.length === 3).sort(() => Math.random() - 0.5): [];
+    const dataThisinhHaveToan2 =dsThisinhParram.filter(f=>f.monthi_ids.length === 2).length>0 ? dsThisinhParram.filter(f=>f.monthi_ids.length === 2).sort(() => Math.random() - 0.5): [];
+    const dataThisinhHaveToan1 =dsThisinhParram.filter(f=>f.monthi_ids.length === 1).length>0 ? dsThisinhParram.filter(f=>f.monthi_ids.length === 1).sort(() => Math.random() - 0.5): [];
+
+
+
+    const DsThisinhNotToan = thisinhInHoidong.filter(thiSinh => !ids.includes(thiSinh.id));
+
+    const datathisinhNotToan7 =DsThisinhNotToan.filter(f=>f.monthi_ids.length === 7).length>0 ? DsThisinhNotToan.filter(f=>f.monthi_ids.length === 7).sort(() => Math.random() - 0.5): [];
+    const datathisinhNotToan6 =DsThisinhNotToan.filter(f=>f.monthi_ids.length === 6).length>0 ? DsThisinhNotToan.filter(f=>f.monthi_ids.length === 6).sort(() => Math.random() - 0.5): [];
+    const datathisinhNotToan5 =DsThisinhNotToan.filter(f=>f.monthi_ids.length === 5).length>0 ? DsThisinhNotToan.filter(f=>f.monthi_ids.length === 5).sort(() => Math.random() - 0.5): [];
+    const dataThisinhNotToan4 =DsThisinhNotToan.filter(f=>f.monthi_ids.length === 4).length>0 ? DsThisinhNotToan.filter(f=>f.monthi_ids.length === 4).sort(() => Math.random() - 0.5): [];
+    const dataThisinhNotToan3 =DsThisinhNotToan.filter(f=>f.monthi_ids.length === 3).length>0 ? DsThisinhNotToan.filter(f=>f.monthi_ids.length === 3).sort(() => Math.random() - 0.5): [];
+    const dataThisinhNotToan2 =DsThisinhNotToan.filter(f=>f.monthi_ids.length === 2).length>0 ? DsThisinhNotToan.filter(f=>f.monthi_ids.length === 2).sort(() => Math.random() - 0.5): [];
+    const dataThisinhNotToan1 =DsThisinhNotToan.filter(f=>f.monthi_ids.length === 1).length>0 ? DsThisinhNotToan.filter(f=>f.monthi_ids.length === 1).sort(() => Math.random() - 0.5): [];
+
+    return [].concat(datathisinhHaveToan7,
+      datathisinhHaveToan6,
+      datathisinhHaveToan5,
+      dataThisinhHaveToan4,
+      dataThisinhHaveToan3,
+      dataThisinhHaveToan2,
+      dataThisinhHaveToan1,
+      datathisinhNotToan7,
+      datathisinhNotToan6,
+      datathisinhNotToan5,
+      dataThisinhNotToan4,
+      dataThisinhNotToan3,
+      dataThisinhNotToan2,
+      dataThisinhNotToan1);
   }
 
   sortRoomByThisinhs(dataphongthi: { phongso: number, soluong }[],dsthisinh:ThptHoiDongThiSinh[]){
@@ -369,46 +412,204 @@ export class AddThiSinhComponent implements OnInit, OnChanges {
   btnXepphong(){
     if(this.dataThiSinhSelect.length>0){
       const dataUpphong =  this.sortRoomByThisinhs(this.dmPhongthi, this.dataThiSinhSelect)
-      this.upDatePhongthi(dataUpphong);
+
+      let dataphong = [];
+      this.dmPhongthi.forEach(e=>{
+        const item  = dataUpphong.filter(f=>f['phongthi'] === e['phongso']).sort((a, b) => a['thisinh']['ten'].localeCompare(b['thisinh']['ten'])).forEach(a=>{
+          dataphong.push(a);
+          return a;
+        });
+      })
+
+      dataphong.map((a,index)=>{
+        a['sobaodanh'] = this.hoidongSelect.tiento_sobaodanh + this.covertId(index+1);
+        a['created'] = false;
+        return a
+      })
+      const step: number = 100 / dataphong.length;
+      this.notifi.loadingAnimationV2({process: {percent: 0}});
+
+      this.upDatePhongthi(dataphong, step, 0).subscribe({
+        next: (mess) => {
+          this.notifi.toastSuccess('Tối ưu phòng thi thành công');
+          this.notifi.isProcessing(false);
+          this.loadData();
+        }, error: (error) => {
+          this.notifi.toastError('Tối ưu phòng thi thành công');
+          this.notifi.isProcessing(false);
+          this.notifi.disableLoadingAnimationV2();
+        }
+      })
+
+      // this.upDatePhongthi(dataUpphong);
     }else{
       this.notifi.toastWarning('vui lòng chọn thí sinh để xếp phòng thi');
     }
   }
 
-  async upDatePhongthi(dataCreate: ThptHoiDongThiSinh[]) {
-    const requests$: Observable<any>[] = [];
-    this.isloading = true;
-    this.notifi.isProcessing(true);
-    this.modalService.open(this.templateWaiting, WAITING_POPUP);
-    dataCreate.forEach((r, index) => {
-      const request$ =
-        this.hoiDongThiSinhService.update(r.id ,{phongthi: r['phongthi']}).pipe(concatMap((id) => {return of(null);}),
-          delay(index * 150),
-          catchError(error => {
-            console.error(error);
-            return of(null);
-          })
-        );
-
-      requests$.push(request$);
-    });
-
-    forkJoin(requests$).pipe(
-      finalize(() => {
-        this.modalService.dismissAll();
-        this.loadData();
-        this.isloading = false;
-        this.emitDataChanges()
-      })
-    ).subscribe({
-      next:(data)=>{
-        this.notifi.isProcessing(false);
-        this.notifi.toastSuccess('Thao tác thành công');
-      },
-      error:(e)=>{
-        this.notifi.isProcessing(false);
-        this.notifi.toastError("Cập nhật phòng thi cho thí sinh không thành công");
-      }
-    });
+  upDatePhongthi(list ,step:number,percent :number) {
+    const index: number = list.findIndex(i => !i['created']);
+    if (index !== -1) {
+      return this.upDatePhongthiControl(list[index]).pipe(switchMap(() => {
+        list[index]['created'] = true;
+        const newPercent: number = percent + step;
+        this.notifi.loadingAnimationV2({process: {percent: newPercent}});
+        return this.upDatePhongthi(list, step, newPercent);
+      }))
+    } else {
+      this.notifi.disableLoadingAnimationV2();
+      return of('complete');
+    }
   }
+  private upDatePhongthiControl(item:ThptHoiDongThiSinh):Observable<number>{
+    return this.hoiDongThiSinhService.update(item.id,{phongthi:item['phongthi'],sobaodanh:item['sobaodanh'] })
+  }
+
+  async btnCompactRoom(){
+    if(this.dataThiSinhSelect.length>0){
+      const button = await this.notifi.confirmRounded(' Tối ưu phòng thi ', 'XÁC NHẬN', [BUTTON_NO, BUTTON_YES]);
+      if (button.name === BUTTON_YES.name) {
+        const dataCompact =  this.changeCompactRoom(this.dataThiSinhSelect).map((m, index)=>{
+          m['sobaodanh'] =this.hoidongSelect.tiento_sobaodanh + this.covertId(index + 1);
+          m['created'] = false;
+          return m;
+        });
+
+        const step: number = 100 / dataCompact.length;
+        this.notifi.loadingAnimationV2({process: {percent: 0}});
+        this.updateDataCompact(dataCompact, step, 0).subscribe({
+          next: (mess) => {
+            this.notifi.toastSuccess('Tối ưu phòng thi thành công');
+            this.notifi.isProcessing(false);
+            this.loadData();
+          }, error: (error) => {
+            this.notifi.toastError('Tối ưu phòng thi thành công');
+            this.notifi.isProcessing(false);
+            this.notifi.disableLoadingAnimationV2();
+          }
+        })
+
+      }
+    }else{
+      this.notifi.toastWarning('vui lòng chọn thí sinh để xếp phòng thi');
+    }
+  }
+
+  covertId(iput: number) {
+    return iput < 10 ? '000' + iput : (iput >= 10 && iput < 100 ? '00' + iput : (iput >= 100 && iput < 1000 ? '0' + iput : iput));
+  }
+
+  updateDataCompact(list, step: number, percent: number){
+    const index: number = list.findIndex(i => !i['created']);
+    if (index !== -1) {
+      return this.updateDataCompactControl(list[index]).pipe(switchMap(() => {
+        list[index]['created'] = true;
+        const newPercent: number = percent + step;
+        this.notifi.loadingAnimationV2({process: {percent: newPercent}});
+        return this.updateDataCompact(list, step, newPercent);
+      }))
+    } else {
+      this.notifi.disableLoadingAnimationV2();
+      return of('complete');
+    }
+  }
+
+  private updateDataCompactControl(info:ThptHoiDongThiSinh):Observable<number>{
+
+    const thisinh = {
+      phongthi: info['phongthi'],
+      sobaodanh: info['sobaodanh'],
+      ca_th:info['ca_th'],
+      ca_vl:info['ca_vl'],
+      ca_hh:info['ca_hh'],
+      ca_sh:info['ca_sh'],
+      ca_ls:info['ca_ls'],
+      ca_dl:info['ca_dl'],
+      ca_ta:info['ca_ta'],
+    };
+    console.log(thisinh);
+    return this.hoiDongThiSinhService.update(info.id,thisinh)
+
+  }
+
+
+  changeCompactRoom(dataThisinhSelect : ThptHoiDongThiSinh[]){
+
+    // dataHaveToan
+    const datathisinhHaveToan = dataThisinhSelect.filter(f=>f.monthi_ids.includes(1))
+    const datathisinhHaveToan7 =datathisinhHaveToan.filter(f=>f.monthi_ids.length === 7).length>0 ? datathisinhHaveToan.filter(f=>f.monthi_ids.length === 7): [];
+    const datathisinhHaveToan6 =datathisinhHaveToan.filter(f=>f.monthi_ids.length === 6).length>0 ? datathisinhHaveToan.filter(f=>f.monthi_ids.length === 6): [];
+    const datathisinhHaveToan5 =datathisinhHaveToan.filter(f=>f.monthi_ids.length === 5).length>0 ? datathisinhHaveToan.filter(f=>f.monthi_ids.length === 5): [];
+    const dataThisinhHaveToan4 =datathisinhHaveToan.filter(f=>f.monthi_ids.length === 4).length>0 ? datathisinhHaveToan.filter(f=>f.monthi_ids.length === 4): [];
+    const dataThisinhHaveToan3 =datathisinhHaveToan.filter(f=>f.monthi_ids.length === 3).length>0 ? datathisinhHaveToan.filter(f=>f.monthi_ids.length === 3): [];
+    const dataThisinhHaveToan2 =datathisinhHaveToan.filter(f=>f.monthi_ids.length === 2).length>0 ? datathisinhHaveToan.filter(f=>f.monthi_ids.length === 2): [];
+    const dataThisinhHaveToan1 =datathisinhHaveToan.filter(f=>f.monthi_ids.length === 1).length>0 ? datathisinhHaveToan.filter(f=>f.monthi_ids.length === 1): [];
+
+    // dataNotToan
+    const datathisinhNotToan = dataThisinhSelect.filter(f=>!f.monthi_ids.includes(1))
+    const datathisinhNotToan7 = datathisinhNotToan.filter(f=>f.monthi_ids.length ===7) ? datathisinhNotToan.filter(f=>f.monthi_ids.length ===7).sort(() => Math.random() - 0.5):[];
+    const datathisinhNotToan6 = datathisinhNotToan.filter(f=>f.monthi_ids.length ===6) ? datathisinhNotToan.filter(f=>f.monthi_ids.length ===6).sort(() => Math.random() - 0.5):[];
+    const datathisinhNotToan5 = datathisinhNotToan.filter(f=>f.monthi_ids.length ===5) ? datathisinhNotToan.filter(f=>f.monthi_ids.length ===5).sort(() => Math.random() - 0.5):[];
+    const datathisinhNotToan4 = datathisinhNotToan.filter(f=>f.monthi_ids.length ===4) ? datathisinhNotToan.filter(f=>f.monthi_ids.length ===4).sort(() => Math.random() - 0.5):[];
+    const datathisinhNotToan3 = datathisinhNotToan.filter(f=>f.monthi_ids.length === 3) ? datathisinhNotToan.filter(f=>f.monthi_ids.length === 3).sort(() => Math.random() - 0.5):[];
+    const data2 = datathisinhNotToan.filter(f=>f.monthi_ids.length === 2) ? datathisinhNotToan.filter(f=>f.monthi_ids.length === 2).sort(() => Math.random() - 0.5):[];
+    const data1 = datathisinhNotToan.filter(f=>f.monthi_ids.length === 1) ? datathisinhNotToan.filter(f=>f.monthi_ids.length === 1).sort(() => Math.random() - 0.5):[];
+    const datathisinhNotToan2 : ThptHoiDongThiSinh[] = [].concat(data2,data1);
+    dataThisinhHaveToan4.forEach((item,index)=>{
+      if(datathisinhNotToan2[index]){
+        let total = item.monthi_ids.length;
+        datathisinhNotToan2[index]['phongthi'] = item['phongthi'];
+        this.dsMon.forEach(mon=>{
+          if(datathisinhNotToan2[index].monthi_ids.find(f=>f === mon.id)){
+            total = total+1;
+            datathisinhNotToan2[index]['ca_' +mon.kyhieu.toLowerCase()] = total;
+          }else
+          {
+            datathisinhNotToan2[index]['ca_' +mon.kyhieu.toLowerCase()] = 0
+          }
+        })
+      }else{
+        return;
+      }
+    })
+    dataThisinhHaveToan3.forEach((item,index)=>{
+      if(datathisinhNotToan3[index]){
+        let total = item.monthi_ids.length;
+        datathisinhNotToan3[index]['phongthi'] = item['phongthi'];
+        this.dsMon.forEach(mon=>{
+          if(datathisinhNotToan3[index].monthi_ids.find(f=>f === mon.id)){
+            total = total+1;
+            datathisinhNotToan3[index]['ca_' +mon.kyhieu.toLowerCase()] = total;
+          }else
+          {
+            datathisinhNotToan3[index]['ca_' +mon.kyhieu.toLowerCase()] = 0
+          }
+        })
+      }else{
+        return
+      }
+    })
+
+    const dataNotToanCovert = [].concat(datathisinhNotToan7,datathisinhNotToan6,datathisinhNotToan5,datathisinhNotToan4, datathisinhNotToan3, datathisinhNotToan2)
+    const dataParram  = [].concat(datathisinhHaveToan7,datathisinhHaveToan6,datathisinhHaveToan5,dataThisinhHaveToan4,dataThisinhHaveToan3,dataThisinhHaveToan2,dataThisinhHaveToan1,dataNotToanCovert).sort((a,b)=>(a['phongthi'] - b['phongthi']));
+
+    let dataphong = [];
+    this.dmPhongthi.forEach(e=>{
+      const item  = dataParram.filter(f=>f['phongthi'] === e['phongso']).sort((a, b) => a['thisinh']['ten'].localeCompare(b['thisinh']['ten'])).forEach(a=>{
+        dataphong.push(a);
+        return a;
+      });
+
+    })
+    console.log(dataphong)
+
+    return dataphong;
+
+
+
+  }
+
+  //================================================================
+
 }
+

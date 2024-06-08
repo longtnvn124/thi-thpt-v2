@@ -3,13 +3,11 @@ import { saveAs } from 'file-saver';
 import {ThptHoiDongPhongThi} from "@shared/models/thpt-model";
 import {asBlob} from "@shared/vendor/html-docx";
 import {FileService} from "@core/services/file.service";
-import {concatMap, from} from "rxjs";
-import {map} from "rxjs/operators";
-import jsPDF from "jspdf";
+
 import {DmPhongThi} from "@shared/services/danh-muc-phong-thi.service";
 import {NotificationService} from "@core/services/notification.service";
 
-const filePath = './example.docx';
+
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +15,6 @@ const filePath = './example.docx';
 export class HtmlToPdfService {
 
   constructor(
-    private fileService: FileService,
     private notificationService:NotificationService
 
   ) {
@@ -186,7 +183,7 @@ export class HtmlToPdfService {
       const thisinhs = phongthi['thisinhs']
 
       thisinhs.forEach((item ,index)=>{
-        const sbd= item['hoidong'].tiento_sobaodanh + this.covertId(item['thisinh']['id']) ;
+        const sbd= item['sobaodanh'] ;
         // const imgObject =  item['__img_object'];
         const thisinh_id = item['thisinh']['id']
         const hoten = item['thisinh']['hoten'];

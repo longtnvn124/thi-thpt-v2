@@ -502,7 +502,6 @@ export class QuanLyTaiKhoanComponent implements OnInit {
         // const exceptHightRole = Math.min(...[...this.auth.roles].map(u => u.id));
         // this.dsNhomQuyen = [...this.auth.roles].filter(r => r.id !== exceptHightRole);
       } else {
-
         return Promise.resolve();
       }
     }

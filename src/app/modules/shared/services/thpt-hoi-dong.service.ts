@@ -1,12 +1,11 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { Dto, OvicConditionParam, OvicQueryCondition } from '@core/models/dto';
-import { AuthService } from '@core/services/auth.service';
-import { HttpParamsHeplerService } from '@core/services/http-params-hepler.service';
-import { ThemeSettingsService } from '@core/services/theme-settings.service';
-import { Observable, map } from 'rxjs';
-import { getRoute } from 'src/environments/environment';
-import {ThptCathi} from "@shared/services/thpt-hoidong-cathi.service";
+import {HttpClient, HttpParams} from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {Dto, OvicConditionParam, OvicQueryCondition} from '@core/models/dto';
+import {AuthService} from '@core/services/auth.service';
+import {HttpParamsHeplerService} from '@core/services/http-params-hepler.service';
+import {ThemeSettingsService} from '@core/services/theme-settings.service';
+import {map, Observable} from 'rxjs';
+import {getRoute} from 'src/environments/environment';
 
 export interface ThptHoiDong {
   id: number;
@@ -170,6 +169,43 @@ export class ThptHoiDongService {
     }
     const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }));
     return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data));
+  }
+
+
+  getDataBypageAndkehoachAndSearch(page: number,kehoach_id?:number,search?:string): Observable<{ recordsTotal: number, data: ThptHoiDong[] }> {
+    const conditions: OvicConditionParam[] = [
+
+    ];
+    if(kehoach_id)
+    {
+      conditions.push({
+        conditionName:'kehoach_id',
+        condition: OvicQueryCondition.equal,
+        value: kehoach_id.toString(),
+        orWhere:'and',
+      })
+    }
+    if(search)
+    {
+      conditions.push({
+        conditionName:'ten_hoidong',
+        condition: OvicQueryCondition.like,
+        value: `%${search}%`,
+        orWhere:'and',
+      })
+    }
+
+    const fromObject = {
+      paged: page,
+      limit: this.themeSettingsService.settings.rows,
+      orderby: 'id',
+      order: "DESC"
+    }
+    const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }));
+    return this.http.get<Dto>(this.api, { params }).pipe(map(res => ({
+      recordsTotal: res.recordsFiltered,
+      data: res.data
+    })))
   }
 
 }

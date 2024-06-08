@@ -57,7 +57,6 @@ export class ThiSinhInHoiDongComponent implements OnInit, OnChanges {
   dmLichthi: ThptLichThi[];
   hoidong: ThptHoiDong;
   isLoading: boolean = false;
-  cathi_id_select: number;
   // ==================================
   thisinhInhoidong: ThptHoiDongThiSinh[] = [];
 
@@ -102,7 +101,7 @@ export class ThiSinhInHoiDongComponent implements OnInit, OnChanges {
           m['ten_phong'] = 'Phòng ' + m.phongso;
           return m
         });
-        console.log(this.dmPhongthi);
+
         this.dmLichthi = dmLichthi.map(m => {
           m['ten_cathi'] = 'Ca ' + m.id;
           return m;
@@ -123,23 +122,18 @@ export class ThiSinhInHoiDongComponent implements OnInit, OnChanges {
     this.notificationService.isProcessing(true);
     this.hoidongThisinhSerive.getDataByHoidongIdUnlimit(hoidong_id, phongthi_id_select).subscribe({
       next: (data) => {
-        this.thisinhInhoidong = data.sort((a, b) => b.monthi_ids.length - a.monthi_ids.length).map((m, index) => {
+        this.thisinhInhoidong = data.sort((a, b) => a['phongthi'] - b['phongthi']).map((m, index) => {
           const thisinh = m['thisinh'];
           m['__index'] = index + 1;
-          m['__hoten'] = thisinh ? thisinh['hoten'] : '';
-          m['__sobaodanh'] = this.hoidong.tiento_sobaodanh + this.covertId(m.thisinh_id);
+          m['__hoten'] = thisinh ? this.helperService.capitalizeAfterSpace(thisinh['hoten']) : '';
           m['__ngaysinh'] = thisinh ? thisinh['ngaysinh'] : '';
           m['__gioitinh'] = thisinh && thisinh['gioitinh'] === 'nu' ? 'Nữ' : 'Nam';
           m['__cccd_so'] = thisinh ? thisinh['cccd_so'] : '';
-
           return m;
         })
-
-
         this.isLoading = false;
         this.notificationService.isProcessing(false);
-
-      }, error: (e) => {
+      }, error: () => {
         this.isLoading = false;
         this.notificationService.isProcessing(false);
         this.notificationService.toastError('Load dữ liệu thí sinh không thành công ');
@@ -184,19 +178,8 @@ export class ThiSinhInHoiDongComponent implements OnInit, OnChanges {
     return result;
   }
 
-  covertId(iput: number) {
-    return iput < 10 ? '000' + iput : (iput >= 10 && iput < 100 ? '00' + iput : (iput >= 100 && iput < 1000 ? '0' + iput : iput));
-  }
 
   //=====================================================
-  phongthi_id_select: number;
-
-  cathiChange(event) {
-
-    this.phongthi_id_select = event.value;
-    this.getDathThisinh(this.hoidong_id, event.value);
-  }
-
   btnExportAlbumAnh() {
     this.modalService.open(this.templateWaiting, WAITING_POPUP);
     const fileName = this.hoidong.ten_hoidong + ' - Danh sách thí sinh';
@@ -209,15 +192,16 @@ export class ThiSinhInHoiDongComponent implements OnInit, OnChanges {
       }))
     })).subscribe({
       next: (data) => {
-        const dataThisinh =  data.sort((a, b) => b.monthi_ids.length - a.monthi_ids.length).map(m => {
+        const dataThisinh = data.sort((a, b) => b.monthi_ids.length - a.monthi_ids.length).map(m => {
           m['hoidong'] = this.hoidong
           return m;
         })
         const dataMap = this.dmPhongthi.map(m => {
-          m['thisinhs'] = dataThisinh.sort((a, b) => a['thisinh']['ten'].localeCompare(b['thisinh']['ten'])).filter(f => f['phongthi'] === m['phongso'])
+          m['thisinhs'] = dataThisinh.sort((a, b) => this.extractNumberFromString(a['sobaodanh'], this.hoidong.tiento_sobaodanh) - this.extractNumberFromString(b['sobaodanh'], this.hoidong.tiento_sobaodanh)).filter(f => f['phongthi'] === m['phongso'])
           return m
         }).filter(f => f['thisinhs'].length > 0);
 
+        console.log(dataMap);
         if (dataMap.length > 0) {
           this.htmlToPdfService.exportHtmlToWordV2(dataMap, fileName);
           this.modalService.dismissAll();
@@ -238,16 +222,6 @@ export class ThiSinhInHoiDongComponent implements OnInit, OnChanges {
   }
 
   //============================Send Email =======================
-  repplaceNgaysinh(text: string) {
-    const parts = text.split('/');
-    const day = parts[0];
-    const month = parts[1];
-    const year = parts[2];
-
-    // Chuyển đổi sang định dạng mới
-    const newDateString = `${year}-${month}-${day}`;
-    return newDateString;
-  }
 
   async btnSendEmail() {
     const button = await this.notificationService.confirmRounded('Gửi email thông báo lịch thi cho thí sinh ', 'XÁC NHẬN', [BUTTON_NO, BUTTON_YES]);
@@ -272,8 +246,8 @@ export class ThiSinhInHoiDongComponent implements OnInit, OnChanges {
               phongthi.push(item)
             })
             const item: FormatthisinhSendEmail = {
-              sobaodanh: thisinh ? this.hoidong.tiento_sobaodanh + this.covertId(thisinh['id']) : '',
-              hoten: thisinh ? thisinh['hoten'] : '',
+              sobaodanh: m['sobaodanh'],
+              hoten: thisinh ? this.helperService.capitalizeAfterSpace(thisinh['hoten']) : '',
               ngaysinh: thisinh ? thisinh['ngaysinh'] : '',
               gioitinh: thisinh && thisinh['gioitinh'] === 'nu' ? 'Nữ' : 'Nam',
               cccd_so: thisinh ? thisinh['cccd_so'] : '',
@@ -294,7 +268,7 @@ export class ThiSinhInHoiDongComponent implements OnInit, OnChanges {
               next: (mess) => {
                 this.notificationService.toastSuccess('Gửi Email thông báo lịch thi thành công');
                 this.notificationService.isProcessing(false);
-              }, error: (error) => {
+              }, error: () => {
                 this.notificationService.toastError('Gửi Email thông báo lịch thi không thành công');
                 this.notificationService.isProcessing(false);
                 this.notificationService.disableLoadingAnimationV2();
@@ -317,7 +291,7 @@ export class ThiSinhInHoiDongComponent implements OnInit, OnChanges {
       const item = thisinhForm[index];
       const email = item.email;
       let message = `
-        <p style="font-size:20px;font-weight: 500"> Xin chào ${item['hoten']} !</p>
+        <p style="font-size:20px;font-weight: 500"> Xin chào ${this.helperService.capitalizeAfterSpace(item['hoten'])} !</p>
         <p>Hội đồng thi Đại học Thái Nguyên (V-SAT-TNU) thông báo tới bạn địa điểm và thời gian dự thi cụ thể như sau: </p>
         <p><strong>Địa điểm thi: </strong></p>
         <p>- Trung tâm Khảo thí và Quản lý chất lượng – Đại học Thái Nguyên</p>
@@ -332,7 +306,7 @@ export class ThiSinhInHoiDongComponent implements OnInit, OnChanges {
         <table width="100%" style="border:0;">
             <tr>
                 <td style="width:100px;">Họ và tên:</td>
-                <td style="font-weight:600">${item.hoten}</td>
+                <td style="font-weight:600">${this.helperService.capitalizeAfterSpace(item.hoten)}</td>
             </tr>
             <tr>
                 <td style="width:100px;">Ngày sinh:</td>
@@ -378,7 +352,7 @@ export class ThiSinhInHoiDongComponent implements OnInit, OnChanges {
         message += `
       <tr style="border: 1px solid black;border-collapse: collapse;">
         <td style="border: 1px solid black;border-collapse: collapse; text-align:center;">${phongthi['index']}</td>
-        <td style="border: 1px solid black;border-collapse: collapse; text-align:center;">${item.sobaodanh}</td>
+        <td style="border: 1px solid black;border-collapse: collapse; text-align:center;">${item['sobaodanh']}</td>
         <td style="border: 1px solid black;border-collapse: collapse; text-align:left;">${phongthi['monthi']}</td>
         <td style="border: 1px solid black;border-collapse: collapse; text-align:center;">${phongthi['phong']}</td>
         <td style="border: 1px solid black;border-collapse: collapse; text-align:center;">${phongthi['ngaythi']}</td>
@@ -414,35 +388,49 @@ export class ThiSinhInHoiDongComponent implements OnInit, OnChanges {
         const thisinhInhoidong = data.sort((a, b) => b.monthi_ids.length - a.monthi_ids.length).map((m, index) => {
           const thisinh = m['thisinh'];
           m['__index'] = index + 1;
-          m['__hoten'] = thisinh ? thisinh['hoten'] : '';
-          m['__sobaodanh'] = this.hoidong.tiento_sobaodanh + this.covertId(m.thisinh_id);
+          m['__hoten'] = thisinh ? this.helperService.capitalizeAfterSpace(thisinh['hoten']) : '';
+          m['__sobaodanh'] = m['sobaodanh'];
           m['__ngaysinh'] = thisinh ? thisinh['ngaysinh'] : '';
           m['__gioitinh'] = thisinh && thisinh['gioitinh'] === 'nu' ? 'Nữ' : 'Nam';
           m['__cccd_so'] = thisinh ? thisinh['cccd_so'] : '';
           m['hoidong'] = this.hoidong;
-          m['phongthi'] = m['phongthi']? m['phongthi'] : null
-          return m ;
+          m['phongthi'] = m['phongthi'] ? m['phongthi'] : null
+          return m;
         })
 
         const phongthiPaam = []
-        this.dmPhongthi.forEach(phongthi=>{
-            const item ={
-              dsThisinh : thisinhInhoidong.sort((a, b) => a['thisinh']['ten'].localeCompare(b['thisinh']['ten'])).filter(f=>f['phongthi'] === phongthi['phongso']).map((m,i)=>{
-                const index =i+1
-                return {index:index, sobaodanh:m['__sobaodanh'],hoten:m['__hoten'],ngaysinh:m['__ngaysinh'],gioitinh: m['__gioitinh'],cccd_so:m['__cccd_so'],ca_th:m['ca_th'] !== 0 ? m['ca_th'] :'',ca_vl:m['ca_vl'] !== 0 ? m['ca_vl'] :'',ca_hh:m['ca_hh'] !==0?m['ca_hh'] :'',ca_sh:m['ca_sh'] !==0?m['ca_sh'] :'',ca_ls:m['ca_ls'] !==0?m['ca_ls'] :'',ca_dl:m['ca_dl'] !==0?m['ca_dl'] :'',ca_ta:m['ca_ta'] !==0?m['ca_ta'] :'' }
-              }),
-              phongso:phongthi['phongso'],
-              ngaythi: this.helperService.formatSQLToDateDMY(new Date(this.hoidong.ngaythi))
-            }
-            phongthiPaam.push(item);
+        this.dmPhongthi.forEach(phongthi => {
+          const item = {
+            dsThisinh: thisinhInhoidong.sort((a, b) => this.extractNumberFromString(a['sobaodanh'], this.hoidong.tiento_sobaodanh) - this.extractNumberFromString(b['sobaodanh'], this.hoidong.tiento_sobaodanh)).filter(f => f['phongthi'] === phongthi['phongso']).map((m, i) => {
+              const index = i + 1
+              return {
+                index: index,
+                sobaodanh: m['__sobaodanh'],
+                hoten: m['__hoten'],
+                ngaysinh: m['__ngaysinh'],
+                gioitinh: m['__gioitinh'],
+                cccd_so: m['__cccd_so'],
+                ca_th: m['ca_th'] !== 0 ? m['ca_th'] : '',
+                ca_vl: m['ca_vl'] !== 0 ? m['ca_vl'] : '',
+                ca_hh: m['ca_hh'] !== 0 ? m['ca_hh'] : '',
+                ca_sh: m['ca_sh'] !== 0 ? m['ca_sh'] : '',
+                ca_ls: m['ca_ls'] !== 0 ? m['ca_ls'] : '',
+                ca_dl: m['ca_dl'] !== 0 ? m['ca_dl'] : '',
+                ca_ta: m['ca_ta'] !== 0 ? m['ca_ta'] : ''
+              }
+            }),
+            phongso: phongthi['phongso'],
+            ngaythi: this.helperService.formatSQLToDateDMY(new Date(this.hoidong.ngaythi))
+          }
+          phongthiPaam.push(item);
         })
 
-        this.expostExcelPhongthiThisinhService.exportHoidongPhongthi(('Danh sách phòng thi - ' + this.hoidong.ten_hoidong ),this.thisinhs_column,phongthiPaam.filter(f=>f.dsThisinh.length>0))
+        this.expostExcelPhongthiThisinhService.exportHoidongPhongthi(('Danh sách phòng thi - ' + this.hoidong.ten_hoidong), this.thisinhs_column, phongthiPaam.filter(f => f.dsThisinh.length > 0))
 
 
         this.notificationService.isProcessing(false);
         this.modalService.dismissAll()
-      }, error: (e) => {
+      }, error: () => {
         this.notificationService.isProcessing(false);
         this.notificationService.toastWarning('Load dữ liệu thí sinh không thành công');
         this.modalService.dismissAll()
@@ -450,7 +438,18 @@ export class ThiSinhInHoiDongComponent implements OnInit, OnChanges {
       }
     })
   }
-  thisinhs_column= ['STT','Số báo danh','Họ và tên ','Ngày sinh','Giới tính','Số CCCD','Ca thi Toán','Ca thi Vật lí',	'Ca thi Hóa học',	'Ca thi Sinh học',	'Ca thi Lịch sử','Ca thi Địa lí','Ca thi Tiếng Anh'
+
+  thisinhs_column = ['STT', 'Số báo danh', 'Họ và tên ', 'Ngày sinh', 'Giới tính', 'Số CCCD', 'Ca thi Toán', 'Ca thi Vật lí', 'Ca thi Hóa học', 'Ca thi Sinh học', 'Ca thi Lịch sử', 'Ca thi Địa lí', 'Ca thi Tiếng Anh'
   ];
 
+  extractNumberFromString(inputString: string, tiento: string) {
+    const prefix = tiento;
+    const startIndex = inputString.indexOf(prefix);
+    return startIndex !== -1 ? parseInt(inputString.substring(startIndex + prefix.length), 10) : NaN;
+  }
+
+
+
 }
+
+

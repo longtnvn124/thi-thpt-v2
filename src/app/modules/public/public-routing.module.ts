@@ -4,12 +4,7 @@ import {ContentNoneComponent} from './features/content-none/content-none.compone
 import {UnauthorizedComponent} from './features/unauthorized/unauthorized.component';
 import {ClearComponent} from './features/clear/clear.component';
 import {LoginVideoComponent} from '@modules/public/features/login-video/login-video.component';
-
 import {ResetPasswordComponent} from "@modules/public/features/reset-password/reset-password.component";
-import {DesktopGuard} from "@modules/public/desktop.guard";
-import {MobileGuard} from "@modules/public/mobile.guard";
-import {HomeDhtnComponent} from "@modules/public/features/home-dhtn/home-dhtn.component";
-import {RegisterAccountService} from "@shared/services/register-account.service";
 import {
   VerificationComponent
 } from "@modules/public/features/home-thi-thpt/layouts/verification/verification.component";
