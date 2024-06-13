@@ -428,10 +428,9 @@ export class AddThiSinhComponent implements OnInit, OnChanges {
       })
       const step: number = 100 / dataphong.length;
       this.notifi.loadingAnimationV2({process: {percent: 0}});
-
       this.upDatePhongthi(dataphong, step, 0).subscribe({
         next: (mess) => {
-          this.notifi.toastSuccess('Tối ưu phòng thi thành công');
+          this.notifi.toastSuccess('Sắp xếp phòng thi thành công');
           this.notifi.isProcessing(false);
           this.loadData();
         }, error: (error) => {
@@ -527,7 +526,7 @@ export class AddThiSinhComponent implements OnInit, OnChanges {
       ca_dl:info['ca_dl'],
       ca_ta:info['ca_ta'],
     };
-    console.log(thisinh);
+
     return this.hoiDongThiSinhService.update(info.id,thisinh)
 
   }
@@ -599,10 +598,7 @@ export class AddThiSinhComponent implements OnInit, OnChanges {
         dataphong.push(a);
         return a;
       });
-
     })
-    console.log(dataphong)
-
     return dataphong;
 
 

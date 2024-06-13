@@ -435,16 +435,16 @@
 
           </form>
         </div>
-
-        <div *ngIf="f['status'].value == 0,else statuscheck"
+        <span class="ovic-side-navigation-content__foot__notice mr-auto"
+              style="padding: 20px 0 0 0;margin: 0 auto;"><mark>(*)</mark> bắt buộc phải nhập</span>
+        <div *ngIf="userInfo['lock'] === 0,else statuscheck"
           class="w-100 h-100 d-flex justify-content-center align-items-center" style="padding: 20px 0;gap: 12px;">
           <button [disabled]="!f['camket'].value"  pButton pRipple label="Lưu thông tin" icon="pi pi-check-square" (click)="saveForm()"> </button>
 
         </div>
 
         <ng-template #statuscheck>
-          <span class="ovic-side-navigation-content__foot__notice mr-auto"
-            style="padding: 20px 0 0 0;margin: 0 auto;"><mark>(*)</mark> bắt buộc phải nhập</span>
+
           <div class="w-100 h-100 d-flex justify-content-center align-items-center" style="padding: 20px 0;gap: 12px;">
             <!--          <button pButton pRipple class="ovic-button&#45;&#45;disabled"  label="Lưu thông tin" icon="pi pi-check-square" > </button>-->
             <button pRipple pButton class="ovic-button--disabled" label="Lưu thông tin"

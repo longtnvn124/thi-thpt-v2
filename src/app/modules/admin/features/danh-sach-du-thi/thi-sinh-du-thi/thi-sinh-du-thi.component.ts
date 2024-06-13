@@ -125,15 +125,10 @@ export class ThiSinhDuThiComponent implements OnInit {
   needUpdate = false;
   private inputChanged: Subject<string> = new Subject<string>();
 
-  listStyle = [
-    {value: 1, title: `<div class="thanh-toan true text-center" [pTooltip]="Đăng ký thành công" [tooltipPosition]="left" ><div></div><i class="pi pi-check-circle"></i></div>`},
-    {value: 0, title: `<div class="thanh-toan false text-center"><div></div><i class="pi pi-exclamation-triangle" [pTooltip]="'Chưa thanh toán'" [tooltipPosition]="'left'"  ></i></div>`},
-    {
-      value: -1, title: `<div class="thanh-toan check text-center"><div></div><i class="pi pi-history" [pTooltip]="'Đã thanh toán, chờ duyệt'" [tooltipPosition]="'left'" ></i></div>`,
-    },
-    {
-      value: 2, title: `<div class="thanh-toan check text-center"><div></div><label>Đang thực hiện thanh toán</label></div>`,
-    }
+  statusTT = [
+    {value: 0, title: 'Chưa thanh toán'},
+    {value: 1, title: 'Đã thanh toán'},
+
   ]
 
   constructor(
@@ -176,13 +171,13 @@ export class ThiSinhDuThiComponent implements OnInit {
     })
   }
 
-  loadData(page: number, kehoach_id?: number, search?: string) {
+  loadData(page: number, kehoach_id?: number, search?: string,) {
     this.selectDataByCheckbox({checker:false});
     this.isLoading = true;
     const limit = this.themeSettingsService.settings.rows;
     this.index = (page * limit) - limit + 1;
     this.notifi.isProcessing(true);
-    this.ordersService.getDataByWithThisinhAndSearchAndPage(page, kehoach_id, search).subscribe({
+    this.ordersService.getDataByWithThisinhAndSearchAndPage(page, this.kehoach_id, this.search ,this.statusSelect).subscribe({
       next: ({recordsTotal, data}) => {
         this.recordsTotal = recordsTotal
         this.listData = data.map((m, index) => {
@@ -217,6 +212,14 @@ export class ThiSinhDuThiComponent implements OnInit {
   loadDropdow(event) {
 
     this.kehoach_id = event;
+    this.page = 1;
+    this.loadData(this.page, this.kehoach_id, this.search);
+  }
+
+  statusSelect : number
+  loadDropdowStatusTT(event) {
+
+    this.statusSelect = event;
     this.page = 1;
     this.loadData(this.page, this.kehoach_id, this.search);
   }

@@ -77,7 +77,17 @@ export class ThptOptionsService {
     return this.http.get<Dto>(this.api, {params}).pipe(map(res => res.data && res.data[0] ? res.data[0] : null));
   }
 
-  g
+  getdataByName (name:string):Observable<Options>{
+    const conditions: OvicConditionParam[] = [
+      {
+        conditionName: 'name',
+        condition: OvicQueryCondition.equal,
+        value: name,
+      }
+    ];
+    const params: HttpParams = this.httpParamsHelper.paramsConditionBuilder(conditions);
+    return this.http.get<Dto>(this.api, {params}).pipe(map(res => res.data && res.data[0] ? res.data[0] : null));
+  }
 
 
 }

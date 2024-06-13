@@ -3,9 +3,6 @@ import {AbstractControl, Form, FormBuilder, FormGroup, Validators} from "@angula
 import {NotificationService} from "@core/services/notification.service";
 import {DanhMucMonService} from "@shared/services/danh-muc-mon.service";
 import {DmMon} from "@shared/models/danh-muc";
-import _default from "chart.js/dist/core/core.interaction";
-
-
 
 export interface InputMonthi {
   id?: number;

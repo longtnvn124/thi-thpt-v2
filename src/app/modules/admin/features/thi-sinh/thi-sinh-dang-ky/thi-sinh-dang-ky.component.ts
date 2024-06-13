@@ -58,7 +58,7 @@ interface Phieuduthi {
 })
 export class ThiSinhDangKyComponent implements OnInit {
   // @ViewChild( 'ViewPhieu') ViewPhieu : ElementRef;
-  @ViewChild( 'dataToExport' , { static : false } ) public dataToExport : ElementRef;
+  @ViewChild( 'dataToExport' , { static : true } ) dataToExport : ElementRef;
   ngType: 1 | 0 | -1 = 0;//0: form,1:thanh toasn thanh coong, -1:chờ thanh toán,
   isLoading: boolean = true;
   loadInitFail = false;
@@ -198,7 +198,7 @@ export class ThiSinhDangKyComponent implements OnInit {
         this.monService.getDataUnlimit(),
         this.toHopMonService.getDataUnlimit(),
         this.kehoachThiService.getDataUnlimitNotstatus(),
-        this.lephithi.getdata(),
+        this.lephithi.getdataByName('LE_PHI_DU_THI'),
         this.hoiDongLichThiService.getDataUnlimit()
       ]
     ).pipe(
@@ -590,6 +590,7 @@ export class ThiSinhDangKyComponent implements OnInit {
       next:(data)=>{
         const hoidongInfo = data[0];
         const thisinhInhoidong = data[1][0];
+        console.log(thisinhInhoidong);
         this.notifi.isProcessing(false);
         if(hoidongInfo && thisinhInhoidong){
           const phongthi = []
@@ -625,7 +626,7 @@ export class ThiSinhDangKyComponent implements OnInit {
             phongthi: phongthi,
             // anh_chandung: this.fileService.getPreviewLinkLocalFileNotToken(this.userInfo.anh_chandung[0]),
             anh_chandung: this.userInfo['base64'],
-            sobaodanh:hoidongInfo.tiento_sobaodanh + this.covertId(this.userInfo.id)
+            sobaodanh:thisinhInhoidong['sobaodanh']
           }
           this.isShower= true;
         }else{
@@ -649,17 +650,15 @@ export class ThiSinhDangKyComponent implements OnInit {
   public downloadAsPdf(): void {
     const quality: number = 1; // Higher the better but larger file
     html2canvas(this.dataToExport.nativeElement, {scale: quality, allowTaint: true}).then(canvas => {
-      const image: string = canvas.toDataURL('image/jpg', quality);
-      const pdf: jsPDF = new jsPDF({
-        orientation: 'l', // landscape
-        unit: 'pt', // points, pixels won't work properly
-        format: [canvas.width, canvas.height] // set needed dimensions for any element
-      });
-      pdf.addImage(image, 'JPEG', 0, 0, canvas.width, canvas.height);
+      const image : string = canvas.toDataURL( 'image/jpg' , quality );
+      const pdf : jsPDF        = new jsPDF( {
+        orientation : 'l' , // landscape
+        unit        : 'pt' , // points, pixels won't work properly
+        format      : [ canvas.width , canvas.height ] // set needed dimensions for any element
+      } );
+      pdf.addImage( image , 'JPEG' , 0 , 0 , canvas.width , canvas.height );
       pdf.save('phieuduthi.pdf');
     });
-
-
   }
 
 

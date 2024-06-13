@@ -1,5 +1,5 @@
 import {OvicFile} from "@core/models/file";
-import {Ngulieu} from "@shared/models/quan-ly-ngu-lieu";
+
 
 export interface DmChung {
   is_deleted: number; //1: deleted; 0: not deleted
@@ -44,49 +44,11 @@ export interface DmTruongHoc extends DmChung {
 
 
 
-export interface DmLinhVuc extends DmChung {
-  id: number;
-  ten: string;
-  kyhieu: string;// viet tat
-  mota: string;
-  status: number; //1 Active; 0: inactive
-}
 
 
-export interface DmLoaiNguLieu extends DmChung {
-  id: number;
-  ten: string;
-  mota: string;
-  donvi_id: number;
-  kyhieu: LoaiNguLieu;
-  status: number; //1 Active; 0: inactive
-}
 
-export interface DmChuyenMuc extends DmChung {
-  id: number;
-  ten: string;
-  mota: string;
-  status: number; //1 Active; 0: inactive
-}
 
-export interface DmNhanVatLichSu extends DmChung {
-  id: number;
-  ten: string;
-  bietdanh: string;
-  mota: string;
-  nam: string;
-  gioitinh: number;
-  files: OvicFile;
-}
 
-export interface DmDiemDiTich extends DmChung {
-  id: number;
-  ten: string;
-  mota: string;
-  ds_ngulieu: Ngulieu[];
-  status: number; //1 Active; 0: inactive
-  toado:string;
-}
 
 
 export interface DonVi {

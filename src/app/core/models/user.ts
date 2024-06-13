@@ -16,6 +16,7 @@ export interface User {
 	is_deleted? : number;
 	created_by? : number;
 	updated_by? : number;
+  verified?:number;
 
 	// permission : {
 	// 	api : object, //{ "roles": [1,1,1,1],"ucases": [1,1,1,1], "usermeta": [1,1,1,1] }

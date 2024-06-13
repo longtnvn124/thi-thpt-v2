@@ -281,7 +281,7 @@ export class KeHoachThiComponent implements OnInit {
           ngaybatdau: object1.ngaybatdau ? new Date(object1.ngaybatdau) : null,
           ngayketthuc:object1.ngayketthuc ? new Date(object1.ngayketthuc) : null,
         })
-        console.log(this.formSave.value);
+
 
         break;
       case 'DELETE_DECISION':

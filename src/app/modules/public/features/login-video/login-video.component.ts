@@ -233,7 +233,6 @@ export class LoginVideoComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     } else {
       this.notification.toastError("Bạn chưa xác nhận Email, vui lòng xác nhận Email rồi quay lại.");
-
     }
 
   }

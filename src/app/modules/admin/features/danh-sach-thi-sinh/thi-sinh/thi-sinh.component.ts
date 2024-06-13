@@ -328,4 +328,20 @@ export class ThiSinhComponent implements OnInit {
 
     this.thisinh_user_id = item.user_id;
   }
+
+  btnUnLock(item:ThiSinhInfo){
+    const select = item['lock'] === 1 ? 0 : 1;
+    this.notificationService.isProcessing(true);
+    this.thisinhInfoService.update( item.id , {lock:select}).subscribe({
+      next:()=>{
+        this.loadData(this.page,this.search);
+        this.notificationService.isProcessing(false)
+        this.notificationService.toastSuccess(' Cập nhật trạng thái khoá thành công ')
+      },error:()=>{
+        this.loadData(this.page,this.search);
+        this.notificationService.isProcessing(false)
+        this.notificationService.toastError(' Cập nhật trạng thái khoá thất bại ')
+      }
+    })
+  }
 }

@@ -1,6 +1,6 @@
 import {Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {FormType, NgPaginateEvent, OvicForm, OvicTableStructure} from "@shared/models/ovic-models";
-import {DmLinhVuc} from "@shared/models/danh-muc";
+
 import {DanhMucDoiTuong, DanhMucDoituongUutienService} from "@shared/services/danh-muc-doituong-uutien.service";
 import {Paginator} from "primeng/paginator";
 import {AbstractControl, FormBuilder, FormGroup, Validators} from "@angular/forms";

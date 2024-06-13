@@ -20,13 +20,16 @@ import {TooltipModule} from "primeng/tooltip";
 import {DialogModule} from "primeng/dialog";
 import {TabViewModule} from "primeng/tabview";
 import {RadioButtonModule} from "primeng/radiobutton";
+import { YeuCauTraKetQuaComponent } from './yeu-cau-tra-ket-qua/yeu-cau-tra-ket-qua.component';
+import {MatMenuModule} from "@angular/material/menu";
 
 
 @NgModule({
   declarations: [
     ThiSinhDangKyComponent,
     ThongTinThiSinhComponent,
-    TraCuuKetQuaComponent
+    TraCuuKetQuaComponent,
+    YeuCauTraKetQuaComponent
   ],
     imports: [
         CommonModule,
@@ -45,7 +48,8 @@ import {RadioButtonModule} from "primeng/radiobutton";
         TooltipModule,
         DialogModule,
         TabViewModule,
-        RadioButtonModule
+        RadioButtonModule,
+        MatMenuModule
     ]
 })
 export class ThiSinhModule { }

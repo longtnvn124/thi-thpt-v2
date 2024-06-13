@@ -311,6 +311,7 @@ export const TYPE_CONTESTANT_TRACKING:{title:string, value:number, icon:string,c
 ];
 
 export const DEPARTMENT_OF_EDUCATION:{id:number,label:string}[]= [
+  {id:29,label:'Không thuộc sở giáo dục nào'},
   {id:1,label:'Sở GD&ĐT Tỉnh Thái Nguyên'},
   {id:2,label:'Sở GD&ĐT Vĩnh Phúc'},
   {id:3,label:'Sở GD&ĐT Bắc Ninh'},
@@ -7736,5 +7737,12 @@ export const SCHOOL_BY_DEPARTMENT:SchoolDepartment[]=[
     province: "Gia Lai",
     province_name: "Huyện Chư Pưh",
     school_address: "TTr. Nhơn Hòa, H. Chư Pưh, Gia Lai."
+  },
+  {
+    school_name: "Trường THPT Vùng Cao Việt Bắc ",
+    department_edu: "Không thuộc sở giáo dục nào",
+    province: " Thái Nguyên",
+    province_name: "Thành phố Thái Nguyên",
+    school_address: "Đường Z 115, Quyết Thắng, Thành phố Thái Nguyên, Thái Nguyên"
   }
 ]

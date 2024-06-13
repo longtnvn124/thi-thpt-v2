@@ -25,7 +25,7 @@ import {InputTextModule} from "primeng/inputtext";
 import {DropdownModule} from "primeng/dropdown";
 
 import {PdfViewerModule} from "ng2-pdf-viewer";
-import {HomeDhtnComponent} from "@modules/public/features/home-dhtn/home-dhtn.component";
+
 import { TraCuuKetQuaComponent } from './features/tra-cuu-ket-qua/tra-cuu-ket-qua.component';
 
 @NgModule({
@@ -37,7 +37,6 @@ import { TraCuuKetQuaComponent } from './features/tra-cuu-ket-qua/tra-cuu-ket-qu
     UnauthorizedComponent,
     ClearComponent,
     LoginVideoComponent,
-    HomeDhtnComponent,
     TraCuuKetQuaComponent
   ],
   exports: [

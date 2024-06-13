@@ -1,0 +1,31 @@
+<div class="answer-option-group">
+
+  <ng-container *ngFor="let dot of dotdangky; index as i">
+
+    <div class=" row mx-0 mb-2" style="gap:10px">
+      <div class="col p-0">
+        <p-dropdown placeholder="Chọn đợt thi..." [style]="{'width':'100%' }" [options]="kehoachthi" [(ngModel)]="dot.kehoach_id"
+                    (onChange)="changeKehoach($event,dot)" optionLabel="dotthi" optionValue="id"></p-dropdown>
+      </div>
+      <div class="col-4 p-0"  *ngIf="dot['dsKetquaMon'] && dot['dsKetquaMon'].length >0">
+        <p-multiSelect placeholder="Chọn môn có kết quả..." [style]="{'width':'100%' }" [options]="dot['dsKetquaMon']" [(ngModel)]="dot.monthi"
+                       (onChange)="selectMonthiInketqua($event,dot)" optionLabel="monthi" optionValue="monthi" ></p-multiSelect>
+      </div>
+    </div>
+
+    <div class=" row mx-0 mb-2" style="gap:10px">
+      <div class="col">
+        <table class="w-100">
+            <tr  *ngFor="let item of dot.details">
+              <td class="text-left ">{{item.monthi}}</td>
+              <td class="text-center "><input type="number" [(ngModel)]="item.soluong"></td>
+              <td class="text-center "> {{item.thanhtien | numberToVndCurrencuy}}</td>
+            </tr>
+        </table>
+      </div>
+    </div>
+  </ng-container>
+
+  <button pRipple pButton class="w-100 my-3" icon="pi pi-plus" label="Thêm đợt thi"
+          (click)="addMoreDothi()"></button>
+</div>

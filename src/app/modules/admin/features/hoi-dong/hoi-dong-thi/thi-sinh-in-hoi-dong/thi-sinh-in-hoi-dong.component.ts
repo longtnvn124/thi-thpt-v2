@@ -200,8 +200,6 @@ export class ThiSinhInHoiDongComponent implements OnInit, OnChanges {
           m['thisinhs'] = dataThisinh.sort((a, b) => this.extractNumberFromString(a['sobaodanh'], this.hoidong.tiento_sobaodanh) - this.extractNumberFromString(b['sobaodanh'], this.hoidong.tiento_sobaodanh)).filter(f => f['phongthi'] === m['phongso'])
           return m
         }).filter(f => f['thisinhs'].length > 0);
-
-        console.log(dataMap);
         if (dataMap.length > 0) {
           this.htmlToPdfService.exportHtmlToWordV2(dataMap, fileName);
           this.modalService.dismissAll();

@@ -17,6 +17,7 @@ import {TooltipModule} from "primeng/tooltip";
 import {ReactiveFormsModule} from "@angular/forms";
 import {InputMaskModule} from "primeng/inputmask";
 import { ThiSinhTaiKhoanComponent } from './thi-sinh/thi-sinh-tai-khoan/thi-sinh-tai-khoan.component';
+import {InputSwitchModule} from "primeng/inputswitch";
 
 
 @NgModule({
@@ -24,23 +25,24 @@ import { ThiSinhTaiKhoanComponent } from './thi-sinh/thi-sinh-tai-khoan/thi-sinh
     ThiSinhComponent,
     ThiSinhTaiKhoanComponent
   ],
-  imports: [
-    CommonModule,
-    DanhSachThiSinhRoutingModule,
-    ButtonModule,
-    CheckboxModule,
-    DropdownModule,
-    InputTextModule,
-    MatMenuModule,
-    MatProgressBarModule,
-    PaginatorModule,
-    RippleModule,
-    SharedModule,
-    SharedModule,
-    TableModule,
-    TooltipModule,
-    ReactiveFormsModule,
-    InputMaskModule
-  ]
+    imports: [
+        CommonModule,
+        DanhSachThiSinhRoutingModule,
+        ButtonModule,
+        CheckboxModule,
+        DropdownModule,
+        InputTextModule,
+        MatMenuModule,
+        MatProgressBarModule,
+        PaginatorModule,
+        RippleModule,
+        SharedModule,
+        SharedModule,
+        TableModule,
+        TooltipModule,
+        ReactiveFormsModule,
+        InputMaskModule,
+        InputSwitchModule
+    ]
 })
 export class DanhSachThiSinhModule { }

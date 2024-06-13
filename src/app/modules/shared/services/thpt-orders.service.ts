@@ -179,7 +179,7 @@ export class ThptOrdersService {
   }
 
   // getDataByWithThisinh()
-  getDataByWithThisinhAndSearchAndPage(page: number, kehoach_id: number, search?: string): Observable<{ recordsTotal: number, data: OrdersTHPT[] }> {
+  getDataByWithThisinhAndSearchAndPage(page: number, kehoach_id: number, search?: string, status?:number): Observable<{ recordsTotal: number, data: OrdersTHPT[] }> {
     const conditions: OvicConditionParam[] = [
     ];
     if (kehoach_id) {
@@ -190,6 +190,23 @@ export class ThptOrdersService {
         orWhere: 'and'
       })
     }
+    if(status === 1 ){
+      conditions.push({
+        conditionName: 'trangthai_thanhtoan',
+        condition: OvicQueryCondition.equal,
+        value: '1',
+        orWhere: 'and'
+      })
+    }
+    if(status === 0 ){
+      conditions.push({
+        conditionName: 'trangthai_thanhtoan',
+        condition: OvicQueryCondition.notEqual,
+        value: '1',
+        orWhere: 'and'
+      })
+    }
+
     const fromObject = {
       search: search ? search : '',
       paged: page,

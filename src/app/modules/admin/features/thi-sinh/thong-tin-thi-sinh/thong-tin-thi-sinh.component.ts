@@ -153,6 +153,7 @@ export class ThongTinThiSinhComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log(this.auth.user.id)
     this.loadInit();
   }
 
@@ -284,6 +285,8 @@ export class ThongTinThiSinhComponent implements OnInit {
         error: () => {
           this.notifi.isProcessing(false);
           this.notifi.toastError('Thao tác thất bại', 'Thông báo')
+          this._getDataUserInfo(this.auth.user.id);
+
         }
       })
     }

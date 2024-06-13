@@ -1638,7 +1638,9 @@ pdf-viewer[ng-reflect-show-all="false"] .pdfViewer {
 .ovic-w-300px {
   width: 300px;
 }
-
+.ovic-w-350px {
+  width: 350px;
+}
 .ovic-w-20 {
   width: 20%;
 }

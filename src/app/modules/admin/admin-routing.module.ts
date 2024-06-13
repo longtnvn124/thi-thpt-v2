@@ -66,6 +66,10 @@ const routes : Routes = [
         path         : 'quan-ly-thi-sinh' ,
         loadChildren : () => import('@modules/admin/features/danh-sach-thi-sinh/danh-sach-thi-sinh.module').then( m => m.DanhSachThiSinhModule )
       } ,
+      {
+        path         : 'tra-ket-qua-thi' ,
+        loadChildren : () => import('@modules/admin/features/tra-ket-qua-thi/tra-ket-qua-thi.module').then( m => m.TraKetQuaThiModule )
+      } ,
 			{
 				path         : 'message' ,
 				loadChildren : () => import('@modules/admin/features/ovic-message/ovic-message.module').then( m => m.OvicMessageModule )

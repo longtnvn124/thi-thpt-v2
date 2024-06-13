@@ -1,0 +1,100 @@
+<div class="container" >
+  <div class="row">
+    <div class="col-12 ovic-ui-table site-thpt"  [class.ovic-is-loading]="isLoading">
+      <div class="p-datatable-header" style="height:65px; border-bottom:1px solid #CCC;">
+        <h3 class="tbl-title ">Tống thí sinh: {{thisinhs.length}} </h3>
+        <div class="search-block ui-table-globalfilter-container ">
+          <div class="d-flex align-items-center">
+            <div class="ovic-vertical__inputs ovic-vertical__inputs--layout-2">
+              <div class="d-flex" style="gap:10px;">
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="ovic-wrap-table-rps ovic-scroll-style" >
+        <div class="ovic-wrap-table-rps__inner">
+          <table class="tbl w-100">
+            <thead class="p-datatable-thead">
+            <tr>
+              <th class="text-center">Toán</th>
+              <th class="text-center"> Vật lí </th>
+              <th class="text-center">Hóa học</th>
+              <th class="text-center">Sinh học</th>
+              <th class="text-center">Lịch sử</th>
+              <th class="text-center">Địa lí</th>
+              <th class="text-center">Tiếng anh</th>
+            </tr>
+
+            </thead>
+            <tbody class="p-datatable-tbody">
+            <tr>
+              <td class="text-center" style="width: calc(100% / 7)">{{ dsMonDky['mon_th'] }}</td>
+              <td class="text-center" style="width: calc(100% / 7)">{{ dsMonDky['mon_vl'] }}</td>
+              <td class="text-center" style="width: calc(100% / 7)">{{ dsMonDky['mon_hh'] }}</td>
+              <td class="text-center" style="width: calc(100% / 7)">{{ dsMonDky['mon_sh'] }}</td>
+              <td class="text-center" style="width: calc(100% / 7)">{{ dsMonDky['mon_ls'] }}</td>
+              <td class="text-center" style="width: calc(100% / 7)">{{ dsMonDky['mon_dl'] }}</td>
+              <td class="text-center" style="width: calc(100% / 7)">{{ dsMonDky['mon_ta'] }}</td>
+            </tr>
+            </tbody>
+          </table>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="row m-0 py-3" >
+  <div class="col-12 ovic-ui-table site-thpt" [class.ovic-is-loading]="isLoading">
+    <div class="p-datatable-header" style="height:65px; border-bottom:1px solid #CCC;">
+      <h3 class="tbl-title ">Thống kê dữ liệu theo phòng thi và ca thi </h3>
+      <div class="search-block ui-table-globalfilter-container ">
+        <div class="d-flex align-items-center">
+          <div class="ovic-vertical__inputs ovic-vertical__inputs--layout-2">
+            <div class="d-flex" style="gap:10px;">
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ovic-wrap-table-rps ovic-scroll-style" >
+      <div class="ovic-wrap-table-rps__inner">
+        <table class="tbl w-100">
+          <thead class="p-datatable-thead">
+          <tr>
+            <th class="text-center">Phòng thi</th>
+            <th class="text-center"> Ca 1</th>
+            <th class="text-center"> Ca 2</th>
+            <th class="text-center">Ca 3</th>
+            <th class="text-center">Ca 4</th>
+            <th class="text-center">Ca 5</th>
+            <th class="text-center">Ca 6</th>
+            <th class="text-center">Ca 7</th>
+          </tr>
+
+          </thead>
+          <tbody class="p-datatable-tbody">
+            <tr *ngFor="let item of phongthis">
+              <td class="text-center ovic-w-120px font-weight-bold" >{{ item['phongthi'] }}</td>
+              <td class="text-center" style="width:calc((100% - 120px - 150px) /7 )" >{{ item['_cathi_total_1'] === '00'? '_' : item['_cathi_total_1'] }}</td>
+              <td class="text-center" style="width:calc((100% - 120px - 150px) /7 )" >{{ item['_cathi_total_2'] === '00'? '_' : item['_cathi_total_2'] }}</td>
+              <td class="text-center" style="width:calc((100% - 120px - 150px) /7 )" >{{ item['_cathi_total_3'] === '00'? '_' : item['_cathi_total_3'] }}</td>
+              <td class="text-center" style="width:calc((100% - 120px - 150px) /7 )" >{{ item['_cathi_total_4'] === '00'? '_' : item['_cathi_total_4'] }}</td>
+              <td class="text-center" style="width:calc((100% - 120px - 150px) /7 )" >{{ item['_cathi_total_5'] === '00'? '_' : item['_cathi_total_5'] }}</td>
+              <td class="text-center" style="width:calc((100% - 120px - 150px) /7 )" >{{ item['_cathi_total_6'] === '00'? '_' : item['_cathi_total_6'] }}</td>
+              <td class="text-center" style="width:calc((100% - 120px - 150px) /7 )" >{{ item['_cathi_total_7'] === '00'? '_' : item['_cathi_total_7'] }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+      </div>
+    </div>
+
+  </div>
+</div>

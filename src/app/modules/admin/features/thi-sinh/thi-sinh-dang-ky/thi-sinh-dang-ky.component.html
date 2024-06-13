@@ -100,7 +100,7 @@
                 </div>
                 <ng-template #tableData>
                   <div class="p-datatable-header" style="border-bottom:1px solid #CCC;">
-                    <h3 class="tbl-title ">Kết quả đăng ký</h3>
+                    <h3 class="tbl-title "> Danh sách đăng ký thi </h3>
                   </div>
                   <p-table [value]="dataOrders" [showCurrentPageReport]="false" [tableStyle]="{ 'min-width': '100px' }">
                     <ng-template pTemplate="header">
@@ -286,7 +286,7 @@
 <!--    <div class="m-2 w-100 btn_exportPhieeus" >-->
 <!--      <button pButton pRipple label="Xuất phiếu dự thi" (click)="downloadAsPdf(dataToExport)"></button>-->
 <!--    </div>-->
-    <div class="phieu_content" style="width:21cm;background: #fff; padding: 20px;" #dataToExport>
+    <div class="phieu_content" style="width:21cm;height:27cm;background: #fff; padding: 20px;" #dataToExport>
       <table class="w-100 my-3 px-2">
         <tr>
           <td>
@@ -373,6 +373,7 @@
           </tr>
         </table>
       </div>
+      <div style="height:30px;margin:0 0 10px 0"></div>
 
     </div>
 

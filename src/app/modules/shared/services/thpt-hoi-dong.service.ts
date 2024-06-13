@@ -208,4 +208,22 @@ export class ThptHoiDongService {
     })))
   }
 
+  getTientosobaodanhUnlimit():Observable<ThptHoiDong[]>{
+    const conditions: OvicConditionParam[] = [
+
+    ];
+
+    const fromObject = {
+      paged: 1,
+      limit: -1,
+      groupby: 'tiento_sobaodanh',
+      order: "ASC",
+      select:'tiento_sobaodanh'
+    }
+
+    const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }));
+    return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data
+    ))
+  }
+
 }

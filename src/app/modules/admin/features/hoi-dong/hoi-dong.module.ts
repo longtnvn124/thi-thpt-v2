@@ -24,6 +24,7 @@ import {CalendarModule} from "primeng/calendar";
 import { PhongThiV2Component } from './hoi-dong-thi/phong-thi-v2/phong-thi-v2.component';
 import { PhongThiV3Component } from './hoi-dong-thi/phong-thi-v3/phong-thi-v3.component';
 import { ThiSinhInHoiDongComponent } from './hoi-dong-thi/thi-sinh-in-hoi-dong/thi-sinh-in-hoi-dong.component';
+import { ThongKeDuLieuComponent } from './hoi-dong-thi/thong-ke-du-lieu/thong-ke-du-lieu.component';
 @NgModule({
     declarations: [
         HoiDongThiComponent,
@@ -31,7 +32,8 @@ import { ThiSinhInHoiDongComponent } from './hoi-dong-thi/thi-sinh-in-hoi-dong/t
         AddThiSinhComponent,
         PhongThiV2Component,
         PhongThiV3Component,
-        ThiSinhInHoiDongComponent
+        ThiSinhInHoiDongComponent,
+        ThongKeDuLieuComponent
     ],
     imports: [
         CommonModule,

@@ -26,6 +26,7 @@
             <tr>
 
               <th class="ovic-w-40px text-center ">STT</th>
+              <th class="ovic-w-40px text-center "><i class="pi pi-lock"></i></th>
               <th class="ovic-w-250px text-center ">Họ tên</th>
               <th class="ovic-w-180px text-center">Ngày sinh</th>
               <th class="ovic-w-80px text-center">Giới tính</th>
@@ -40,6 +41,7 @@
           <ng-template pTemplate="body" let-item let-i="rowIndex">
             <tr>
               <td class="text-center">{{ item['_indexTable'] }}</td>
+              <td class="text-center"><p-inputSwitch [ngModel]="item['lock'] === 1 " (click)="btnUnLock(item)"></p-inputSwitch></td>
 
               <td class="text-left">
                 <div class="d-flex justify-content-between p-1">

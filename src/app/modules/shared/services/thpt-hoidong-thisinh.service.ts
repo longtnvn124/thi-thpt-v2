@@ -283,4 +283,63 @@ export class ThptHoidongThisinhService {
     const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }));
     return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data));
   }
+  getDataPhongthiandMonthi_idsByHoidong_id(hoidong_id: number): Observable<ThptHoiDongThiSinh[]> {
+    const conditions: OvicConditionParam[] = [
+      {
+        conditionName: 'hoidong_id',
+        condition: OvicQueryCondition.equal,
+        value: hoidong_id.toString(),
+      }
+
+    ];
+
+    const fromObject = {
+      paged: 1,
+      limit: -1,
+      select:'monthi_ids,phongthi,ca_th,ca_vl,ca_hh,ca_sh,ca_ls,ca_dl,ca_ta'
+
+    };
+    const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }));
+    return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data));
+  }
+
+  getDataPhongthiOnlyByHoidongId(hoidong_id: number): Observable<ThptHoiDongThiSinh[]> {
+    const conditions: OvicConditionParam[] = [
+      {
+        conditionName: 'hoidong_id',
+        condition: OvicQueryCondition.equal,
+        value: hoidong_id.toString(),
+      }
+
+    ];
+
+    const fromObject = {
+      paged: 1,
+      limit: -1,
+      groupby:'phongthi',
+      select:'phongthi'
+    };
+    const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }));
+    return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data));
+  }
+
+  getDataThisinhBySelectAndHoidongId(hoidong_id:number):Observable<ThptHoiDongThiSinh[]>{
+    const conditions: OvicConditionParam[] = [
+      {
+        conditionName: 'hoidong_id',
+        condition: OvicQueryCondition.equal,
+        value: hoidong_id.toString(),
+      }
+
+    ];
+
+    const fromObject = {
+      paged: 1,
+      limit: -1,
+      groupby:'thisinh_id',
+      select:'thisinh_id'
+    };
+    const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }));
+    return this.http.get<Dto>(this.api, { params }).pipe(map(res => res.data));
+  }
 }
