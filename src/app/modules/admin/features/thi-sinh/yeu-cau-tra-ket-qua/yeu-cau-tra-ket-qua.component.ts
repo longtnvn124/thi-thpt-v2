@@ -94,7 +94,7 @@ export class YeuCauTraKetQuaComponent implements OnInit {
     this.thptTraKetQuaService.getdatabythisinhId(this.page,this.thisinhInfo.id).subscribe(
       {
         next:({recordsTotal,data})=>{
-          console.log(data);
+
           this.recordsTotal= recordsTotal;
           this.listData = data;
           this.isLoading=false;

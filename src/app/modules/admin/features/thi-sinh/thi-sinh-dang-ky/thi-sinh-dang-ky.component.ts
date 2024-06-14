@@ -590,7 +590,7 @@ export class ThiSinhDangKyComponent implements OnInit {
       next:(data)=>{
         const hoidongInfo = data[0];
         const thisinhInhoidong = data[1][0];
-        console.log(thisinhInhoidong);
+
         this.notifi.isProcessing(false);
         if(hoidongInfo && thisinhInhoidong){
           const phongthi = []

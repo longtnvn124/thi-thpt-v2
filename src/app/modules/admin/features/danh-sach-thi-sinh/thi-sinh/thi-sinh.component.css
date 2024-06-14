@@ -48,45 +48,6 @@
   margin-right: 10px;
 }
 
-.btn-menu-material{
-  background: #fff;
-  border: none;
-  width: 100%;
-  text-align: start;
-  font-size: 15px;
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 8px;
-  height: 36px;
-  padding:6px 10px;
-  cursor: pointer;
-}
-.btn-menu-material i{
-  font-size:1.2rem;
-}
-.btn-menu-material.excel:hover{
-  background: #6aba4a !important;
-  color:#fff;
-}
-.btn-menu-material.acsses:hover{
-  background: #5387e5  !important;
-  color:#fff;
-}
-.btn-menu-material.cancel:hover{
-  background: #494949 !important;
-  color:#fff;
-}
-.btn-menu-material.delete:hover{
-  background: tomato !important;
-  color:#fff;
-}
-.ovic-wrap-table-rps{
-  width:100%;
-  display: block;
-  overflow-x: auto;
-}
-
 .ovic-wrap-table-rps__inner{
   display: block;
   width: 100%;

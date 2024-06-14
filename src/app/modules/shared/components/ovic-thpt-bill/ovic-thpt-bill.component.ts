@@ -83,8 +83,7 @@ export class OvicThptBillComponent implements OnInit {
   }
 
   changeKehoach(event, dot:Phieumonthi){
-    console.log(event);
-    console.log(dot);
+
     this.notificationService.isProcessing(true);
     this.thptKetquaService.getdataBythisinhIdAndKehoachId(this.thisinh_id ,event.value).subscribe({
       next:(data)=>{
@@ -100,7 +99,7 @@ export class OvicThptBillComponent implements OnInit {
     })
   }
   selectMonthiInketqua(event, dot:Phieumonthi){
-    console.log(event.value)
+
     if(event.value === []){
       dot.details= [];
     }else{

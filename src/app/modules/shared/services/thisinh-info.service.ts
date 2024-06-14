@@ -141,4 +141,27 @@ export class ThisinhInfoService {
   getCountThiSinh():Observable<number>{
     return this.http.get<Dto>(this.api, ).pipe(map(res => res.recordsFiltered));
   }
+
+  getDataByLockandSearch(page:number,search:string):Observable<{recordsTotal:number,data:ThiSinhInfo[]}>{
+    const conditions: OvicConditionParam[] = [
+      {
+        conditionName: 'request_update',
+        condition: OvicQueryCondition.equal,
+        value: `1`,
+      }
+    ]
+
+    const fromObject = {
+      paged: page,
+      limit: this.themeSettingsService.settings.rows,
+      orderby: 'id',
+      order: "ASC",
+      search:search
+    }
+    const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({ fromObject }));
+    return this.http.get<Dto>(this.api, { params }).pipe(map(res => ({
+      recordsTotal: res.recordsFiltered,
+      data: res.data
+    })))
+  }
 }

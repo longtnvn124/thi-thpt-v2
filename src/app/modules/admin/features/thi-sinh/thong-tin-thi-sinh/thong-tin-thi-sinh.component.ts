@@ -18,7 +18,7 @@ import {NotificationService} from "@core/services/notification.service";
 import {LocationService} from "@shared/services/location.service";
 import {DDMMYYYYDateFormatValidator, NumberLessThanTenValidator, PhoneNumberValidator} from "@core/utils/validators";
 import {ThisinhInfoService} from "@shared/services/thisinh-info.service";
-import {BUTTON_NO, BUTTON_YES} from "@core/models/buttons";
+import {BUTTON_CANCEL, BUTTON_NO, BUTTON_YES} from "@core/models/buttons";
 import {DanToc, DEPARTMENT_OF_EDUCATION, SCHOOL_BY_DEPARTMENT, SchoolDepartment} from "@shared/utils/syscat";
 import {DanhMucDoiTuong, DanhMucDoituongUutienService} from "@shared/services/danh-muc-doituong-uutien.service";
 
@@ -153,7 +153,6 @@ export class ThongTinThiSinhComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log(this.auth.user.id)
     this.loadInit();
   }
 
@@ -273,6 +272,13 @@ export class ThongTinThiSinhComponent implements OnInit {
       })
     }
     if (type === FormType.UPDATE) {
+
+      if(this.userInfo.request_update === 2){
+        data['request_update'] = 0;
+        data['lock'] = 1;
+      }
+      console.log(data);
+
       this.thisinhInfoService.update(object.id, data).subscribe({
         next: () => {
           if (type === FormType.ADDITION) {
@@ -286,7 +292,6 @@ export class ThongTinThiSinhComponent implements OnInit {
           this.notifi.isProcessing(false);
           this.notifi.toastError('Thao tác thất bại', 'Thông báo')
           this._getDataUserInfo(this.auth.user.id);
-
         }
       })
     }
@@ -417,5 +422,29 @@ export class ThongTinThiSinhComponent implements OnInit {
   school11_department: SchoolDepartment[] = [];
   school12_department: SchoolDepartment[] = [];
 
-}
 
+  saveFormByRequsetUpdate(){
+
+  }
+  isRequestUpdate:boolean = false;
+  async btnRequsetUpdate(){
+    const button = await this.notifi.confirmRounded('Gửi yêu cầu cập nhật thông tin ','XÁC NHẬN',  [BUTTON_CANCEL,BUTTON_YES]);
+    if (button.name === BUTTON_YES.name) {
+      this.isRequestUpdate= true;
+      this.thisinhInfoService.update(this.userInfo.id,{request_update:1}).subscribe({
+        next:(data)=>{
+          this._getDataUserInfo(this.auth.user.id)
+          this.isRequestUpdate= false;
+          this.notifi.toastSuccess('Yêu cầu đã được gửi đi, vui lòng quay lại sau.');
+
+        },error:()=>{
+          this.isRequestUpdate= false;
+          this.notifi.toastError('Thao tác không thành công');
+        }
+      })
+    }
+
+
+  }
+
+}

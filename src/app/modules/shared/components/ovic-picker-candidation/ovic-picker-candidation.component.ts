@@ -56,7 +56,6 @@ export class OvicPickerCandidationComponent implements OnInit {
 
     this.ordersService.getdataByNotThisinhIds(this.page, this.user_ids, this.kehoach_id).subscribe({
       next: ({ data, recordsTotal }) => {
-        console.log(data);
         this.data = data.map(m => {
           const thisinh = m['thisinh'];
           m['_hoten'] = thisinh ? thisinh['hoten'] : '';

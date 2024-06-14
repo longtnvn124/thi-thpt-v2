@@ -439,18 +439,24 @@
               style="padding: 20px 0 0 0;margin: 0 auto;"><mark>(*)</mark> bắt buộc phải nhập</span>
         <div *ngIf="userInfo['lock'] === 0,else statuscheck"
           class="w-100 h-100 d-flex justify-content-center align-items-center" style="padding: 20px 0;gap: 12px;">
-          <button [disabled]="!f['camket'].value"  pButton pRipple label="Lưu thông tin" icon="pi pi-check-square" (click)="saveForm()"> </button>
+
+          <div *ngIf="userInfo['request_update'] === 0">
+            <button [disabled]="!f['camket'].value"  pButton pRipple label="Lưu thông tin" icon="pi pi-check-square" (click)="saveForm()"> </button>
+          </div>
+          <div *ngIf="userInfo['request_update'] === 2">
+            <button [disabled]="!f['camket'].value"  pButton pRipple label="Lưu thông tin" icon="pi pi-check-square" (click)="saveForm()"> </button>
+          </div>
 
         </div>
 
         <ng-template #statuscheck>
-
-          <div class="w-100 h-100 d-flex justify-content-center align-items-center" style="padding: 20px 0;gap: 12px;">
-            <!--          <button pButton pRipple class="ovic-button&#45;&#45;disabled"  label="Lưu thông tin" icon="pi pi-check-square" > </button>-->
+          <div class="status_check">
             <button pRipple pButton class="ovic-button--disabled" label="Lưu thông tin"
               icon="pi pi-check-square"></button>
-<!--            <button pButton pRipple class="ovic-button&#45;&#45;disabled p-button-warning" label="Khoá thông tin"-->
-<!--              icon="pi pi-lock"> </button>-->
+            <button *ngIf="userInfo['request_update'] === 0" pButton pRipple class="p-button-warning" label="Yêu cầu cập nhật thông tin"
+                    icon="pi pi-bell" [loading]="isRequestUpdate" (click)="btnRequsetUpdate()"> </button>
+            <button *ngIf="userInfo['request_update'] === 1" pButton pRipple class="p-button-warning ovic-button--disabled" label="Yêu cầu đang chờ duyệt "
+                    icon="pi pi-bell" [loading]="isRequestUpdate" > </button>
           </div>
         </ng-template>
       </div>

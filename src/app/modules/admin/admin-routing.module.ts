@@ -70,6 +70,10 @@ const routes : Routes = [
         path         : 'tra-ket-qua-thi' ,
         loadChildren : () => import('@modules/admin/features/tra-ket-qua-thi/tra-ket-qua-thi.module').then( m => m.TraKetQuaThiModule )
       } ,
+      {
+        path         : 'yeu-cau' ,
+        loadChildren : () => import('@modules/admin/features/yeu-cau/yeu-cau.module').then( m => m.YeuCauModule )
+      } ,
 			{
 				path         : 'message' ,
 				loadChildren : () => import('@modules/admin/features/ovic-message/ovic-message.module').then( m => m.OvicMessageModule )
