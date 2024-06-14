@@ -18,7 +18,7 @@
         </div>
       </div>
     </div>
-    <div class="ovic-wrap-table-rps ovic-scroll-style" style="height:calc(100% - 65px - 60px);background: #dedede;">
+    <div class="ovic-wrap-table-rps ovic-scroll-style overflow-hidden overflow-y-auto" style="height:calc(100% - 65px - 60px);background: #dedede;">
       <div class="ovic-wrap-table-rps__inner">
         <p-table [(selection)]="listData" styleClass="p-datatable-gridlines" [value]="listData" [rowHover]="true"
                  [rows]="rows" [showCurrentPageReport]="true" [rowsPerPageOptions]="[10,25,50]" [loading]="isLoading">
