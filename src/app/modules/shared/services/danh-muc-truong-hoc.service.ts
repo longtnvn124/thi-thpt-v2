@@ -51,20 +51,21 @@ export class DanhMucTruongHocService {
     const conditions: OvicConditionParam[] = [
 
     ];
-    const fromObject = {
-      paged: page,
-      limit: this.themeSettingsService.settings.rows,
-      orderby: 'tentruong',
-      order: 'ASC'
-    };
+
     if (ten) {
       conditions.push({
-        conditionName: 'tentruong',
+        conditionName: 'ten',
         condition: OvicQueryCondition.like,
         value: `%${ten}%`,
         orWhere: 'and'
       });
     }
+    const fromObject = {
+      paged: page,
+      limit: this.themeSettingsService.settings.rows,
+      orderby: 'parent_id',
+      order: 'ASC'
+    };
     const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({fromObject}));
     return this.http.get<Dto>(this.api, {params}).pipe(map(res => ({
       recordsTotal: res.recordsFiltered,
@@ -84,7 +85,59 @@ export class DanhMucTruongHocService {
     const fromObject = {
       paged: 1,
       limit: -1,
-      orderby: 'tentruong',
+      orderby: 'id',
+      order: 'ASC'
+    };
+    const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({fromObject}));
+    return this.http.get<Dto>(this.api, {params}).pipe(map(res => res.data));
+  }
+
+  getSogiaoduc(): Observable<DmTruongHoc[]> {
+    const conditions: OvicConditionParam[] = [
+      {
+        conditionName: 'status',
+        condition: OvicQueryCondition.equal,
+        value: '1',
+      },
+      {
+        conditionName: 'parent_id',
+        condition: OvicQueryCondition.equal,
+        value: '0',
+        orWhere:'and'
+      },
+
+    ];
+
+    const fromObject = {
+      paged: 1,
+      limit: -1,
+      orderby: 'ten',
+      order: 'ASC'
+    };
+    const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({fromObject}));
+    return this.http.get<Dto>(this.api, {params}).pipe(map(res => res.data));
+  }
+
+  getDataByParrentId(parent_id:number): Observable<DmTruongHoc[]>{
+    const conditions: OvicConditionParam[] = [
+      {
+        conditionName: 'status',
+        condition: OvicQueryCondition.equal,
+        value: '1',
+      },
+      {
+        conditionName: 'parent_id',
+        condition: OvicQueryCondition.equal,
+        value: parent_id.toString(),
+        orWhere:'and'
+      },
+
+    ];
+
+    const fromObject = {
+      paged: 1,
+      limit: -1,
+      orderby: 'ten',
       order: 'ASC'
     };
     const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({fromObject}));

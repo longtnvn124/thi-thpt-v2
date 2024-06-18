@@ -345,7 +345,8 @@ export class PhongThiV2Component implements OnInit, OnChanges {
           this.loadDataCathi();
         }
       })
-    } else {
+    }
+    else {
       const dsThisinhParram = this.coverthisinhParramnotMath(this.dataThisinhInHoidong);
 
       const newPhongs = this.setUptestRoom(this.dataPhongThi, dsThisinhParram);

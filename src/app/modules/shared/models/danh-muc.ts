@@ -34,9 +34,10 @@ export interface DmDotThi extends DmChung {
 
 export interface DmTruongHoc extends DmChung {
   id: number;
-  tinhtp_id: number;
-  tentruong: string;
-  diachi: string;
+  ten: string;
+  parent_id: number;
+  address: string;
+  province: number; //1 Active; 0: inactive
   status: number; //1 Active; 0: inactive
 }
 

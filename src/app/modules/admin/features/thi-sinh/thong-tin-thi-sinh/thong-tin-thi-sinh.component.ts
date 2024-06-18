@@ -21,6 +21,8 @@ import {ThisinhInfoService} from "@shared/services/thisinh-info.service";
 import {BUTTON_CANCEL, BUTTON_NO, BUTTON_YES} from "@core/models/buttons";
 import {DanToc, DEPARTMENT_OF_EDUCATION, SCHOOL_BY_DEPARTMENT, SchoolDepartment} from "@shared/utils/syscat";
 import {DanhMucDoiTuong, DanhMucDoituongUutienService} from "@shared/services/danh-muc-doituong-uutien.service";
+import {DmTruongHoc} from "@shared/models/danh-muc";
+import {DanhMucTruongHocService} from "@shared/services/danh-muc-truong-hoc.service";
 
 
 interface FormThisinh extends OvicForm {
@@ -50,6 +52,11 @@ export class ThongTinThiSinhComponent implements OnInit {
 
   departmentData = DEPARTMENT_OF_EDUCATION;
   schoolByDepartment = SCHOOL_BY_DEPARTMENT;
+
+  dataSogiaoduc:DmTruongHoc[];
+  datatruong10:DmTruongHoc[];
+  datatruong11:DmTruongHoc[];
+  datatruong12:DmTruongHoc[];
   checkdata: 1 | 0 = 0;// o :load data
   formSave: FormGroup;
 
@@ -94,7 +101,8 @@ export class ThongTinThiSinhComponent implements OnInit {
     private thisinhInfoService: ThisinhInfoService,
     private notifi: NotificationService,
     private locationService: LocationService,
-    private danhMucDoituongUutienService: DanhMucDoituongUutienService
+    private danhMucDoituongUutienService: DanhMucDoituongUutienService,
+    private danhMucTruongHocService: DanhMucTruongHocService
   ) {
     const observeProcessFormData = this.OBSERVE_PROCESS_FORM_DATA.asObservable().pipe(debounceTime(100)).subscribe(form => this.__processFrom(form));
     this.subscription.add(observeProcessFormData);
@@ -120,7 +128,7 @@ export class ThongTinThiSinhComponent implements OnInit {
       nguoinhan_phone: ['', [Validators.required, PhoneNumberValidator, Validators.maxLength(12), Validators.minLength(6)]],
       nguoinhan_diachi: [null, Validators.required],
       khuvuc: [null, Validators.required],
-      namtotnghiep_thpt: [null, [PhoneNumberValidator]],
+      namtotnghiep_thpt: [null, [Validators.required,PhoneNumberValidator]],
       lop10_thanhpho: [null],
       lop11_thanhpho: [null],
       lop12_thanhpho: [null],
@@ -162,14 +170,15 @@ export class ThongTinThiSinhComponent implements OnInit {
   }
 
   getDataCitis() {
-    forkJoin<[DiaDanh[], DanhMucDoiTuong[]]>(
+    forkJoin<[DiaDanh[], DanhMucDoiTuong[],DmTruongHoc[]]>(
       this.locationService.listProvinces(),
-      this.danhMucDoituongUutienService.getdataUnlimit()
+      this.danhMucDoituongUutienService.getdataUnlimit(),
+      this.danhMucTruongHocService.getSogiaoduc(),
     ).subscribe({
-      next: ([diadanh, doituong]) => {
+      next: ([diadanh, doituong,sogiaoduc]) => {
         this.provinceOptions = diadanh;
         this.danhMucDoiTuong = doituong;
-
+        this.dataSogiaoduc = sogiaoduc
       }
     })
 
@@ -231,13 +240,13 @@ export class ThongTinThiSinhComponent implements OnInit {
             ketqua_xetdaihoc: data.ketqua_xetdaihoc === 1 ? true : false,
             chuongtrinhhoc: data.chuongtrinhhoc,
             trangthaitotnghiep: data.trangthaitotnghiep,
+
           });
           this.changeInfoDepartment10(data.lop10_department)
           this.changeInfoDepartment11(data.lop11_department)
           this.changeInfoDepartment12(data.lop12_department)
 
           this.userInfo = data;
-
         } else {
           this.checkdata = 1;
           this.formActive = this.listForm[FormType.ADDITION];
@@ -277,7 +286,7 @@ export class ThongTinThiSinhComponent implements OnInit {
         data['request_update'] = 0;
         data['lock'] = 1;
       }
-      console.log(data);
+
 
       this.thisinhInfoService.update(object.id, data).subscribe({
         next: () => {
@@ -321,7 +330,7 @@ export class ThongTinThiSinhComponent implements OnInit {
       const quoctich = this.f['quoctich'].value ? 1 : 0;
       this.f['quoctich'].setValue(quoctich);
 
-      // console.log(this.formSave);
+
 
       if (mattruoc && matsau && anh_chandung) {
         this.formActive.data = this.formSave.value;
@@ -388,40 +397,79 @@ export class ThongTinThiSinhComponent implements OnInit {
     }
 
   }
-
+  truong10_isloadding:boolean=false;
+  truong11_isloadding:boolean=false;
+  truong12_isloadding:boolean=false;
 
   changeInfoDepartment10(department?: string, school?: string) {
+    this.truong10_isloadding= true
     if (department) {
-      this.school10_department = this.schoolByDepartment.filter(f => f['department_edu'] === department);
+
+      const sogiaoducSelect =  this.dataSogiaoduc.find(f=>f.ten === department)
+      if(sogiaoducSelect){
+        this.danhMucTruongHocService.getDataByParrentId(sogiaoducSelect.id).subscribe({
+          next:(data)=>{
+            this.datatruong10= data;
+            this.truong10_isloadding= false;
+
+          },error:()=>{
+            this.truong10_isloadding= false;
+            this.datatruong10= [];
+
+          }
+        })
+      }
     } else {
       this.f['lop10_truong'].setValue(null);
-      this.school10_department = [];
+      this.datatruong10 = [];
     }
 
   }
 
   changeInfoDepartment11(department?: string, school?: string) {
+    this.truong11_isloadding= true;
     if (department) {
-      this.school11_department = this.schoolByDepartment.filter(f => f['department_edu'] === department);
+      const sogiaoducSelect =  this.dataSogiaoduc.find(f=>f.ten === department)
+      if(sogiaoducSelect){
+        this.danhMucTruongHocService.getDataByParrentId(sogiaoducSelect.id).subscribe({
+          next:(data)=>{
+            this.datatruong11= data;
+            this.truong11_isloadding= false;
+
+          },error:()=>{
+            this.truong11_isloadding= false;
+            this.datatruong11=[];
+          }
+        })
+      }
     } else {
-      this.f['lop12_truong'].setValue(null);
-      this.school11_department = [];
+      this.f['lop11_truong'].setValue(null);
+      this.datatruong11 = [];
     }
   }
 
   changeInfoDepartment12(department?: string, school?: string) {
+    this.truong12_isloadding= true;
+
     if (department) {
-      this.school12_department = this.schoolByDepartment.filter(f => f['department_edu'] === department);
+      const sogiaoducSelect =  this.dataSogiaoduc.find(f=>f.ten === department)
+      if(sogiaoducSelect){
+        this.danhMucTruongHocService.getDataByParrentId(sogiaoducSelect.id).subscribe({
+          next:(data)=>{
+            this.datatruong12= data;
+            this.truong12_isloadding= false;
+          },error:()=>{
+            this.truong12_isloadding= false;
+            this.datatruong12=[];
+          }
+        })
+
+      }
     } else {
       this.f['lop12_truong'].setValue(null);
-      this.school12_department = [];
+      this.datatruong12 = [];
     }
   }
-
-  school10_department: SchoolDepartment[] = [];
-  school11_department: SchoolDepartment[] = [];
-  school12_department: SchoolDepartment[] = [];
-
 
   saveFormByRequsetUpdate(){
 

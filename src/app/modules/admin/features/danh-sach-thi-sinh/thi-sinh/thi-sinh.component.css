@@ -48,10 +48,17 @@
   margin-right: 10px;
 }
 
+.ovic-wrap-table-rps{
+  width:100%;
+  display: block;
+  overflow-x: auto;
+}
+
 .ovic-wrap-table-rps__inner{
   display: block;
   width: 100%;
-  min-width: 1400px;
+  min-width: 1200px;
 }
+
 
 

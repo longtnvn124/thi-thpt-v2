@@ -115,7 +115,7 @@ export class KeHoachThiComponent implements OnInit {
 
   headButtons = [
     {
-      label: 'Thêm môn',
+      label: 'Thêm đợt thi ',
       name: 'BUTTON_ADD_NEW',
       icon: 'pi-plus pi',
       class: 'p-button-rounded p-button-success ml-3 mr-2'

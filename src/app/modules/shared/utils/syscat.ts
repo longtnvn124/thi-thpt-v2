@@ -311,7 +311,6 @@ export const TYPE_CONTESTANT_TRACKING:{title:string, value:number, icon:string,c
 ];
 
 export const DEPARTMENT_OF_EDUCATION:{id:number,label:string}[]= [
-  {id:29,label:'Không thuộc sở giáo dục nào'},
   {id:1,label:'Sở GD&ĐT Tỉnh Thái Nguyên'},
   {id:2,label:'Sở GD&ĐT Vĩnh Phúc'},
   {id:3,label:'Sở GD&ĐT Bắc Ninh'},
@@ -340,6 +339,8 @@ export const DEPARTMENT_OF_EDUCATION:{id:number,label:string}[]= [
   {id:26,label:'Sở GD&ĐT Hà Tĩnh'},
   {id:27,label:'Sở GD&ĐT Quảng Nam'},
   {id:28,label:'Sở GD&ĐT Gia Lai'},
+  {id:29,label:'Không thuộc sở giáo dục nào'},
+  {id:30,label:'Sở GD&ĐT Hà Nội'},
 ]
 
 export interface SchoolDepartment{
@@ -353,210 +354,210 @@ export const SCHOOL_BY_DEPARTMENT:SchoolDepartment[]=[
   {
     school_name: "Trường THPT Võ Nguyên Giáp",
     department_edu: "Sở GD&ĐT Tỉnh Thái Nguyên",
-    province: " Thái Nguyên",
+    province: "Thái Nguyên",
     province_name: "Thành phố Phổ Yên",
     school_address: "Phường Đắc Sơn, Thành phố Phổ Yên, tỉnh Thái Nguyên"
   },
   {
     school_name: "Trường THPT Bình Yên",
     department_edu: "Sở GD&ĐT Tỉnh Thái Nguyên",
-    province: " Thái Nguyên",
+    province: "Thái Nguyên",
     province_name: "Huyện Định Hóa ",
     school_address: "Thôn Yên Thông, xã Bình Yên, huyện Định Hóa, tỉnh Thái Nguyên"
   },
   {
     school_name: "Trường THPT Bắc Sơn",
     department_edu: "Sở GD&ĐT Tỉnh Thái Nguyên",
-    province: " Thái Nguyên",
+    province: "Thái Nguyên",
     province_name: "Thành phố Phổ Yên",
     school_address: "Phường Bắc Sơn - Thành phố Phổ Yên - tỉnh Thái Nguyên"
   },
   {
     school_name: "Trường THPT Chu Văn An",
     department_edu: "Sở GD&ĐT Tỉnh Thái Nguyên",
-    province: " Thái Nguyên",
+    province: "Thái Nguyên",
     province_name: "Thành phố Thái Nguyên",
     school_address: "271 Lưu Nhân Chú, Hương Sơn, Thành phố Thái Nguyên, Thái Nguyên"
   },
   {
     school_name: "Trường THPT Dương Tự Minh",
     department_edu: "Sở GD&ĐT Tỉnh Thái Nguyên",
-    province: " Thái Nguyên",
+    province: "Thái Nguyên",
     province_name: "Thành phố Thái Nguyên",
     school_address: "723 Đường Dương Tự Minh, Phường Quang Vinh, TP Thái Nguyên, Thái Nguyên"
   },
   {
     school_name: "Trường THPT Gang Thép",
     department_edu: "Sở GD&ĐT Tỉnh Thái Nguyên",
-    province: " Thái Nguyên",
+    province: "Thái Nguyên",
     province_name: "Thành phố Thái Nguyên",
     school_address: "Tổ 28 Phường Trung Thành, TP. Thái Nguyên, Tỉnh Thái Nguyên"
   },
   {
     school_name: "Trường THPT Thái Nguyên",
     department_edu: "Sở GD&ĐT Tỉnh Thái Nguyên",
-    province: " Thái Nguyên",
+    province: "Thái Nguyên",
     province_name: "Thành phố Thái Nguyên",
     school_address: "127 Đường Lương Thế Vinh, Quang Trung, Thành phố Thái Nguyên, Thái Nguyên"
   },
   {
     school_name: "Trường THPT Hoàng Quốc Việt",
     department_edu: "Sở GD&ĐT Tỉnh Thái Nguyên",
-    province: " Thái Nguyên",
+    province: "Thái Nguyên",
     province_name: "Huyện Võ Nhai",
     school_address: "Võ Nhai, Thái Nguyên"
   },
   {
     school_name: "Trường THPT Khánh Hòa",
     department_edu: "Sở GD&ĐT Tỉnh Thái Nguyên",
-    province: " Thái Nguyên",
+    province: "Thái Nguyên",
     province_name: "Thành phố Thái Nguyên",
     school_address: "Xã Sơn Cẩm, Thành phố Thái Nguyên, tỉnh Thái Nguyên"
   },
   {
     school_name: "Trường THPT Lê Hồng Phong",
     department_edu: "Sở GD&ĐT Tỉnh Thái Nguyên",
-    province: " Thái Nguyên",
+    province: "Thái Nguyên",
     province_name: "Thành phố Phổ Yên",
     school_address: "Phổ Yên, Thái Nguyên"
   },
   {
     school_name: "Trường THPT Lý Nam Đế",
     department_edu: "Sở GD&ĐT Tỉnh Thái Nguyên",
-    province: " Thái Nguyên",
+    province: "Thái Nguyên",
     province_name: "Thành phố Sông Công",
     school_address: "Thành phố Sông Công, Thái Nguyên"
   },
   {
     school_name: "Trường THPT Lưu Nhân Chú",
     department_edu: "Sở GD&ĐT Tỉnh Thái Nguyên",
-    province: " Thái Nguyên",
+    province: "Thái Nguyên",
     province_name: "Huyện Đại Từ",
     school_address: "Đại Từ, Thái Nguyên"
   },
   {
     school_name: "Trường THPT Lương Ngọc Quyến",
     department_edu: "Sở GD&ĐT Tỉnh Thái Nguyên",
-    province: " Thái Nguyên",
+    province: "Thái Nguyên",
     province_name: "Thành phố Thái Nguyên",
     school_address: "Tổ 30, Phường Hoàng Văn Thụ, Thành phố Thái Nguyên, Tỉnh Thái nguyên"
   },
   {
     school_name: "Trường THPT Lương Phú",
     department_edu: "Sở GD&ĐT Tỉnh Thái Nguyên",
-    province: " Thái Nguyên",
+    province: "Thái Nguyên",
     province_name: "Huyện Phú Bình",
     school_address: "Xóm Mảng - Xã Lương Phú - Huyện Phú Bình - Tỉnh Thái Nguyên"
   },
   {
     school_name: "Trường THPT Nguyễn Huệ",
     department_edu: "Sở GD&ĐT Tỉnh Thái Nguyên",
-    province: " Thái Nguyên",
+    province: "Thái Nguyên",
     province_name: "Huyện Đại Từ",
     school_address: "Xã Phú Thịnh, huyện Đại Từ, tỉnh Thái Nguyên"
   },
   {
     school_name: "Trường THPT Ngô Quyền",
     department_edu: "Sở GD&ĐT Tỉnh Thái Nguyên",
-    province: " Thái Nguyên",
+    province: "Thái Nguyên",
     province_name: "Thành phố Thái Nguyên",
     school_address: "Phường Thịnh Đán, Thành phố Thái Nguyên, Thái Nguyên"
   },
   {
     school_name: "Trường THPT Phú Bình",
     department_edu: "Sở GD&ĐT Tỉnh Thái Nguyên",
-    province: " Thái Nguyên",
+    province: "Thái Nguyên",
     province_name: "Huyện Phú Bình",
     school_address: "Phú Bình, Thái Nguyên"
   },
   {
     school_name: "Trường THPT Phú Lương",
     department_edu: "Sở GD&ĐT Tỉnh Thái Nguyên",
-    province: " Thái Nguyên",
+    province: "Thái Nguyên",
     province_name: "Huyện Phú Lương",
     school_address: "Phú Lương, Thái Nguyên"
   },
   {
     school_name: "Trường THPT Phổ Yên",
     department_edu: "Sở GD&ĐT Tỉnh Thái Nguyên",
-    province: " Thái Nguyên",
+    province: "Thái Nguyên",
     province_name: "Thành phố Phổ Yên",
     school_address: "Số nhà 245 đường Hoàng Quốc Việt - xã Tân Hương, TP Phổ Yên, tỉnh Thái Nguyên"
   },
   {
     school_name: "Trường THPT Sông Công",
     department_edu: "Sở GD&ĐT Tỉnh Thái Nguyên",
-    province: " Thái Nguyên",
+    province: "Thái Nguyên",
     province_name: "Thành phố Sông Công",
     school_address: "TP Sông Công, Thái Nguyên"
   },
   {
     school_name: "Trường THPT Trại Cau",
     department_edu: "Sở GD&ĐT Tỉnh Thái Nguyên",
-    province: " Thái Nguyên",
+    province: "Thái Nguyên",
     province_name: "Huyện Đồng Hỷ",
     school_address: "Đồng Hỷ, Thái Nguyên"
   },
   {
     school_name: "Trường THPT Trần Phú",
     department_edu: "Sở GD&ĐT Tỉnh Thái Nguyên",
-    province: " Thái Nguyên",
+    province: "Thái Nguyên",
     province_name: "Huyện Võ Nhai",
     school_address: "Võ Nhai, Thái Nguyên"
   },
   {
     school_name: "Trường THPT Yên Ninh",
     department_edu: "Sở GD&ĐT Tỉnh Thái Nguyên",
-    province: " Thái Nguyên",
+    province: "Thái Nguyên",
     province_name: "Huyện Phú Lương",
     school_address: "Xóm Bằng Ninh - Xã Yên Ninh - Phú Lương - Thái Nguyên"
   },
   {
     school_name: "Trường THPT Điềm Thụy",
     department_edu: "Sở GD&ĐT Tỉnh Thái Nguyên",
-    province: " Thái Nguyên",
+    province: "Thái Nguyên",
     province_name: "Huyện Phú Bình",
     school_address: "Xóm Thuần pháp, Xã Điềm Thuỵ, Huyện Phú Bình, Tỉnh Thái Nguyên"
   },
   {
     school_name: "TRƯỜNG THPT Đại Từ",
     department_edu: "Sở GD&ĐT Tỉnh Thái Nguyên",
-    province: " Thái Nguyên",
+    province: "Thái Nguyên",
     province_name: "Huyện Đại Từ",
     school_address: "Thị trấn Hùng Sơn, Huyện Đại Từ, Tỉnh Thái Nguyên"
   },
   {
     school_name: "Trường THPT Định Hoá",
     department_edu: "Sở GD&ĐT Tỉnh Thái Nguyên",
-    province: " Thái Nguyên",
+    province: "Thái Nguyên",
     province_name: "Huyện Định Hóa ",
     school_address: "TDP Hợp Thành, Thị trấn Chợ Chu, Huyện Định Hóa, Tỉnh Thái Nguyên"
   },
   {
     school_name: "Trường THPT Đồng Hỷ",
     department_edu: "Sở GD&ĐT Tỉnh Thái Nguyên",
-    province: " Thái Nguyên",
+    province: "Thái Nguyên",
     province_name: "Huyện Đồng Hỷ",
     school_address: "Đồng Hỷ, Thái Nguyên"
   },
   {
     school_name: "Trường THPT Đội Cấn",
     department_edu: "Sở GD&ĐT Tỉnh Thái Nguyên",
-    province: " Thái Nguyên",
+    province: "Thái Nguyên",
     province_name: "Huyện Đại Từ",
     school_address: "Hà Thượng, Đại Từ, Thái Nguyên"
   },
   {
     school_name: "Trường THPT Iris",
     department_edu: "Sở GD&ĐT Tỉnh Thái Nguyên",
-    province: " Thái Nguyên",
+    province: "Thái Nguyên",
     province_name: "Thành phố Thái Nguyên",
     school_address: "Gia Sàng, TP Thái Nguyên, Thái Nguyên"
   },
   {
     school_name: "Trường THPT Chuyên Thái Nguyên",
     department_edu: "Sở GD&ĐT Tỉnh Thái Nguyên",
-    province: " Thái Nguyên",
+    province: "Thái Nguyên",
     province_name: "Thành phố Thái Nguyên",
     school_address: "Tổ 6, phường Túc Duyên, Thành phố Thái Nguyên, tỉnh Thái Nguyên"
   },
@@ -7741,8 +7742,15 @@ export const SCHOOL_BY_DEPARTMENT:SchoolDepartment[]=[
   {
     school_name: "Trường THPT Vùng Cao Việt Bắc ",
     department_edu: "Không thuộc sở giáo dục nào",
-    province: " Thái Nguyên",
+    province: "Thái Nguyên",
     province_name: "Thành phố Thái Nguyên",
     school_address: "Đường Z 115, Quyết Thắng, Thành phố Thái Nguyên, Thái Nguyên"
+  },
+  {
+    school_name:'Trường THPT Thạch Bàn',
+    department_edu: "Sở GD&ĐT Hà Nội",
+    province: "Hà Nội",
+    province_name: "Thành phố Hà Nội",
+    school_address: "Tổ 12, Thạch Bàn, Long Biên, Hà Nội"
   }
 ]

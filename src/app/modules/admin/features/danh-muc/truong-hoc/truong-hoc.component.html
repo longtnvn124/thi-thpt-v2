@@ -30,8 +30,8 @@
           <div class="row">
             <div class="col-6">
               <p class="form-row" >
-                <label>Tên trường học<span class="ovic-mark">*</span></label>
-                <input pRipple pInputText type="text" placeholder="Tên trường học..." formControlName="tentruong"
+                <label>Tên<span class="ovic-mark">*</span></label>
+                <input pRipple pInputText type="text" placeholder="Tên ..." formControlName="ten"
                        autocomplete="off">
               </p>
             </div>
@@ -47,8 +47,18 @@
           <div class="row">
             <div class="col-12">
               <p class="form-row">
+                <label>Sở giáo dục trực thuộc </label>
+                <p-dropdown placeholder="Chọn..." class="w-100" [options]="sogiaoduc" optionLabel="ten"
+                            optionValue="id" [showClear]="true"
+                            formControlName='parent_id'></p-dropdown>
+              </p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12">
+              <p class="form-row">
                 <label >Tỉnh/ Thành phố <span class="ovic-mark">*</span></label>
-                <p-dropdown placeholder="Chọn..." class="w-100" [options]="provinces" formControlName="tinhtp_id" optionValue="id" optionLabel="name" [filter]="true"></p-dropdown>
+                <p-dropdown placeholder="Chọn..." class="w-100" [options]="provinces" formControlName="province" optionValue="name" optionLabel="name" [filter]="true"></p-dropdown>
               </p>
             </div>
 
@@ -56,8 +66,8 @@
           <div class="row">
             <div class="col-12">
               <div class="form-row">
-                  <label >Địa chỉ <span class="ovic-mark">*</span></label>
-                  <textarea formControlName="diachi" cols="30" rows="5"></textarea>
+                  <label >Địa chỉ</label>
+                  <textarea formControlName="address" cols="30" rows="5"></textarea>
               </div>
             </div>
           </div>
@@ -74,3 +84,4 @@
     </div>
   </div>
 </ng-template>
+<!--<button pRipple pButton (click)="btnAddTool()" label='run create data'></button>-->

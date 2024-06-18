@@ -252,8 +252,8 @@
                           [class.fieldset--invalid]="f['lop10_department'].touched && f['lop10_department'].valid">
                           <label>Sở giáo dục và đào tạo</label>
                           <p-dropdown class="w-100" [style]="{'width':'100%'}" [filter]="true"
-                            formControlName="lop10_department" [options]="departmentData" optionLabel="label" [showClear]="true"
-                            optionValue="label" placeholder="Chọn..." (onChange)="changeInfoDepartment10($event.value, null)"></p-dropdown>
+                            formControlName="lop10_department" [options]="dataSogiaoduc" optionLabel="ten" [showClear]="true"
+                            optionValue="ten" placeholder="Chọn..." (onChange)="changeInfoDepartment10($event.value, null)"></p-dropdown>
                         </div>
                       </div>
                       <div class="col col-lg-3 col-md-6">
@@ -261,9 +261,9 @@
                           [class.fieldset--error]="f['lop10_truong'].touched && f['lop10_truong'].invalid"
                           [class.fieldset--invalid]="f['lop10_truong'].touched && f['lop10_truong'].valid">
                           <label>Trường</label>
-                          <p-dropdown class="w-100" [style]="{'width':'100%'}" [filter]="true"
-                                      formControlName="lop10_truong" [options]="school10_department" optionLabel="school_name"
-                                      optionValue="school_name" placeholder="Chọn..." ></p-dropdown>
+                          <p-dropdown class="w-100" [style]="{'width':'100%'}" [filter]="true" [lazy]="truong10_isloadding"
+                                      formControlName="lop10_truong" [options]="datatruong10" optionLabel="ten"
+                                      optionValue="ten" placeholder="Chọn..." ></p-dropdown>
                         </div>
                       </div>
                       <div class="col col-lg-3 col-md-6">
@@ -299,8 +299,8 @@
                              [class.fieldset--invalid]="f['lop11_department'].touched && f['lop11_department'].valid">
                           <label>Sở giáo dục và đào tạo</label>
                           <p-dropdown class="w-100" [style]="{'width':'100%'}" [filter]="true"
-                                      formControlName="lop11_department" [options]="departmentData" optionLabel="label" [showClear]="true"
-                                      optionValue="label" placeholder="Chọn..." (onChange)="changeInfoDepartment11($event.value, null)"></p-dropdown>
+                                      formControlName="lop11_department" [options]="dataSogiaoduc" optionLabel="ten" [showClear]="true"
+                                      optionValue="ten" placeholder="Chọn..." (onChange)="changeInfoDepartment11($event.value, null)"></p-dropdown>
                         </div>
                       </div>
                       <div class="col col-lg-3 col-md-6">
@@ -308,9 +308,9 @@
                              [class.fieldset--error]="f['lop11_truong'].touched && f['lop11_truong'].invalid"
                              [class.fieldset--invalid]="f['lop11_truong'].touched && f['lop11_truong'].valid">
                           <label>Trường</label>
-                          <p-dropdown class="w-100" [style]="{'width':'100%'}" [filter]="true"
-                                      formControlName="lop11_truong" [options]="school11_department" optionLabel="school_name"
-                                      optionValue="school_name" placeholder="Chọn..." ></p-dropdown>
+                          <p-dropdown class="w-100" [style]="{'width':'100%'}" [filter]="true" [lazy]="truong11_isloadding"
+                                      formControlName="lop11_truong" [options]="datatruong11" optionLabel="ten"
+                                      optionValue="ten" placeholder="Chọn..." ></p-dropdown>
                         </div>
                       </div>
                       <div class="col col-lg-3 col-md-6">
@@ -346,8 +346,8 @@
                              [class.fieldset--invalid]="f['lop12_department'].touched && f['lop12_department'].valid">
                           <label>Sở giáo dục và đào tạo</label>
                           <p-dropdown class="w-100" [style]="{'width':'100%'}" [filter]="true"
-                                      formControlName="lop12_department" [options]="departmentData" optionLabel="label" [showClear]="true"
-                                      optionValue="label" placeholder="Chọn..." (onChange)="changeInfoDepartment12($event.value, null)"></p-dropdown>
+                                      formControlName="lop12_department" [options]="dataSogiaoduc" optionLabel="ten" [showClear]="true"
+                                      optionValue="ten" placeholder="Chọn..." (onChange)="changeInfoDepartment12($event.value, null)"></p-dropdown>
                         </div>
                       </div>
                       <div class="col col-lg-3 col-md-6">
@@ -355,9 +355,9 @@
                              [class.fieldset--error]="f['lop12_truong'].touched && f['lop12_truong'].invalid"
                              [class.fieldset--invalid]="f['lop12_truong'].touched && f['lop12_truong'].valid">
                           <label>Trường</label>
-                          <p-dropdown class="w-100" [style]="{'width':'100%'}" [filter]="true"
-                                      formControlName="lop12_truong" [options]="school12_department" optionLabel="school_name"
-                                      optionValue="school_name" placeholder="Chọn..." ></p-dropdown>
+                          <p-dropdown class="w-100" [style]="{'width':'100%'}" [filter]="true" [lazy]="truong12_isloadding"
+                                      formControlName="lop12_truong" [options]="datatruong12" optionLabel="ten"
+                                      optionValue="ten" placeholder="Chọn..." ></p-dropdown>
                         </div>
                       </div>
                       <div class="col col-lg-3 col-md-6">
@@ -437,25 +437,24 @@
         </div>
         <span class="ovic-side-navigation-content__foot__notice mr-auto"
               style="padding: 20px 0 0 0;margin: 0 auto;"><mark>(*)</mark> bắt buộc phải nhập</span>
-        <div *ngIf="userInfo['lock'] === 0,else statuscheck"
-          class="w-100 h-100 d-flex justify-content-center align-items-center" style="padding: 20px 0;gap: 12px;">
+        <div *ngIf="!userInfo,else statuscheck" class="w-100 h-100 d-flex justify-content-center align-items-center" style="padding: 20px 0;gap: 12px;">
 
-          <div *ngIf="userInfo['request_update'] === 0">
             <button [disabled]="!f['camket'].value"  pButton pRipple label="Lưu thông tin" icon="pi pi-check-square" (click)="saveForm()"> </button>
-          </div>
-          <div *ngIf="userInfo['request_update'] === 2">
-            <button [disabled]="!f['camket'].value"  pButton pRipple label="Lưu thông tin" icon="pi pi-check-square" (click)="saveForm()"> </button>
-          </div>
 
         </div>
 
         <ng-template #statuscheck>
-          <div class="status_check">
+          <div *ngIf="userInfo['lock'] === 0" class="w-100 h-100 d-flex justify-content-center align-items-center" style="padding: 20px 0;gap: 12px;" >
+            <button [disabled]="!f['camket'].value"  pButton pRipple label="Lưu thông tin" icon="pi pi-check-square" (click)="saveForm()"> </button>
+          </div>
+
+
+          <div *ngIf="userInfo['lock'] === 1" class="status_check">
             <button pRipple pButton class="ovic-button--disabled" label="Lưu thông tin"
               icon="pi pi-check-square"></button>
-            <button *ngIf="userInfo['request_update'] === 0" pButton pRipple class="p-button-warning" label="Yêu cầu cập nhật thông tin"
+            <button *ngIf="userInfo && userInfo['request_update'] === 0" pButton pRipple class="p-button-warning" label="Yêu cầu cập nhật thông tin"
                     icon="pi pi-bell" [loading]="isRequestUpdate" (click)="btnRequsetUpdate()"> </button>
-            <button *ngIf="userInfo['request_update'] === 1" pButton pRipple class="p-button-warning ovic-button--disabled" label="Yêu cầu đang chờ duyệt "
+            <button *ngIf="userInfo && userInfo['request_update'] === 1" pButton pRipple class="p-button-warning ovic-button--disabled" label="Yêu cầu đang chờ duyệt "
                     icon="pi pi-bell" [loading]="isRequestUpdate" > </button>
           </div>
         </ng-template>
