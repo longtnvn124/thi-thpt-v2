@@ -143,4 +143,32 @@ export class DanhMucTruongHocService {
     const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({fromObject}));
     return this.http.get<Dto>(this.api, {params}).pipe(map(res => res.data));
   }
+
+  getDataBySearchAndids(page: number, ten: string, ids:number[]): Observable<{ recordsTotal: number, data: DmTruongHoc[] }> {
+    const conditions: OvicConditionParam[] = [
+
+    ];
+
+    if (ten) {
+      conditions.push({
+        conditionName: 'ten',
+        condition: OvicQueryCondition.like,
+        value: `%${ten}%`,
+        orWhere: 'and'
+      });
+    }
+    const fromObject = {
+      paged: page,
+      limit: this.themeSettingsService.settings.rows,
+      orderby: 'parent_id',
+      order: 'ASC',
+      include: ids.join(','),
+      include_by: 'parent_id',
+    };
+    const params = this.httpParamsHelper.paramsConditionBuilder(conditions, new HttpParams({fromObject}));
+    return this.http.get<Dto>(this.api, {params}).pipe(map(res => ({
+      recordsTotal: res.recordsFiltered,
+      data: res.data
+    })));
+  }
 }

@@ -25,6 +25,9 @@ import { LePhiThiComponent } from './le-phi-thi/le-phi-thi.component';
 import {InputTextModule} from "primeng/inputtext";
 import { KhaiBaoPhongThiComponent } from './khai-bao-phong-thi/khai-bao-phong-thi.component';
 import { DoiTuongUuTienComponent } from './doi-tuong-uu-tien/doi-tuong-uu-tien.component';
+import {InputSwitchModule} from "primeng/inputswitch";
+import {MatMenuModule} from "@angular/material/menu";
+import {TableModule} from "primeng/table";
 Quill.register('modules/imageResize', ImageResize);
 
 @NgModule({
@@ -53,7 +56,10 @@ Quill.register('modules/imageResize', ImageResize);
         MultiSelectModule,
         SplitterModule,
         CalendarModule,
-        InputTextModule
+        InputTextModule,
+        InputSwitchModule,
+        MatMenuModule,
+        TableModule
     ]
 })
 export class DanhMucModule {

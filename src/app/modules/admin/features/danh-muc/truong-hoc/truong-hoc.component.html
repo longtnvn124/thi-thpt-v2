@@ -1,21 +1,102 @@
 <div class="row">
-  <div class="col-12" [class.ovic-is-loading]="isLoading">
-    <div class="ovic-load-init-fail alert alert-danger --fs-14" *ngIf="loadInitFail; else tableData">
-      Đã có lỗi trong quá trình tải dữ liệu
-      <button class="btn btn-primary border-circle --fs-13 ml-2" (click)="loadInit()">Reload</button>
+  <div class="col-12 ovic-ui-table site-thpt" style="height:calc(100vh - 90px)" [class.ovic-is-loading]="isLoading">
+    <div class="p-datatable-header" style="height:65px; border-bottom:1px solid #CCC;">
+      <h3 class="tbl-title ">Danh sách </h3>
+      <div class="search-block ui-table-globalfilter-container ">
+        <div class="d-flex align-items-center">
+          <div class="ovic-vertical__inputs ovic-vertical__inputs--layout-2">
+            <div class="d-flex" style="gap:10px;">
+              <div>
+                <p-multiSelect [style]="{'width':'250px'}" placeholder="Sở giáo dục và đào tạo" [options]="sogiaoduc" [(ngModel)]="sogiaoduc_select" optionValue="id" optionLabel="ten" (onChange)="multiChange($event.value)"></p-multiSelect>
+              </div>
+              <div class="search-block__elm ">
+                <span class="p-input-icon-right">
+                  <i class="pi pi-search"></i>
+                  <input type="text" pInputText style="height:42px" placeholder="Nhập tên trường..."
+                         (input)="onInputChange($event.target['value'])"/>
+                </span>
+              </div>
+              <div>
+                <button pButton pRipple label="Thêm mới" icon="pi pi-plus" class="p-button-success" style="height: 41px;" (click)="btnAdd()"></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <ng-template #tableData>
-      <ovic-table emptyMessage="Danh sách trống" [index]="index" [data]="listData"
-                  styleClass="tbl-danh-sach-tap-the head-input-size--normal head-input-size--250px" dataKey="id"
-                  rowHover="true"
-                  [rows]="15" tableName="Danh sách Truờng học" [tblStructure]="tblStructure"
-                  (onButtonClick)="handleClickOnTable($event)" [enableSearch]="true" [enableSearchLocal]="false"
-                  (onSearch)="onSearch($event)" [searchDebounceTime]="800" [headerButtons]="headButtons"></ovic-table>
-      <p-paginator class="p-paginator--custom" [showCurrentPageReport]="true" [rows]="rows"
-                   [totalRecords]="recordsTotal" [pageLinkSize]="5" (onPageChange)="paginate($event)"></p-paginator>
-    </ng-template>
+    <div class="ovic-wrap-table-rps ovic-scroll-style" style="height:calc(100% - 65px - 60px);background: #dedede;">
+      <!--    <div class="ovic-wrap-table-rps ovic-scroll-style overflow-hidden overflow-y-auto" style="height:calc(100% - 65px - 60px);background: #dedede;">-->
+      <div class="ovic-wrap-table-rps__inner">
+        <p-table class="w-100"  [(selection)]="listData" styleClass="p-datatable-gridlines" [value]="listData" [rowHover]="true"
+                 [rows]="rows" [showCurrentPageReport]="true" [rowsPerPageOptions]="[10,25,50]" [loading]="isLoading">
+          <ng-template pTemplate="header" class="d-bock">
+            <tr>
+              <th class="ovic-w-40px text-center ">STT</th>
+              <th class=" text-left ">Tên </th>
+              <th class="ovic-w-250px text-center">Sở GD & ĐT</th>
+              <th class="ovic-w-180px text-center">Tỉnh / Thành phố</th>
+              <th class="ovic-w-180px text-center">Trạng thái</th>
+              <th class="text-center">Thao tác</th>
+
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="body" let-item let-i="rowIndex">
+            <tr>
+              <td class="text-center">{{ item['__index_table'] }}</td>
+              <td class="text-left" [innerHTML]=" item['__ten_converted'] | ovicSafeHtml" ></td>
+
+              <td class="text-center">{{ item['__sogiaoduc_converted'] }}</td>
+              <td class="text-left">{{ item['province'] }}</td>
+              <td class="text-center" [innerHTML]="item['__status'] |ovicSafeHtml"></td>
+
+              <td class="text-center">
+                <div class="d-flex justify-content-center" style="gap:10px;">
+                  <button style="width:32px;height:32px;" pRipple pButton class="p-button-warning" icon="pi pi-file-edit"  pTooltip="Cập nhật " tooltipPosition="left" (click)="btnUpdate(item)"></button>
+                  <button style="width:32px;height:32px;" pRipple pButton class="p-button-danger" icon="pi pi-trash" pTooltip="Xóa" tooltipPosition="left" (click)="btnDelete(item)"></button>
+                </div>
+              </td>
+
+<!--              __status-->
+<!--              __ten_converted-->
+<!--              __sogiaoduc_converted-->
+
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="10">
+                Không có dữ liệu thí sinh!
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </div>
+    <p-paginator class="duthi_panigator" [showCurrentPageReport]="true" [rows]="rows" [totalRecords]="recordsTotal"
+                 [pageLinkSize]="5"
+                 (onPageChange)="paginate($event)"></p-paginator>
   </div>
 </div>
+
+<!--<div class="row">-->
+<!--  <div class="col-12" [class.ovic-is-loading]="isLoading">-->
+<!--    <div class="ovic-load-init-fail alert alert-danger &#45;&#45;fs-14" *ngIf="loadInitFail; else tableData">-->
+<!--      Đã có lỗi trong quá trình tải dữ liệu-->
+<!--      <button class="btn btn-primary border-circle &#45;&#45;fs-13 ml-2" (click)="loadInit()">Reload</button>-->
+<!--    </div>-->
+<!--    <ng-template #tableData>-->
+<!--      <ovic-table emptyMessage="Danh sách trống" [index]="index" [data]="listData"-->
+<!--                  styleClass="tbl-danh-sach-tap-the head-input-size&#45;&#45;normal head-input-size&#45;&#45;250px" dataKey="id"-->
+<!--                  rowHover="true"-->
+<!--                  [rows]="15" tableName="Danh sách Truờng học" [tblStructure]="tblStructure"-->
+<!--                  (onButtonClick)="handleClickOnTable($event)" [enableSearch]="true" [enableSearchLocal]="false"-->
+<!--                  (onSearch)="onSearch($event)" [searchDebounceTime]="800" [headerButtons]="headButtons"></ovic-table>-->
+<!--      <p-paginator class="p-paginator&#45;&#45;custom" [showCurrentPageReport]="true" [rows]="rows"-->
+<!--                   [totalRecords]="recordsTotal" [pageLinkSize]="5" (onPageChange)="paginate($event)"></p-paginator>-->
+<!--    </ng-template>-->
+<!--  </div>-->
+<!--</div>-->
 
 <ng-template #fromUpdate>
   <div class="ovic-side-navigation-content">

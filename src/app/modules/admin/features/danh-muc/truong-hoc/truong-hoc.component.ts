@@ -129,7 +129,9 @@ export class TruongHocComponent implements OnInit {
   search = '';
 
   provinces: DiaDanh[]
+  private inputChanged: Subject<string> = new Subject<string>();
 
+  sogiaoduc_select:number[]= [];
   constructor(
     private themeSettingsService: ThemeSettingsService,
     private notificationService: NotificationService,
@@ -155,6 +157,10 @@ export class TruongHocComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.inputChanged.pipe(debounceTime(1000)).subscribe((item: string) => {
+      this.searchContentByInput(item);
+    });
+
     this.notificationService.isProcessing(true);
     this.locationService.listProvinces().subscribe({
       next: (data) => {
@@ -177,23 +183,24 @@ export class TruongHocComponent implements OnInit {
     this.loadData(1);
   }
 
-  loadData(page: number, search?: string) {
+  loadData(page: number, ) {
     const limit = this.themeSettingsService.settings.rows;
     this.index = (page * limit) - limit + 1;
-    let newsearch: string = search ? search : this.search;
+
     forkJoin<[DmTruongHoc[], { recordsTotal: number; data: DmTruongHoc[] }]>(
       this.danhMucTruongHocService.getSogiaoduc(),
-      this.danhMucTruongHocService.search(page, newsearch)
+      this.danhMucTruongHocService.getDataBySearchAndids(page,this.search, this.sogiaoduc_select)
     )
       .subscribe({
         next: ([sogiaoduc, {data, recordsTotal}]) => {
           this.sogiaoduc = sogiaoduc
           this.recordsTotal = recordsTotal;
-          this.listData = data.map(m => {
+          this.listData = data.map((m,index) => {
             const sIndex = this.statusList.findIndex(i => i.value === m.status);
-            // m['__proviewed'] = this.provinces && m.province!=nm ? this.provinces.find(f => f.id === m.province).name : '';
+            m['__index_table'] = (page - 1 )*10 + index + 1;
             m['__status'] = sIndex !== -1 ? this.statusList[sIndex].color : '';
             m['__ten_converted'] = `<b>${m.ten}</b><br>` + (m.address ? m.address : '');
+            m['__sogiaoduc_converted'] = sogiaoduc.find(f=>f.id === m.parent_id) ? sogiaoduc.find(f=>f.id === m.parent_id).ten :'' ;
             return m;
           })
           this.isLoading = false;
@@ -211,7 +218,7 @@ export class TruongHocComponent implements OnInit {
     observer$.subscribe({
       next: () => {
         this.needUpdate = true;
-        this.loadData(1, this.search);
+        this.loadData(1);
         this.notificationService.toastSuccess('Thao tác thành công', 'Thông báo');
         this.notificationService.isProcessing(false);
       },
@@ -228,11 +235,6 @@ export class TruongHocComponent implements OnInit {
     this.loadData(this.page);
   }
 
-  onSearch(text: string) {
-    this.search = text;
-    this.paginator.changePage(1);
-    this.loadData(1, text);
-  }
 
   private preSetupForm(name: string) {
     if (this.provinces) {
@@ -250,7 +252,49 @@ export class TruongHocComponent implements OnInit {
     this.loadInit();
     this.notificationService.closeSideNavigationMenu(this.menuName);
   }
+  btnAdd(){
+    this.btn_checkAdd = "Lưu lại";
+    this.formSave.reset({
+      ten: '',
+      province: '',
+      parent_id: 0,
+      address: '',
+      status: null,
 
+    });
+    this.formActive = this.listForm[FormType.ADDITION];
+    this.preSetupForm(this.menuName);
+  }
+  btnUpdate(item: DmTruongHoc){
+    this.btn_checkAdd = "Cập nhật";
+    this.formSave.reset({
+      ten: item.ten,
+      parent_id: item.parent_id,
+      address: item.address,
+      status: item.status,
+      province: item.province
+    })
+    this.formActive = this.listForm[FormType.UPDATE];
+    this.formActive.object = item;
+    this.preSetupForm(this.menuName);
+  }
+  async btnDelete(item:DmTruongHoc){
+    const confirm = await this.notificationService.confirmDelete();
+    if (confirm) {
+      this.danhMucTruongHocService.delete(item.id).subscribe({
+        next: () => {
+          this.page = Math.max(1, this.page - (this.listData.length > 1 ? 0 : 1));
+          this.notificationService.isProcessing(false);
+          this.notificationService.toastSuccess('Thao tác thành công');
+          this.loadData(this.page);
+
+        }, error: () => {
+          this.notificationService.isProcessing(false);
+          this.notificationService.toastError('Thao tác không thành công');
+        }
+      })
+    }
+  }
   async handleClickOnTable(button: OvicButton) {
     if (!button) {
       return;
@@ -333,8 +377,7 @@ export class TruongHocComponent implements OnInit {
   cap2 = SCHOOL_BY_DEPARTMENT;
 
   btnAddTool() {
-    console.log(this.cap1)
-    console.log(this.cap2)
+
     const step: number = 100 / this.cap1.length;
     this.notificationService.loadingAnimationV2({process: {percent: 0}});
     this.createParrent(this.cap1, step, 0).subscribe({
@@ -395,4 +438,20 @@ export class TruongHocComponent implements OnInit {
   }
 
 
+  searchContentByInput(text: string) {
+    this.page = 1;
+
+    this.search= text.trim()
+
+    this.loadData(this.page );
+  }
+
+  onInputChange(event: string) {
+
+    this.inputChanged.next(event);
+  }
+  multiChange(event){
+    this.page=1;
+    this.loadData(this.page);
+  }
 }
