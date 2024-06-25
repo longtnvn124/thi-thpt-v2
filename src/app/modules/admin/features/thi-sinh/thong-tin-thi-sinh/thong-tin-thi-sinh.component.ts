@@ -166,7 +166,6 @@ export class ThongTinThiSinhComponent implements OnInit {
 
   loadInit() {
     this.getDataCitis();
-    this._getDataUserInfo(this.auth.user.id);
   }
 
   getDataCitis() {
@@ -178,13 +177,17 @@ export class ThongTinThiSinhComponent implements OnInit {
       next: ([diadanh, doituong,sogiaoduc]) => {
         this.provinceOptions = diadanh;
         this.danhMucDoiTuong = doituong;
-        this.dataSogiaoduc = sogiaoduc
+        this.dataSogiaoduc = sogiaoduc;
+        if(this.provinceOptions.length>0 && this.danhMucDoiTuong.length>0 &&this.dataSogiaoduc.length>0 ){
+          this._getDataUserInfo(this.auth.user.id);
+
+        }
       }
     })
 
   }
 
-  _getDataUserInfo(user_id: number) {
+  async _getDataUserInfo(user_id: number) {
     this.notifi.isProcessing(true);
     this.thisinhInfoService.getUserInfo(user_id).subscribe({
       next: data => {
@@ -401,13 +404,13 @@ export class ThongTinThiSinhComponent implements OnInit {
   truong11_isloadding:boolean=false;
   truong12_isloadding:boolean=false;
 
-  changeInfoDepartment10(department?: string, school?: string) {
+   changeInfoDepartment10(department?: string, school?: string) {
     this.truong10_isloadding= true
     if (department) {
 
-      const sogiaoducSelect =  this.dataSogiaoduc.find(f=>f.ten === department)
+      const sogiaoducSelect = this.dataSogiaoduc.find(f=>f.ten === department)? this.dataSogiaoduc.find(f=>f.ten === department): null
       if(sogiaoducSelect){
-        this.danhMucTruongHocService.getDataByParrentId(sogiaoducSelect.id).subscribe({
+         this.danhMucTruongHocService.getDataByParrentId(sogiaoducSelect.id).subscribe({
           next:(data)=>{
             this.datatruong10= data;
             this.truong10_isloadding= false;
@@ -418,6 +421,10 @@ export class ThongTinThiSinhComponent implements OnInit {
 
           }
         })
+      }else{
+        this.datatruong10= [];
+        this.f['lop10_truong'].setValue(null);
+
       }
     } else {
       this.f['lop10_truong'].setValue(null);
@@ -426,12 +433,13 @@ export class ThongTinThiSinhComponent implements OnInit {
 
   }
 
-  changeInfoDepartment11(department?: string, school?: string) {
+   changeInfoDepartment11(department?: string, school?: string) {
     this.truong11_isloadding= true;
     if (department) {
-      const sogiaoducSelect =  this.dataSogiaoduc.find(f=>f.ten === department)
+      const sogiaoducSelect =this.dataSogiaoduc.find(f=>f.ten === department)? this.dataSogiaoduc.find(f=>f.ten === department): null
+
       if(sogiaoducSelect){
-        this.danhMucTruongHocService.getDataByParrentId(sogiaoducSelect.id).subscribe({
+         this.danhMucTruongHocService.getDataByParrentId(sogiaoducSelect.id).subscribe({
           next:(data)=>{
             this.datatruong11= data;
             this.truong11_isloadding= false;
@@ -441,6 +449,10 @@ export class ThongTinThiSinhComponent implements OnInit {
             this.datatruong11=[];
           }
         })
+      }else{
+        this.datatruong11=[];
+        this.f['lop11_truong'].setValue(null);
+
       }
     } else {
       this.f['lop11_truong'].setValue(null);
@@ -448,13 +460,13 @@ export class ThongTinThiSinhComponent implements OnInit {
     }
   }
 
-  changeInfoDepartment12(department?: string, school?: string) {
+   changeInfoDepartment12(department?: string, school?: string) {
     this.truong12_isloadding= true;
 
     if (department) {
-      const sogiaoducSelect =  this.dataSogiaoduc.find(f=>f.ten === department)
+      const sogiaoducSelect =this.dataSogiaoduc.find(f=>f.ten === department)? this.dataSogiaoduc.find(f=>f.ten === department): null
       if(sogiaoducSelect){
-        this.danhMucTruongHocService.getDataByParrentId(sogiaoducSelect.id).subscribe({
+         this.danhMucTruongHocService.getDataByParrentId(sogiaoducSelect.id).subscribe({
           next:(data)=>{
             this.datatruong12= data;
             this.truong12_isloadding= false;
@@ -463,6 +475,10 @@ export class ThongTinThiSinhComponent implements OnInit {
             this.datatruong12=[];
           }
         })
+
+      }else{
+        this.datatruong10= [];
+        this.f['lop12_truong'].setValue(null);
 
       }
     } else {
