@@ -9,6 +9,8 @@ import {InputTextModule} from "primeng/inputtext";
 import {RippleModule} from "primeng/ripple";
 import {ButtonModule} from "primeng/button";
 import {InputTextareaModule} from "primeng/inputtextarea";
+import {PaginatorModule} from "primeng/paginator";
+import {ReactiveFormsModule} from "@angular/forms";
 
 
 @NgModule({
@@ -23,7 +25,9 @@ import {InputTextareaModule} from "primeng/inputtextarea";
     InputTextModule,
     RippleModule,
     ButtonModule,
-    InputTextareaModule
+    InputTextareaModule,
+    PaginatorModule,
+    ReactiveFormsModule
   ]
 })
 export class DevModule { }

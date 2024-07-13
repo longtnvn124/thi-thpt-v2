@@ -130,6 +130,8 @@ import { OvicInputMonthiComponent } from './components/ovic-input-monthi/ovic-in
 import {CheckboxModule} from "primeng/checkbox";
 import { ThptFormTraketquaComponent } from './components/thpt-form-traketqua/thpt-form-traketqua.component';
 import { OvicThptBillComponent } from './components/ovic-thpt-bill/ovic-thpt-bill.component';
+import { OvicTestOneAnswerComponent } from './components/ovic-test-one-answer/ovic-test-one-answer.component';
+import { TestQuestionComponent } from './components/ovic-test-one-answer/test-question/test-question.component';
 
 @NgModule({
   declarations: [
@@ -217,6 +219,8 @@ import { OvicThptBillComponent } from './components/ovic-thpt-bill/ovic-thpt-bil
     OvicInputMonthiComponent,
     ThptFormTraketquaComponent,
     OvicThptBillComponent,
+    OvicTestOneAnswerComponent,
+    TestQuestionComponent,
 
   ],
   imports: [
@@ -342,7 +346,8 @@ import { OvicThptBillComponent } from './components/ovic-thpt-bill/ovic-thpt-bil
         OvicCountdownComponent,
         NumberToVndCurrencuyPipe,
         OvicInputMonthiComponent,
-        OvicThptBillComponent
+        OvicThptBillComponent,
+        OvicTestOneAnswerComponent
     ]
 })
 export class SharedModule {
